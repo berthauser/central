@@ -60,7 +60,7 @@ public class ClienteForm extends AbstractForm<Cliente> {
 
 	// Campos finales
 	private TextArea observaciones = new TextArea("Observaciones");
-	private ComboBox<TipoDocumento> documento = new ComboBox<>("Documento");
+	private ComboBox<TipoDocumento> tipoDocumento = new ComboBox<>("Documento");
 	private TextField numero = new TextField("Número");
 	private ComboBox<Estado> estado = new ComboBox<>("Estado");
 
@@ -83,7 +83,7 @@ public class ClienteForm extends AbstractForm<Cliente> {
         domicilioSubForm.addDomListener(() -> {
             domiciliosModificados = true;
             actualizarEstadoBotones();
-            System.out.println("📝 Cambios en domicilios detectados");
+            System.out.println("Cambios en domicilios detectados");
             
         });
         
@@ -91,7 +91,7 @@ public class ClienteForm extends AbstractForm<Cliente> {
         grupoFamSubForm.addDomListener(() -> {
         	grupoFamiliarModificado = true;
         	actualizarEstadoBotones();
-        	System.out.println("📝 Cambios en grupo familiar detectados");
+        	System.out.println("Cambios en grupo familiar detectados");
         });
 	}
 
@@ -168,11 +168,11 @@ public class ClienteForm extends AbstractForm<Cliente> {
 		observaciones.setWidth("600px");
 		observaciones.setHeight("100px");
 
-		documento.addClassName(campoStyle);
-		documento.setItems(Arrays.asList(TipoDocumento.values()));
-		documento.setItemLabelGenerator(TipoDocumento::getLabel);
-		documento.setWidth("200px");
-		documento.setRequired(true);
+		tipoDocumento.addClassName(campoStyle);
+		tipoDocumento.setItems(TipoDocumento.values());
+		tipoDocumento.setItemLabelGenerator(TipoDocumento::toString);
+		tipoDocumento.setWidth("200px");
+		tipoDocumento.setRequired(true);
 
 		estado.addClassName(campoStyle);
 		estado.setItems(Arrays.asList((Estado.values())));
@@ -185,7 +185,7 @@ public class ClienteForm extends AbstractForm<Cliente> {
 		fila1.setSpacing(true);
 		fila1.setAlignItems(Alignment.END);
 
-		HorizontalLayout fila2 = new HorizontalLayout(documento, numero, email, estado);
+		HorizontalLayout fila2 = new HorizontalLayout(tipoDocumento, numero, email, estado);
 		fila2.setSpacing(true);
 		fila2.setAlignItems(Alignment.END);
 		
@@ -239,7 +239,7 @@ public class ClienteForm extends AbstractForm<Cliente> {
 	    
 	    // Añadir listeners de foco para cerrar los Details
 	    List<Component> focusComponents = List.of(
-	    		nombreCliente, nombreFantasia ,sexo, telefonoFijo, telefonoMovil, documento, numero, email, estado,
+	    		nombreCliente, nombreFantasia ,sexo, telefonoFijo, telefonoMovil, tipoDocumento, numero, email, estado,
 	    		crear, modificar, eliminar, volver
 	    		);
 
@@ -280,6 +280,10 @@ public class ClienteForm extends AbstractForm<Cliente> {
 		binder.bind(telefonoFijo, Cliente::getTelefonoFijo, Cliente::setTelefonoFijo);
 		binder.bind(telefonoMovil, Cliente::getTelefonoMovil, Cliente::setTelefonoMovil);
 
+		binder.forField(tipoDocumento)
+		.asRequired("El Tipo de Documento es Obligatorio")
+		.bind(Cliente::getTipoDocumento, Cliente::setTipoDocumento);
+		
 		binder.forField(numero)
 		.withNullRepresentation("")
 		.withConverter(new StringToLongConverter("Debe ser un número"))
@@ -330,14 +334,13 @@ public class ClienteForm extends AbstractForm<Cliente> {
 		.bind(Cliente::getSaldoCtaCte, Cliente::setSaldoCtaCte);
 
 		binder.bind(observaciones, Cliente::getObservaciones, Cliente::setObservaciones);
-		binder.bind(documento, Cliente::getDocumento, Cliente::setDocumento);
 		binder.bind(estado, Cliente::getEstado, Cliente::setEstado);
 	}
 
 	@Override
 	protected void setFormValues(Cliente entity) {
 		
-		System.out.println("📝 setFormValues() - Cargando cliente: " + 
+		System.out.println("setFormValues() - Cargando cliente: " + 
 	            (entity != null ? entity.getNombreFantasia() : "NULL"));
 		
 		if (entity == null) {
@@ -369,7 +372,7 @@ public class ClienteForm extends AbstractForm<Cliente> {
 		situacionFiscal.setValue(entity.getSituacionFiscal());
 		saldoCtaCte.setValue(entity.getSaldoCtaCte());
 		observaciones.setValue(entity.getObservaciones() != null ? entity.getObservaciones() : "");
-		documento.setValue(entity.getDocumento());
+		tipoDocumento.setValue(entity.getTipoDocumento());
 		estado.setValue(entity.getEstado());
 		
 		// CARGAR DOMICILIOS Y GRUPO FAMILIAR SOLO CUANDO SE EDITA UN CLIENTE EXISTENTE
@@ -420,10 +423,10 @@ public class ClienteForm extends AbstractForm<Cliente> {
 	}
 	
 	private void actualizarEstadoBotones() {
-		System.out.println("📝 actualizarEstadoBotones() - domiciliosModificados: " + domiciliosModificados + ", grupoFamiliarModificado: " + grupoFamiliarModificado);
+		System.out.println("actualizarEstadoBotones() - domiciliosModificados: " + domiciliosModificados + ", grupoFamiliarModificado: " + grupoFamiliarModificado);
 	    
 	    if (modificar == null) {
-	        System.out.println("⚠️ modificar es null - no se puede actualizar botones");
+	        System.out.println("modificar es null - no se puede actualizar botones");
 	        return;
 	    }
 

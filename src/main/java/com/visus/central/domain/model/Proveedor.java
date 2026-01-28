@@ -1,5 +1,7 @@
 package com.visus.central.domain.model;
 
+import java.util.Objects;
+
 import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.Estado;
 import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.SituacionFiscal;
 import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.TipoDocumento;
@@ -131,4 +133,30 @@ public class Proveedor {
 		this.estado = estado;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(banco, documento, email, estado, id, nombreFantasia, nombreReal, numero, situacionFiscal,
+				telefonoDos, telefonoTres, telefonoUno);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Proveedor other = (Proveedor) obj;
+		return Objects.equals(banco, other.banco) && documento == other.documento && Objects.equals(email, other.email)
+				&& estado == other.estado && Objects.equals(id, other.id)
+				&& Objects.equals(nombreFantasia, other.nombreFantasia) && Objects.equals(nombreReal, other.nombreReal)
+				&& Objects.equals(numero, other.numero) && situacionFiscal == other.situacionFiscal
+				&& Objects.equals(telefonoDos, other.telefonoDos) && Objects.equals(telefonoTres, other.telefonoTres)
+				&& Objects.equals(telefonoUno, other.telefonoUno);
+	}
+
+    
+    
+    
 }

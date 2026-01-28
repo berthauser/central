@@ -18,7 +18,7 @@ public class Cliente {
     private Sexo sexo;
     private String telefonoFijo;
     private String telefonoMovil;
-    private TipoDocumento documento;
+    private TipoDocumento tipoDocumento;
     private Long numero;
     private String email;
     private LocalDate fechaIngreso;
@@ -83,12 +83,12 @@ public class Cliente {
 		this.telefonoMovil = telefonoMovil;
 	}
 	
-	public TipoDocumento getDocumento() {
-		return documento;
+	public TipoDocumento getTipoDocumento() {
+		return tipoDocumento;
 	}
 	
-	public void setDocumento(TipoDocumento documento) {
-		this.documento = documento;
+	public void setTipoDocumento(TipoDocumento tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
 	}
 	
 	public Long getNumero() {
@@ -213,7 +213,7 @@ public class Cliente {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(documento, domicilios, email, estado, fechaActualizacion, fechaBaja, fechaIngreso,
+		return Objects.hash(tipoDocumento, domicilios, email, estado, fechaActualizacion, fechaBaja, fechaIngreso,
 				fechaUltimaCompra, grupoFam, id, limiteCredito, limiteFacturasVencidas, nombreCliente, nombreFantasia,
 				numero, observaciones, pagoMinimo, saldoCtaCte, sexo, situacionFiscal, telefonoFijo, telefonoMovil);
 	}
@@ -227,7 +227,7 @@ public class Cliente {
 		if (getClass() != obj.getClass())
 			return false;
 		Cliente other = (Cliente) obj;
-		return documento == other.documento && Objects.equals(domicilios, other.domicilios)
+		return tipoDocumento == other.tipoDocumento && Objects.equals(domicilios, other.domicilios)
 				&& Objects.equals(email, other.email) && estado == other.estado
 				&& Objects.equals(fechaActualizacion, other.fechaActualizacion)
 				&& Objects.equals(fechaBaja, other.fechaBaja) && Objects.equals(fechaIngreso, other.fechaIngreso)
@@ -247,7 +247,7 @@ public class Cliente {
 	public String toString() {
 		return "Cliente [id=" + id + ", nombreFantasia=" + nombreFantasia + ", nombreCliente=" + nombreCliente
 				+ ", sexo=" + sexo + ", telefonoFijo=" + telefonoFijo + ", telefonoMovil=" + telefonoMovil
-				+ ", documento=" + documento + ", numero=" + numero + ", email=" + email + ", fechaIngreso="
+				+ ", documento=" + tipoDocumento + ", numero=" + numero + ", email=" + email + ", fechaIngreso="
 				+ fechaIngreso + ", fechaActualizacion=" + fechaActualizacion + ", fechaBaja=" + fechaBaja
 				+ ", fechaUltimaCompra=" + fechaUltimaCompra + ", limiteFacturasVencidas=" + limiteFacturasVencidas
 				+ ", limiteCredito=" + limiteCredito + ", pagoMinimo=" + pagoMinimo + ", situacionFiscal="

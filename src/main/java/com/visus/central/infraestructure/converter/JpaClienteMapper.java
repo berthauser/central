@@ -7,6 +7,7 @@ import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity;
 
 @Component
 public class JpaClienteMapper {
+	
 	public Cliente toModel(JpaClienteEntity entity) {
 		
 		if (entity == null) return null;
@@ -30,7 +31,7 @@ public class JpaClienteMapper {
         model.setSituacionFiscal(entity.getSituacionFiscal());
         model.setSaldoCtaCte(entity.getSaldoCtaCte());
         model.setObservaciones(entity.getObservaciones());
-        model.setDocumento(entity.getTipoDocumento());
+        model.setTipoDocumento(entity.getTipoDocumento());
         model.setEstado(entity.getEstado());
         return model;
     }
@@ -58,7 +59,7 @@ public class JpaClienteMapper {
         entity.setSituacionFiscal(model.getSituacionFiscal());
         entity.setSaldoCtaCte(model.getSaldoCtaCte());
         entity.setObservaciones(model.getObservaciones());
-        entity.setTipoDocumento(model.getDocumento());
+        entity.setTipoDocumento(model.getTipoDocumento());
         entity.setEstado(model.getEstado());
         return entity;
     }

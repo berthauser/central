@@ -1,6 +1,8 @@
 package com.visus.central.ui.component;
 
 import java.util.function.Consumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
@@ -8,14 +10,18 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 
 public abstract class AbstractForm<T> extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
+	// logger
+    private static final Logger log = LoggerFactory.getLogger(AbstractForm.class);
 	
 	protected final Binder<T> binder;
     protected final Button crear = new Button("Crear");
@@ -76,26 +82,54 @@ public abstract class AbstractForm<T> extends VerticalLayout {
             if (onCancel != null) onCancel.run();
         });
         
+     // Inicializar el binder con una instancia vacía
+        this.current = createEmptyInstance();
+        binder.setBean(current);
+        
     }
     
 	protected abstract void bindFields();
-
-	public void setEntity(T entity) {
-		
-		System.out.println("📝 AbstractForm.setEntity() - Entidad: " + 
-		        (entity != null ? entity.getClass().getSimpleName() + " ID:" + getId(entity) : "NULL"));
-		
-		this.current = entity;
-		if (entity == null) {
-			throw new IllegalArgumentException("La entidad no puede ser null");
-		} else {
-			System.out.println("📝 binder.setBean() - Asignando bean");
-	        binder.setBean(entity); // 🔗 vincula campos
-	        System.out.println("📝 setFormValues() - Llamando a método personalizado");
-	        setFormValues(entity);  // 👈 ESTE MÉTODO DEBE EJECUTARSE
-	        System.out.println("📝 setFormValues() - Método personalizado ejecutado");
-		}
 	
+	public void setEntity(T entity) {
+	   
+		log.info("AbstractForm.setEntity() - Entidad: {} ID: {}", 
+	            entity != null ? entity.getClass().getSimpleName() : "null",
+	            entity != null ? getId(entity) : "null");
+	        
+	        this.current = entity;  // CORRECCIÓN 1: Usar current, no entity
+	        
+	        if (entity != null) {
+	            try {
+	                log.info("setFormValues() - Llamando a método personalizado");
+	                setFormValues(entity);  // Establecer valores primero
+	                
+	                log.info("binder.setBean() - Asignando bean");
+	                binder.setBean(entity); // Luego vincular con el binder
+	                
+	                log.info("Formulario cargado exitosamente para ID: {}", getId(entity));
+	            } catch (Exception e) {
+	                log.error("Error al cargar datos en el formulario para ID: {}", 
+	                    entity != null ? getId(entity) : "null", e);
+	                
+	                // Limpiar el formulario si hay error
+	                binder.removeBean();
+	                clearForm();
+	             // Mostrar error específico
+	                String errorMsg = "Error al cargar los datos: ";
+	                if (e instanceof NullPointerException) {
+	                    errorMsg += "Hay campos con valores nulos que no pueden ser procesados.";
+	                } else {
+	                    errorMsg += e.getMessage();
+	                }
+	                
+	                Notification.show(errorMsg, 5000, Notification.Position.MIDDLE);
+	                throw new RuntimeException("Error en setFormValues", e);
+	            }
+	        } else {
+	            // CORRECCIÓN 2: Esto NO es código muerto - es necesario
+	            clearForm();
+	            log.info("Formulario limpiado - entidad es null");
+	        }
 	}
 	
 	// MÉTODO AUXILIAR PARA OBTENER ID DE CUALQUIER ENTIDAD
@@ -110,18 +144,30 @@ public abstract class AbstractForm<T> extends VerticalLayout {
 	
 	// Método de tipo helper
 	private boolean validateAndProceed(String operation) {
-	    var validationResult = binder.validate();
-	    if (validationResult.isOk()) {
-	        System.out.println("✅ Todos los campos del BINDER OK - " + operation);
-	        updateCurrentFromBinder();
-	        return true;
-	    } else {
-	        System.out.println("❌ Los campos del BINDER NOT OK - " + operation);
-	        validationResult.getValidationErrors().forEach(error -> {
-	            System.out.println("   - " + error.getErrorMessage());
-	        });
-	        return false;
-	    }
+		try {
+            // Esto valida TODOS los campos y si son válidos, escribe los valores en 'current'
+            binder.writeBean(current);
+            System.out.println("✅ Validación y actualización OK - " + operation);
+            
+            // Solo después de una validación exitosa, actualizamos campos no bindeados
+            updateCurrentFromBinder();
+            
+            return true;
+            
+        } catch (ValidationException e) {
+            System.out.println("❌ Validación falló - " + operation);
+            
+            // Mostrar errores de validación
+            e.getValidationErrors().forEach(error -> {
+                System.out.println("   - " + error.getErrorMessage());
+                
+                // Mostrar notificación para el usuario
+                Notification.show(error.getErrorMessage(), 
+                    3000, Notification.Position.MIDDLE);
+            });
+            
+            return false;
+        }
 	}
 	
 	protected Component buildBotonera() {
@@ -138,13 +184,15 @@ public abstract class AbstractForm<T> extends VerticalLayout {
     }
 
 	public T getEntity() {
-        updateCurrentFromBinder();
+		// NOTA: Este método NO valida, solo retorna la entidad actual
+        // Si se necesita validar, usar validateAndProceed() antes
         return current;
     }
 
 	protected void updateCurrentFromBinder() {
-        // Si usás campos no bindables, actualizalos aquí manualmente
-        // Ejemplo: current.setProvincia(comboProvincia.getValue());
+		// Las subclases pueden sobrescribir este método para actualizar
+        // campos NO bindeados después de una validación exitosa
+        // Por ejemplo: current.setDomicilios(domicilioSubForm.getDomicilios());
     }
 
 	protected abstract void setFormValues(T entity);
@@ -205,5 +253,6 @@ public abstract class AbstractForm<T> extends VerticalLayout {
     public Registration addBackListener(ComponentEventListener<BackEvent> listener) {
         return addListener(BackEvent.class, listener);
     }
+    
 
 }

@@ -193,7 +193,7 @@ private static final long serialVersionUID = 1L;
         coeficiente.setValue(entity.getCoeficiente());
         esDtoProntoPago.setValue(entity.getEsDtoProntoPago());
         
-        // 👇 Guardar el valor original
+        // Guardar el valor original
         originalDtoProntoPago = entity.getDtoProntoPago();
         dtoProntoPago.setValue(entity.getDtoProntoPago());
         

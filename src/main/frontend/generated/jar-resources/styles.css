@@ -1,0 +1,605 @@
+ @import url('https://fonts.googleapis.com/css2?family=Antonio&display=swap'); 
+ @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Argentum+Sans+ExtraBold&display=swap');
+ 
+/* Ancho del contenedor: 1918px */
+/* Altura del contenedor: 1080px */
+
+.title-img7 {
+    position: absolute;
+    top: 65px; /* Ajusta según sea necesario */
+    left: 70px; /* Ajusta según sea necesario */
+    transform: translate(0, 0);
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt; 
+    color: black; 
+    visibility: hidden;  /* Inicialmente oculto */
+    opacity: 0; 
+    animation: titleAnimation7 68s linear infinite;
+}
+
+.title-img10 {
+    position: absolute;
+    top: 65px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation10 68s linear infinite;
+}
+
+.title-img15 {
+    position: absolute;
+    top: 65px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation15 68s linear infinite;
+}
+
+.title-img17 {
+    position: absolute;
+    top: 65px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt; 
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation17 68s linear infinite;
+}
+
+.title-img19 {
+    position: absolute;
+    top: 65px; 
+    left: 70px; 
+    font-family:'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation19 68s linear infinite;
+}
+
+.title-img21 {
+    position: absolute;
+    top: 65px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation21 68s linear infinite;
+}
+
+.title-img21a {
+    position: absolute;
+    top: 220px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation23 68s linear infinite;
+}
+
+.title-img23 {
+    position: absolute;
+    top: 65px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation23 68s linear infinite;
+}
+
+.title-img23a {
+    position: absolute;
+    top: 220px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation21 68s linear infinite;
+}
+
+.title-img25 {
+    position: absolute;
+    top: 65px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation25 68s linear infinite;
+}
+
+.title-img25a {
+    position: absolute;
+    top: 220px; 
+    left: 70px; 
+    font-family: 'Antonio', sans-serif;
+    font-weight: bold;
+    font-size: 106pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation25 68s linear infinite;
+}
+
+.sub-title-img7a {
+    position: absolute;
+    top: 245px; 
+    left: 80px; 
+    transform: translate(0, 0);
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 32pt;
+    color: black; 
+    visibility: hidden;  
+    opacity: 0; 
+    animation: titleAnimation7a 68s linear infinite;
+}
+
+.sub-title-img7b {
+    position: absolute;
+    top: 285px; 
+    left: 80px; 
+    transform: translate(0, 0);
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 32pt; 
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation7b 68s linear infinite;
+}
+
+.sub-title-img10 {
+    position: absolute;
+    top: 78.17%; 
+    left: 5.55%; 
+    transform: translate(0, 0);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 24pt;
+    color: black;
+    visibility: hidden;
+    opacity: 0; 
+    animation: titleAnimation10 68s linear infinite;
+}
+
+/* left: (110 / 1918) * 100 = 5.73%;
+   top: (805 / 1080) * 100 ≈ 71.30%; */
+.gramaje-sub-title-img7c {
+    position: absolute;
+    top: 74.53%; 
+    left: 5.73%; 
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 24pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation7 68s linear infinite;
+}
+
+.gramaje-sub-title-img7d {
+    position: absolute;
+    top: 79.17%; 
+    left: 5.73%; 
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 24pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation7 68s linear infinite;
+}
+
+/* left: (345px / 1918px) * 100 = 17.98%;
+   top: (770px / 1080px) * 100 ≈ 63.43%; */ 
+.precio-gramaje-sub-title-img7e {
+    position: absolute;
+    top: 74.53%; 
+    left: 17.98%; 
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black;
+    visibility: hidden;
+    opacity: 0; 
+    animation: titleAnimation7 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img7f {
+    position: absolute;
+    top: 79.17%; 
+    left: 17.98%;
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black;
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation7 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img11 {
+    position: absolute;
+    top: 78.17%; 
+    left: 18.70%; 
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation10 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img15 {
+    position: absolute;
+    top: 75.53%; 
+    left: 7%; 
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black; 
+    visibility: hidden;
+    opacity: 0; 
+    animation: titleAnimation15 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img17 {
+    position: absolute;
+    top: 75.53%; 
+    left: 7%;
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black; 
+    visibility: hidden;
+    opacity: 0; 
+    animation: titleAnimation17 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img19 {
+    position: absolute;
+    top: 75.53%; 
+    left: 6.80%; 
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation19 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img21 {
+    position: absolute;
+    top: 76%; 
+    left: 6.80%; 
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black; 
+    visibility: hidden;
+    opacity: 0; 
+    animation: titleAnimation21 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img23 {
+    position: absolute;
+    top: 76%; 
+    left: 6.80%; 
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black;
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation23 68s linear infinite;
+}
+
+.precio-gramaje-sub-title-img25 {
+    position: absolute;
+    top: 76%; 
+    left: 6.80%; 
+    font-family: 'Argentum+Sans+ExtraBold', sans-serif;
+    font-weight: 800;
+    font-size: 26pt;
+    color: black; 
+    visibility: hidden; 
+    opacity: 0; 
+    animation: titleAnimation25 68s linear infinite;
+}
+
+/* Contenedor del carrusel, posición relativa para posicionar los slides */
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.slide {
+    display: flex;
+    
+}
+
+/* Animaciones para las imágenes */
+.slide-image {
+    position: absolute; 
+    width: 100vw; 
+    height: auto; 
+    object-fit: cover; 
+    opacity: 0; 
+    animation: imageAnimation 68s linear infinite;  
+}
+
+/* Primer grupo (0% a 8.83%) */
+.slide-image:nth-child(1) {
+    animation-delay: 0s; 
+}
+
+.slide-image:nth-child(2) {
+    animation-delay: 1s;
+}
+
+.slide-image:nth-child(3) {
+    animation-delay: 2s;
+}
+
+.slide-image:nth-child(4) {
+    animation-delay: 3s;
+}
+
+.slide-image:nth-child(5) {
+    animation-delay: 4s;
+}
+
+.slide-image:nth-child(6) {
+    animation-delay: 5s;
+}
+
+/* Segundo grupo (8.83% a 30.88%) */
+/* .slide-image:nth-child(7) { animation-delay: 8.83s; }
+.slide-image:nth-child(8) { animation-delay: 10s; }
+.slide-image:nth-child(9) { animation-delay: 12s; }
+.slide-image:nth-child(10) { animation-delay: 14s; }
+.slide-image:nth-child(11) { animation-delay: 16s; } */
+
+
+   
+.slide-image:nth-child(7) {
+    animation-delay: 7s;
+}
+
+.slide-image:nth-child(8) {
+    animation-delay: 9s;
+}
+
+.slide-image:nth-child(9) {
+    animation-delay: 13s;
+}
+
+.slide-image:nth-child(10) {
+    animation-delay: 17s;
+}
+
+.slide-image:nth-child(11) {
+    animation-delay: 19s;
+}   
+   
+
+
+/* Tercer grupo (30.88% a 39.71%) */
+/* .slide-image:nth-child(12) { animation-delay: 30.88s; }
+.slide-image:nth-child(13) { animation-delay: 32s; }
+.slide-image:nth-child(14) { animation-delay: 34s; } */
+
+
+
+
+
+.slide-image:nth-child(12) {
+    animation-delay: 23s;
+}
+
+.slide-image:nth-child(13) {
+    animation-delay: 25s;
+}
+
+.slide-image:nth-child(14) {
+    animation-delay: 27s;
+}
+
+
+
+/* Cuarto grupo (39.71% a 100%) */
+/* .slide-image:nth-child(15) { animation-delay: 39.71s; }
+.slide-image:nth-child(16) { animation-delay: 41s; }
+.slide-image:nth-child(17) { animation-delay: 43s; }
+.slide-image:nth-child(18) { animation-delay: 45s; }
+.slide-image:nth-child(19) { animation-delay: 47s; }
+.slide-image:nth-child(20) { animation-delay: 49s; }
+.slide-image:nth-child(21) { animation-delay: 51s; }
+.slide-image:nth-child(22) { animation-delay: 53s; }
+.slide-image:nth-child(23) { animation-delay: 55s; }
+.slide-image:nth-child(24) { animation-delay: 57s; }
+.slide-image:nth-child(25) { animation-delay: 59s; }
+.slide-image:nth-child(26) { animation-delay: 61s; } */
+
+
+
+.slide-image:nth-child(15) {
+    animation-delay: 31s;
+}
+
+.slide-image:nth-child(16) {
+    animation-delay: 33s;
+}
+
+.slide-image:nth-child(17) {
+    animation-delay: 37s;
+}
+
+.slide-image:nth-child(18) {
+    animation-delay: 39s;
+}
+
+.slide-image:nth-child(19) {
+    animation-delay: 43s;
+}
+
+.slide-image:nth-child(20) {
+    animation-delay: 45s;
+}
+
+.slide-image:nth-child(21) {
+    animation-delay: 49s;
+}
+
+.slide-image:nth-child(22) {
+    animation-delay: 51s;
+}
+
+.slide-image:nth-child(23) {
+    animation-delay: 55s;
+}
+
+.slide-image:nth-child(24) {
+    animation-delay: 57s;
+}
+
+.slide-image:nth-child(25) {
+    animation-delay: 61s;
+}
+
+.slide-image:nth-child(26) {
+    animation-delay: 63s;
+}   
+   
+/* Animaciones de las imágenes */
+/* (1 / 26) * 100% ≈ 3.846% */
+@keyframes imageAnimation {
+    0%, 3.846% { opacity: 0; opacity: 1;}
+    3.847%, 7.692% { opacity: 1; opacity: 1;}
+    7.693%, 100% { opacity: 0; opacity: 0;}
+}
+
+@keyframes slide {
+/* 
+Primera Sección (Primer grupo de imágenes):
+Desde 0% hasta 8.83%, el contenedor se mantiene en translateX(0), mostrando el primer grupo de imágenes.
+
+Segunda Sección (Segundo grupo de imágenes):
+Desde 8.84% hasta 30.88%, el contenedor se desplaza a translateX(-100%), mostrando el segundo grupo de imágenes.
+
+Tercera Sección (Tercer grupo de imágenes):
+Desde 30.89% hasta 39.71%, el contenedor se desplaza a translateX(-200%), mostrando el tercer grupo de imágenes.
+
+Cuarta Sección (Cuarto grupo de imágenes):
+Desde 39.72% hasta 100%, el contenedor se desplaza a translateX(-300%), mostrando el cuarto grupo de imágenes. 
+*/
+	
+    0%, 8.83% { transform: translateX(0); } 
+    8.84%, 30.88% { transform: translateX(-100vw); } 
+    30.89%, 39.71% { transform: translateX(-200vw); } 
+    39.72%, 100% { transform: translateX(-300vw); } 
+    
+    
+}
+
+/* Animación para el título */
+@keyframes titleAnimation7 {
+/* PRIMER FOTOGRAMA */
+/* (momento de aparicion  * 100) / duracion animacion */
+/* momento de aparicion = el segundo en el que quiero que aparezca */
+
+/* SEGUNDO FOTOGRAMA*/
+/* (duracion del titulo * 100) / duracion animacion  + calculo del primer fotograma */
+/* duracion del titulo = cuanto tiempo quiero que aparezca */
+  
+/* Mantener oculto el título hasta el segundo 7 */
+    0%, 10.31% { visibility: hidden; opacity: 0; } 
+    10.32%, 25% { visibility: visible; opacity: 1; }
+    25.1%, 100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes titleAnimation7a {
+ 	0%, 11.30% { visibility: hidden; opacity: 0; }  
+    12.00%, 25% { visibility: visible; opacity: 1; }
+    25.1%, 100% { visibility: hidden; opacity: 0; }  
+}
+
+@keyframes titleAnimation7b {
+	0%, 12.30% { visibility: hidden; opacity: 0; } 
+    13%, 25% { visibility: visible; opacity: 1; }
+    25.1%, 100% { visibility: hidden; opacity: 0; } 
+}
+
+@keyframes titleAnimation10 {
+    0%, 25% { visibility: hidden; opacity: 0; }
+    25.1%, 33.88% { visibility: visible; opacity: 1; }
+    33.89%, 100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes titleAnimation15 {
+    0%, 45.58% { visibility: hidden; opacity: 0; }  
+    45.59%, 54.41% { visibility: visible; opacity: 1; }
+    54.42%, 100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes titleAnimation17 {
+    0%, 54.43% { visibility: hidden; opacity: 0; } 
+    54.44%, 63.26% { visibility: visible; opacity: 1; }
+    63.27%, 100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes titleAnimation19 {
+    0%, 63.28% { visibility: hidden; opacity: 0; }  
+    63.29%, 72.11% { visibility: visible; opacity: 1; }
+    72.12%, 100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes titleAnimation21 {
+    0%, 72.13% { visibility: hidden; opacity: 0; }  
+    72.14%, 80.95% { visibility: visible; opacity: 1; }
+    80.96%, 100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes titleAnimation23 {
+    0%, 80.97% { visibility: hidden; opacity: 0; }  
+    80.98%, 89.80% { visibility: visible; opacity: 1; }
+    89.81%, 100% { visibility: hidden; opacity: 0; }
+}
+
+@keyframes titleAnimation25 {
+    0%, 89.82% { visibility: hidden; opacity: 0; }  
+    89.83%, 100% { visibility: visible; opacity: 1; }
+}

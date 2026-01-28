@@ -23,11 +23,8 @@ public class PostgresProveedorAdapter implements ProveedorRepository {
     private final JpaProveedorRepository jpaRepository;
     private final JpaBancoRepository bancoRepository; // NUEVA DEPENDENCIA
 
-    public PostgresProveedorAdapter(
-        JpaProveedorRepository jpaRepository,
-        JpaBancoRepository bancoRepository // 👈 INYECCIÓN DE DEPENDENCIA
-    ) {
-        this.jpaRepository = jpaRepository;
+    public PostgresProveedorAdapter(JpaProveedorRepository jpaRepository, JpaBancoRepository bancoRepository) { // 👈 INYECCIÓN DE DEPENDENCIA
+       this.jpaRepository = jpaRepository;
         this.bancoRepository = bancoRepository;
     }
 

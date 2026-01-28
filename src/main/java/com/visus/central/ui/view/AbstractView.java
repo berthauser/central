@@ -31,6 +31,9 @@ public abstract class AbstractView<T> extends VerticalLayout {
     protected TextField filtro;
     protected Button nuevo;
     
+    // NUEVO: Flag para diferir carga de datos
+    protected boolean deferInitialDataLoad = false;
+    
     // Constructor para datos pequeños (optimista)
     protected AbstractView(String titulo, CrudUseCase<T> service) {
         this(titulo, service, true); // por defecto: optimista
@@ -60,7 +63,10 @@ public abstract class AbstractView<T> extends VerticalLayout {
 
         add(contenido);
         
-        actualizarGrilla(); // inicializa según la estrategia
+        // MODIFICADO: Solo actualizar si no se difirió la carga
+        if (!deferInitialDataLoad) {
+            actualizarGrilla(); // inicializa según la estrategia
+        }
         
         form.setOnCancel(() -> {
             form.setVisible(false);
@@ -78,6 +84,13 @@ public abstract class AbstractView<T> extends VerticalLayout {
         });
         
         form.setVisible(false);
+    }
+    
+    // NUEVO: Método para diferir carga de datos
+    protected void deferDataLoading() {
+        this.deferInitialDataLoad = true;
+        // Establecer un grid vacío inicialmente
+        grid.setItems(new ArrayList<>());
     }
 
     protected HorizontalLayout buildHeader(String textoNuevo) {

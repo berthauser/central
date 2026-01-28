@@ -40,7 +40,7 @@ public class ClienteView extends AbstractView<Cliente> {
             	.setHeader("MÓVIL")
             	.setAutoWidth(true)
             	.setResizable(true),
-            grid.addColumn(Cliente::getDocumento)
+            grid.addColumn(Cliente::getTipoDocumento)
             	.setHeader("TIPO")
             	.setAutoWidth(true)
             	.setResizable(true),

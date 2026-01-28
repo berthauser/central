@@ -39,7 +39,7 @@ public class CoeficienteView extends AbstractView<Coeficiente> {
         );
     }
     
-    // IMPLEMENTACIÓN CORRECTA - devuelve AbstractForm<Concepto>
+    // IMPLEMENTACIÓN CORRECTA - devuelve AbstractForm<Coeficiente>
     @Override
     protected AbstractForm<Coeficiente> buildForm() {
         return new CoeficienteForm();

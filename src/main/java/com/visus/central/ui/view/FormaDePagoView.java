@@ -23,6 +23,7 @@ import com.visus.central.ui.component.CentralLayout;
 public class FormaDePagoView extends AbstractView<FormaDePago> {
 
 	private static final long serialVersionUID = 1L;
+	
 	private final FormaDePagoUseCase service;
 
 	public FormaDePagoView(FormaDePagoUseCase service) {
