@@ -6,6 +6,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -24,6 +25,8 @@ public class VendedorView extends AbstractView<Vendedor> {
 	public VendedorView(VendedorUseCase vendedorUseCase) {
 		super("Nuevo Vendedor", vendedorUseCase); // usa optimista por defecto
 //        super("Nuevo Cliente", service, false); // desactiva optimista para data muy grande
+		grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
+		grid.addClassName("grid-documentacion-dark");
     }
 	
 	@Override

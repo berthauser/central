@@ -210,6 +210,10 @@ public class Cliente {
 	public void setGrupoFam(List<GrupoFam> grupoFam) {
 		this.grupoFam = grupoFam;
 	}
+	
+	public boolean isHabilitado() {
+	    return this.estado == Estado.Habilitado;
+	}
 
 	@Override
 	public int hashCode() {

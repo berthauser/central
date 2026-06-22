@@ -1,13 +1,16 @@
 package com.visus.central.infraestructure.converter;
 
+import org.springframework.stereotype.Component;
+
 import com.visus.central.domain.model.Domicilio;
 import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity;
 import com.visus.central.infraestructure.persistence.entity.JpaDomicilioEntity;
 import com.visus.central.infraestructure.persistence.entity.JpaVendedorEntity;
 
+@Component
 public class JpaDomicilioMapper {
 	
-	public static Domicilio toModel(JpaDomicilioEntity entity) {
+	public Domicilio toModel(JpaDomicilioEntity entity) {
         if (entity == null) return null;
 
         Domicilio model = new Domicilio();
@@ -34,7 +37,7 @@ public class JpaDomicilioMapper {
         return model;
     }
 
-    public static JpaDomicilioEntity toEntity(Domicilio model) {
+    public JpaDomicilioEntity toEntity(Domicilio model) {
         if (model == null) return null;
 
         JpaDomicilioEntity entity = new JpaDomicilioEntity();

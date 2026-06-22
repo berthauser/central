@@ -40,5 +40,22 @@ public class ComprobanteUseCaseImpl implements ComprobanteUseCase {
     public void deleteById(Integer id) {
         comprobanteRepository.deleteById(id);
     }
+    
+    @Override
+    @Transactional
+    public void activarComprobante(Integer id) {
+        // Desactivar todos
+        comprobanteRepository.findAll().forEach(c -> {
+            if (c.getActivo()) {
+                c.setActivo(false);
+                comprobanteRepository.save(c);
+            }
+        });
+        // Activar el seleccionado
+        Comprobante comp = comprobanteRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Comprobante no encontrado"));
+        comp.setActivo(true);
+        comprobanteRepository.save(comp);
+    }
 	
 }

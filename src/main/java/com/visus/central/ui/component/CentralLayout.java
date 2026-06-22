@@ -6,8 +6,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -26,35 +25,46 @@ import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.visus.central.domain.port.in.HealthCheckUseCase;
 import com.visus.central.domain.port.in.HealthCheckUseCase.DatabaseHealthStatus;
+import com.visus.central.domain.port.in.PasswordChangeUseCase;
 import com.visus.central.infraestructure.security.SecurityUtils;
+import com.visus.central.infraestructure.util.SpringContextBridge;
 import com.visus.central.ui.view.ActualizacionPreciosCodigoBarraView;
 import com.visus.central.ui.view.ActualizacionPreciosRubroLineaView;
 import com.visus.central.ui.view.AlicuotaView;
 import com.visus.central.ui.view.ArticulosView;
 import com.visus.central.ui.view.BancosView;
+import com.visus.central.ui.view.CajaView;
 import com.visus.central.ui.view.ClienteView;
 import com.visus.central.ui.view.CoeficienteView;
+import com.visus.central.ui.view.ComisionView;
 import com.visus.central.ui.view.ComprobanteView;
-import com.visus.central.ui.view.ConceptoView;
-import com.visus.central.ui.view.DepartamentoView;
-import com.visus.central.ui.view.FormaDePagoView;
+import com.visus.central.ui.view.CuentaCorrienteView;
+//import com.visus.central.ui.view.DepartamentoView;
+import com.visus.central.ui.view.FacturacionView;
 import com.visus.central.ui.view.LineaView;
 import com.visus.central.ui.view.LocalidadView;
+import com.visus.central.ui.view.LoginView;
 import com.visus.central.ui.view.MedidaView;
+import com.visus.central.ui.view.PermisosView;
 import com.visus.central.ui.view.PresentacionView;
 import com.visus.central.ui.view.ProveedorView;
+import com.visus.central.ui.view.ReglaComisionView;
 import com.visus.central.ui.view.RubroView;
+import com.visus.central.ui.view.TipoPagoView;
 import com.visus.central.ui.view.UsersView;
 import com.visus.central.ui.view.VendedorView;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 
 @PageTitle("Visus Central")
-public class CentralLayout extends AppLayout implements AfterNavigationObserver {
+public class CentralLayout extends AppLayout implements AfterNavigationObserver, BeforeEnterObserver {
 
 	private static final long serialVersionUID = 1L;
 
@@ -96,13 +106,13 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		HorizontalLayout branding = new HorizontalLayout(new DrawerToggle());
 		branding.setAlignItems(FlexComponent.Alignment.CENTER);
 		branding.setSpacing(true);
-		branding.getStyle()
-		.set("margin-right", "15px"); // Separación fija entre branding y menú
+		branding.getStyle().set("margin-right", "15px"); // Separación fija entre branding y menú
 
 		// Crear menú pull-down
 		MenuBar menuBar = createPullDownMenu();
 
-		// Área del usuario (derecha) - crearla primero para poder usarla como referencia
+		// Área del usuario (derecha) - crearla primero para poder usarla como
+		// referencia
 		HorizontalLayout userArea = createUserArea();
 
 		// Contenedor izquierdo que agrupa branding y menú
@@ -121,12 +131,8 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		topBar.setJustifyContentMode(FlexComponent.JustifyContentMode.BETWEEN);
 		topBar.setAlignItems(FlexComponent.Alignment.CENTER);
 		topBar.setHeight("55px");
-		topBar.getStyle()
-		.set("padding", "4px 12px")
-		.set("font-size", "0.9em")
-		.set("background-color", "#101b29") 
-		.set("color", "white")
-		.set("border-bottom", "1px solid #3a5f5f");
+		topBar.getStyle().set("padding", "4px 12px").set("font-size", "0.9em").set("background-color", "#101b29")
+				.set("color", "white").set("border-bottom", "1px solid #3a5f5f");
 
 		return topBar;
 	}
@@ -135,12 +141,8 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		MenuBar menuBar = new MenuBar();
 		menuBar.setOpenOnHover(true);
 		menuBar.addThemeVariants(MenuBarVariant.LUMO_SMALL);
-		menuBar.getStyle()
-		.set("background-color", "#101b29")
-		.set("color", "white")
-		.set("padding", "0")
-		.set("border-radius", "4px")
-		.set("border", "1px solid #2a3f4f");
+		menuBar.getStyle().set("background-color", "#101b29").set("color", "white").set("padding", "0")
+				.set("border-radius", "4px").set("border", "1px solid #2a3f4f");
 
 		// Item "Visus"
 		MenuItem visusItem = menuBar.addItem("Visus");
@@ -155,11 +157,30 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 			aboutDialog.openDialog();
 		});
 
-		// Item "Usuarios"
-		MenuItem usuariosItem = menuBar.addItem("Usuarios");
-		SubMenu usuariosSubMenu = usuariosItem.getSubMenu();
-		usuariosSubMenu.addItem("Actualización");
-		usuariosSubMenu.addItem("Listado");
+		// Item "Usuarios" (solo ADMIN, sin submenú)
+		if (SecurityUtils.isAdmin()) {
+			MenuItem usuariosItem = menuBar.addItem("Usuarios");
+			usuariosItem.addClickListener(_ -> {
+				UI.getCurrent().navigate(UsersView.class);
+			});
+		}
+
+		// Item "Permisos" (solo ADMIN)
+		if (SecurityUtils.isAdmin()) {
+			MenuItem permisosItem = menuBar.addItem("Permisos");
+			permisosItem.addClickListener(_ -> {
+				UI.getCurrent().navigate(PermisosView.class);
+			});
+		}
+
+		// Item "Caja"
+		MenuItem cajaItem = menuBar.addItem("Caja");
+		SubMenu cajaSubMenu = cajaItem.getSubMenu();
+		MenuItem movManuales = cajaSubMenu.addItem("Movimientos Manuales");
+		movManuales.addClickListener(_ -> {
+			UI.getCurrent().navigate(CajaView.class);
+		});
+		cajaSubMenu.addItem("Consulta de Caja");
 
 		// Item "Inventario"
 		MenuItem inventarioItem = menuBar.addItem("Inventario");
@@ -176,14 +197,23 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		// OPCIÓN: Navegar a la ruta o crear instancia manualmente
 		MenuItem rubroylineaItem = preciosSubMenu.addItem("Actualizar por Rubros y Líneas");
 		rubroylineaItem.addClickListener(_ -> {
-			//	        UI.getCurrent().navigate("actualizacion-precios"); // alternativa
+			// UI.getCurrent().navigate("actualizacion-precios"); // alternativa
 			UI.getCurrent().navigate(ActualizacionPreciosRubroLineaView.class);
 		});
 
 		MenuItem porCodigoBarraItem = preciosSubMenu.addItem("Actualizar por Código de Barras");
 		porCodigoBarraItem.addClickListener(_ -> {
-			//	        UI.getCurrent().navigate("actualizacion-precios-codigo-barra");
+			// UI.getCurrent().navigate("actualizacion-precios-codigo-barra");
 			UI.getCurrent().navigate(ActualizacionPreciosCodigoBarraView.class);
+		});
+
+		// Item "Facturación"
+		MenuItem facturacionItem = menuBar.addItem("Facturación");
+		SubMenu facturacionSubMenu = facturacionItem.getSubMenu();
+
+		MenuItem facturarItem = facturacionSubMenu.addItem("Facturar");
+		facturarItem.addClickListener(_ -> {
+			UI.getCurrent().navigate(FacturacionView.class);
 		});
 
 		// Estilizar los ítems del menú
@@ -192,43 +222,30 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 				MenuItem menuItem = (MenuItem) item;
 
 				// Estilos base para todos los items del menú
-				menuItem.getElement().getStyle()
-				.set("color", "white")
-				.set("font-size", "14px")
-				.set("font-weight", "normal")
-				.set("padding", "8px 12px")
-				.set("border-radius", "4px") // Bordes redondeados por defecto
-				.set("margin", "0 2px") // Pequeño margen entre items
-				.set("transition", "all 0.2s ease"); // Transición suave
+				menuItem.getElement().getStyle().set("color", "white").set("font-size", "14px")
+						.set("font-weight", "normal").set("padding", "8px 12px").set("border-radius", "4px") 
+						.set("margin", "0 2px") // Pequeño margen entre items
+						.set("transition", "all 0.2s ease"); // Transición suave
 
 				// Estilo para hover - redondeado más pronunciado
 				menuItem.getElement().addEventListener("mouseenter", _ -> {
-					menuItem.getElement().getStyle()
-					.set("background-color", "#3a5f5f")
-					.set("border-radius", "4px")
-					.set("box-shadow", "0 2px 4px rgba(0,0,0,0.2)"); // Sombra sutil para efecto 3D
+					menuItem.getElement().getStyle().set("background-color", "#3a5f5f").set("border-radius", "4px")
+							.set("box-shadow", "0 2px 4px rgba(0,0,0,0.2)"); // Sombra sutil para efecto 3D
 				});
 
 				menuItem.getElement().addEventListener("mouseleave", _ -> {
-					menuItem.getElement().getStyle()
-					.set("background-color", "transparent")
-					.set("border-radius", "4px") // Mantener borde redondeado al salir
-					.set("box-shadow", "none"); // Eliminar sombra
+					menuItem.getElement().getStyle().set("background-color", "transparent").set("border-radius", "4px") 
+							.set("box-shadow", "none"); // Eliminar sombra
 				});
 				// También para el foco (accesibilidad)
 				menuItem.getElement().addEventListener("focus", _ -> {
-					menuItem.getElement().getStyle()
-					.set("background-color", "#3a5f5f")
-					.set("border-radius", "4px")
-					.set("outline", "2px solid #5a8f8f")
-					.set("outline-offset", "2px");
+					menuItem.getElement().getStyle().set("background-color", "#3a5f5f").set("border-radius", "4px")
+							.set("outline", "2px solid #5a8f8f").set("outline-offset", "2px");
 				});
 
 				menuItem.getElement().addEventListener("blur", _ -> {
-					menuItem.getElement().getStyle()
-					.set("background-color", "transparent")
-					.set("border-radius", "4px")
-					.set("outline", "none");
+					menuItem.getElement().getStyle().set("background-color", "transparent").set("border-radius", "4px")
+							.set("outline", "none");
 				});
 			}
 		});
@@ -241,23 +258,26 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		userIcon.setSize("24px");
 		userIcon.getStyle().set("color", "white");
 
-		Span username = new Span(SecurityContextHolder.getContext().getAuthentication().getName());
-		username.getStyle()
-		.set("color", "white")
-		.set("font-size", "14px");
+		Span username = new Span(SecurityUtils.getUsername() != null ? SecurityUtils.getUsername() : "Invitado");
+		username.getStyle().set("color", "white").set("font-size", "14px");
 
-		Button logoutButton = new Button("Cerrar Sesión", _ -> {
+		Button changePasswordButton = new Button("Cambiar Contraseña", _ -> {
+			PasswordChangeUseCase pwdUseCase = SpringContextBridge.getBean(PasswordChangeUseCase.class);
+			ChangePasswordDialog dialog = new ChangePasswordDialog(pwdUseCase);
+			dialog.open();
+		});
+		changePasswordButton.getElement().setAttribute("theme", "small");
+		changePasswordButton.getStyle().set("color", "white").set("background-color", "#2a3f4f")
+				.set("border", "1px solid #3a5f5f").set("font-size", "12px");
+
+		Button logoutButton = new Button("Salir", _ -> {
 			UI.getCurrent().getPage().setLocation("/logout");
 		});
-
 		logoutButton.getElement().setAttribute("theme", "small");
-		logoutButton.getStyle()
-		.set("color", "white")
-		.set("background-color", "#2a3f4f")
-		.set("border", "1px solid #3a5f5f")
-		.set("font-size", "12px");
+		logoutButton.getStyle().set("color", "white").set("background-color", "#8b0000")
+				.set("border", "1px solid #a00000").set("font-size", "12px");
 
-		HorizontalLayout userLayout = new HorizontalLayout(userIcon, username, logoutButton);
+		HorizontalLayout userLayout = new HorizontalLayout(userIcon, username, changePasswordButton, logoutButton);
 		userLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 		userLayout.setSpacing(true);
 
@@ -269,18 +289,10 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		drawer.setPadding(false);
 		drawer.setSpacing(false);
 		drawer.setSizeFull();
-		drawer.getStyle()
-		.set("padding", "0")
-		.set("margin", "0")
-		.set("background-color", "transparent")
-		.set("color", "white")
-		.set("overflow-x", "hidden")
-		.set("width", "255px") 
-		.set("min-width", "255px")
-		.set("max-width", "255px")
-		.set("border-radius", "0")
-		.set("margin-top", "2px")
-		.set("margin-bottom", "2px");
+		drawer.getStyle().set("padding", "0").set("margin", "0").set("background-color", "transparent")
+				.set("color", "white").set("overflow-x", "hidden").set("width", "255px").set("min-width", "255px")
+				.set("max-width", "255px").set("border-radius", "0").set("margin-top", "2px")
+				.set("margin-bottom", "2px");
 
 		VerticalLayout logoContainer = new VerticalLayout();
 		logoContainer.setPadding(false);
@@ -288,168 +300,35 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		logoContainer.setMargin(false);
 		logoContainer.setWidthFull();
 		logoContainer.setHeight("53px");
-		logoContainer.getStyle()
-		.set("padding", "0")
-		.set("background-color", "#101b29") 
-		.set("border-bottom", "1px solid #3a5f5f")
-		.set("display", "flex")
-		.set("align-items", "center")
-		.set("justify-content", "center")
-		.set("border-radius", "0 0 8px 8px")
-		.set("margin-bottom", "2px");
+		logoContainer.getStyle().set("padding", "0").set("background-color", "#101b29")
+				.set("border-bottom", "1px solid #3a5f5f").set("display", "flex").set("align-items", "center")
+				.set("justify-content", "center").set("border-radius", "0 0 8px 8px").set("margin-bottom", "2px");
 
-//		// Usamos una tabla simple para control preciso
-//		Div tableContainer = new Div();
-//		tableContainer.getStyle()
-//		.set("display", "table")
-//		.set("margin", "0 auto")
-//		.set("padding", "8px 0");
-//
-//		// Fila 1: Visus
-//		Div visusRow = new Div();
-//		visusRow.getStyle()
-//		.set("display", "table-row");
-//
-//		Div visusCell = new Div();
-//		visusCell.getStyle()
-//		.set("display", "table-cell")
-//		.set("text-align", "center")
-//		.set("vertical-align", "middle");
-//
-//		Span visusSpan = new Span("Visus");
-//		visusSpan.getStyle()
-//		.set("font-size", "20px")
-//		.set("font-weight", "bold")
-//		.set("color", "white")
-//		.set("line-height", "1")
-//		.set("letter-spacing", "0.5px")
-//		.set("margin", "0")
-//		.set("padding", "0")
-//		.set("display", "block");
-//
-//		visusCell.add(visusSpan);
-//		visusRow.add(visusCell);
-		
-		// Usamos una tabla simple para control preciso
-		Div tableContainer = new Div();
-		tableContainer.getStyle()
-		.set("display", "table")
-		.set("margin", "0 auto")
-		.set("padding", "8px 0");
-
-		// Fila 1: Icono + Visus
-		Div visusRow = new Div();
-		visusRow.getStyle()
-		.set("display", "table-row");
-
-		Div visusCell = new Div();
-		visusCell.getStyle()
-		.set("display", "table-cell")
-		.set("text-align", "center")
-		.set("vertical-align", "middle")
-		.set("position", "relative"); // Para posicionar icono relativo a texto
-
-		// Crear contenedor para el icono
-		Div iconContainer = new Div();
-		iconContainer.getStyle()
-		.set("position", "absolute")
-		.set("left", "-35px") // Ajusta esta posición para que quede bien alineado
-		.set("top", "50%")
-		.set("transform", "translateY(-50%)")
-		.set("width", "auto")
-		.set("height", "auto");
-
+		// Icono + Visus + Central con flexbox simple
 		Icon appIcon = VaadinIcon.CUBES.create();
-		appIcon.setSize("24px"); // Tamaño reducido para no ocupar mucho espacio
+		appIcon.setSize("28px");
 		appIcon.setColor("#3a5f5f");
-		iconContainer.add(appIcon);
-
-		// Contenedor para el texto "Visus"
-		Div visusTextContainer = new Div();
-		visusTextContainer.getStyle()
-		.set("display", "inline-block")
-		.set("margin-left", "4px"); // Espacio para el icono
+		appIcon.getStyle().set("flex-shrink", "0");
 
 		Span visusSpan = new Span("Visus");
-		visusSpan.getStyle()
-		.set("font-size", "20px")
-		.set("font-weight", "bold")
-		.set("color", "white")
-		.set("line-height", "1")
-		.set("letter-spacing", "0.5px")
-		.set("margin", "0")
-		.set("padding", "0")
-		.set("display", "block");
-
-		visusTextContainer.add(visusSpan);
-		visusCell.add(iconContainer, visusTextContainer); // Agregar ambos elementos
-		visusRow.add(visusCell);
-
-		// Fila 2: Central (alineado debajo de la 'u' de Visus)
-		Div centralRow = new Div();
-		centralRow.getStyle()
-		.set("display", "table-row");
-
-		Div centralCell = new Div();
-		centralCell.getStyle()
-		.set("display", "table-cell");
-//		.set("padding-top", ""); // Pequeño espacio entre las filas
-
-		// Contenedor para Central con padding-left específico
-		Div centralWrapper = new Div();
-		centralWrapper.getStyle()
-		.set("display", "inline-block")
-		.set("margin-left", "38px"); // Ajusta este valor para alinear con la 'u' de Visus
+		visusSpan.getStyle().set("font-size", "20px").set("font-weight", "bold").set("color", "white")
+				.set("line-height", "1.2").set("letter-spacing", "0.5px");
 
 		Span centralSpan = new Span("Central");
-		centralSpan.getStyle()
-		.set("font-size", "14px")
-		.set("color", "lightgray")
-		.set("margin", "0")
-		.set("padding", "0")
-		.set("line-height", "1")
-		.set("letter-spacing", "0.5px");
+		centralSpan.getStyle().set("font-size", "14px").set("color", "lightgray").set("line-height", "1.2")
+				.set("letter-spacing", "0.5px");
 
-		centralWrapper.add(centralSpan);
-		centralCell.add(centralWrapper);
-		centralRow.add(centralCell);
+		VerticalLayout textLayout = new VerticalLayout(visusSpan, centralSpan);
+		textLayout.setPadding(false);
+		textLayout.setSpacing(false);
+		textLayout.setAlignItems(Alignment.START);
 
-		tableContainer.add(visusRow, centralRow);
-		logoContainer.add(tableContainer);
-		
-		
+		HorizontalLayout headerLayout = new HorizontalLayout(appIcon, textLayout);
+		headerLayout.setAlignItems(Alignment.CENTER);
+		headerLayout.setSpacing(true);
+		headerLayout.getStyle().set("padding", "8px 0");
 
-		// Fila 2: Central (alineado debajo de la 'u')
-//		Div centralRow = new Div();
-//		centralRow.getStyle()
-//		.set("display", "table-row");
-//
-//		Div centralCell = new Div();
-//		centralCell.getStyle()
-//		.set("display", "table-cell")
-//		.set("padding-top", "2px"); // Pequeño espacio entre las filas
-//
-//		// Contenedor para Central con padding-left específico
-//		Div centralWrapper = new Div();
-//		centralWrapper.getStyle()
-//		.set("display", "inline-block")
-//		.set("margin-left", "38px"); // Ajusta este valor para alinear con la 'u' de Visus
-//
-//		Span centralSpan = new Span("Central");
-//		centralSpan.getStyle()
-//		.set("font-size", "14px")
-//		.set("color", "lightgray")
-//		.set("margin", "0")
-//		.set("padding", "0")
-//		.set("line-height", "1")
-//		.set("letter-spacing", "0.5px");
-
-		centralWrapper.add(centralSpan);
-		centralCell.add(centralWrapper);
-		centralRow.add(centralCell);
-
-		tableContainer.add(visusRow, centralRow);
-		logoContainer.add(tableContainer);
+		logoContainer.add(headerLayout);
 
 		VerticalLayout menu = createMenu();
 
@@ -464,80 +343,47 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		menuLayout.setSpacing(false);
 		menuLayout.setMargin(false);
 		menuLayout.setWidthFull();
-		menuLayout.getStyle()
-		.set("background-color", "#101b29")
-		.set("color", "white")
-		.set("padding", "4px 0")
-		.set("border-radius", "8px")
-		.set("border", "1px solid #2a3f4f")
-		.set("margin-top", "1px");
-
-		// Enlace condicional a Usuarios
-		if (SecurityUtils.isAdmin()) {
-			System.out.println("El usuario es ADMIN");
-
-			// Sección: Usuarios
-			Details usuariosSection = createMenuSection(
-					"Usuarios", 
-					createMenuLink("Usuarios", UsersView.class, 35)
-					);
-			usuariosSection.getStyle().set("margin-bottom", "2px");
-			menuLayout.add(usuariosSection);
-		}
-
-		System.out.println("El usuario NO es ADMIN");
+		menuLayout.getStyle().set("background-color", "#101b29").set("color", "white").set("padding", "4px 0")
+				.set("border-radius", "8px").set("border", "1px solid #2a3f4f").set("margin-top", "1px");
 
 		// Sección: CLIENTES
-		Details clientesSection = createMenuSection(
-				"Clientes",
-				createMenuLink("Actualización", ClienteView.class, 35),
-				createMenuSpan("Cuenta Corriente", 35),
-				createMenuSpan("Listado", 35)
-				);
+		Details clientesSection = createMenuSection("Clientes", createMenuLink("Actualización", ClienteView.class, 35),
+				createMenuLink("Cuenta Corriente", CuentaCorrienteView.class, 35));
 		clientesSection.getStyle().set("margin-bottom", "2px");
 		menuLayout.add(clientesSection);
 
 		// Sección: PROVEEDORES
-		Details proveedoresSection = createMenuSection(
-				"Proveedores",
-				createMenuLink("Actualización", ProveedorView.class, 35),
-				createMenuSpan("Listado", 35)
-				);
+		Details proveedoresSection = createMenuSection("Proveedores",
+				createMenuLink("Actualización", ProveedorView.class, 35));
 		proveedoresSection.getStyle().set("margin-bottom", "2px");
 		menuLayout.add(proveedoresSection);
 
 		// SECCIÓN: TABLAS BÁSICAS
-		Details tablasBaseSection = createMenuSection(
-				"Tablas Básicas",
-				createMenuLink("Departamentos", DepartamentoView.class, 35),
+		Details tablasBaseSection = createMenuSection("Tablas Básicas",
+//				createMenuLink("Departamentos", DepartamentoView.class, 35),
 				createMenuLink("Localidades", LocalidadView.class, 35),
-				createMenuLink("Vendedores", VendedorView.class, 35),
-				createMenuLink("Conceptos", ConceptoView.class, 35)
-				);
+				createMenuLink("Vendedores", VendedorView.class, 35));
 		tablasBaseSection.getStyle().set("margin-bottom", "2px");
 		menuLayout.add(tablasBaseSection);
 
 		// Sección: ÁREA FINANCIERA
-		Details areaFinancieraSection = createMenuSection(
-				"Área Financiera",
+		Details areaFinancieraSection = createMenuSection("Área Financiera",
 				createMenuLink("Coeficientes", CoeficienteView.class, 35),
 				createMenuLink("Alícuotas", AlicuotaView.class, 35),
-				createMenuLink("Formas de Pago", FormaDePagoView.class, 35),
+				createMenuLink("Tipos de Pago", TipoPagoView.class, 35),
+				createMenuLink("Reglas de Comisiones", ReglaComisionView.class, 35),
+				createMenuLink("Comisiones", ComisionView.class, 35),
 				createMenuLink("Comprobantes", ComprobanteView.class, 35),
-				createMenuLink("Consultar Bancos", BancosView.class, 35)
-				);
+				createMenuLink("Consultar Bancos", BancosView.class, 35));
 		areaFinancieraSection.getStyle().set("margin-bottom", "2px");
 		menuLayout.add(areaFinancieraSection);
 
 		// Sección: ARTÍCULOS
-		Details articulosSection = createMenuSection(
-				"Artículos",
-				createMenuLink("Actualización", ArticulosView.class, 35),
-				createMenuLink("Rubros", RubroView.class, 35),
+		Details articulosSection = createMenuSection("Artículos",
+				createMenuLink("Actualización", ArticulosView.class, 35), createMenuLink("Rubros", RubroView.class, 35),
 				createMenuLink("Líneas", LineaView.class, 35),
 				createMenuLink("Presentaciones", PresentacionView.class, 35),
-				createMenuLink("Medidas", MedidaView.class, 35)
-				);
+				createMenuLink("Medidas", MedidaView.class, 35));
 		articulosSection.getStyle().set("margin-bottom", "2px");
 		menuLayout.add(articulosSection);
 
@@ -550,9 +396,7 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		content.setSpacing(false);
 		content.setMargin(false);
 		content.setWidthFull();
-		content.getStyle()
-		.set("padding", "2px 0")
-		.set("background-color", "transparent");
+		content.getStyle().set("padding", "2px 0").set("background-color", "transparent");
 
 		for (Component component : components) {
 			content.add(component);
@@ -560,40 +404,24 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 
 		Div summaryDiv = new Div();
 		summaryDiv.setText(title);
-		summaryDiv.getStyle()
-		.set("background-color", "transparent")
-		.set("padding", "8px 16px")
-		.set("font-weight", "600")
-		.set("font-size", "14px")
-		.set("color", "white")
-		.set("cursor", "pointer")
-		.set("user-select", "none")
-		.set("margin", "0 0")
-		.set("width", "calc(100% - 16px)")
-		.set("border-radius", "4px")
-		.set("transition", "all 0.2s ease");
+		summaryDiv.getStyle().set("background-color", "transparent").set("padding", "8px 16px")
+				.set("font-weight", "600").set("font-size", "14px").set("color", "white").set("cursor", "pointer")
+				.set("user-select", "none").set("margin", "0 0").set("width", "calc(100% - 16px)")
+				.set("border-radius", "4px").set("transition", "all 0.2s ease");
 
 		Details details = new Details(summaryDiv, content);
 		details.setOpened(true);
 		details.setWidthFull();
 
-		details.getElement().getStyle()
-		.set("border", "none")
-		.set("border-radius", "0")
-		.set("box-shadow", "none")
-		.set("margin", "0")
-		.set("padding", "0")
-		.set("width", "100%")
-		.set("background-color", "transparent");
+		details.getElement().getStyle().set("border", "none").set("border-radius", "0").set("box-shadow", "none")
+				.set("margin", "0").set("padding", "0").set("width", "100%").set("background-color", "transparent");
 
 		summaryDiv.getElement().addEventListener("mouseenter", _ -> {
-			summaryDiv.getStyle()
-			.set("background-color", "#3a5f5f");
+			summaryDiv.getStyle().set("background-color", "#3a5f5f");
 		});
 
 		summaryDiv.getElement().addEventListener("mouseleave", _ -> {
-			summaryDiv.getStyle()
-			.set("background-color", "transparent");
+			summaryDiv.getStyle().set("background-color", "transparent");
 		});
 
 		return details;
@@ -601,31 +429,18 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 
 	private RouterLink createMenuLink(String text, Class<? extends Component> viewClass, int marginLeft) {
 		RouterLink link = new RouterLink(text, viewClass);
-		link.getStyle()
-		.set("margin-left", marginLeft + "px")
-		.set("font-size", "0.85em")
-		.set("font-weight", "400")
-		.set("color", "#e0e0e0")
-		.set("text-decoration", "none")
-		.set("padding", "6px 16px")
-		.set("display", "block")
-		.set("border-radius", "4px")
-		.set("margin", "0 8px")
-		.set("width", "calc(100% - " + (marginLeft + 16) + "px)")
-		.set("box-sizing", "border-box")
-		.set("transition", "all 0.2s ease")
-		.set("background-color", "transparent");
+		link.getStyle().set("margin-left", marginLeft + "px").set("font-size", "0.85em").set("font-weight", "400")
+				.set("color", "#e0e0e0").set("text-decoration", "none").set("padding", "6px 16px")
+				.set("display", "block").set("border-radius", "4px").set("margin", "0 8px")
+				.set("width", "calc(100% - " + (marginLeft + 16) + "px)").set("box-sizing", "border-box")
+				.set("transition", "all 0.2s ease").set("background-color", "transparent");
 
 		link.getElement().addEventListener("mouseenter", _ -> {
-			link.getStyle()
-			.set("background-color", "#3a5f5f")
-			.set("color", "white");
+			link.getStyle().set("background-color", "#3a5f5f").set("color", "white");
 		});
 
 		link.getElement().addEventListener("mouseleave", _ -> {
-			link.getStyle()
-			.set("background-color", "transparent")
-			.set("color", "#e0e0e0");
+			link.getStyle().set("background-color", "transparent").set("color", "#e0e0e0");
 		});
 
 		return link;
@@ -633,18 +448,10 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 
 	private Span createMenuSpan(String text, int marginLeft) {
 		Span span = new Span(text);
-		span.getStyle()
-		.set("margin-left", marginLeft + "px")
-		.set("font-size", "0.9em")
-		.set("font-weight", "400")
-		.set("color", "#a0a0a0")
-		.set("padding", "10px 16px")
-		.set("display", "block")
-		.set("border-radius", "6px")
-		.set("margin", "0 8px")
-		.set("width", "calc(100% - " + (marginLeft + 16) + "px)")
-		.set("box-sizing", "border-box")
-		.set("background-color", "transparent");
+		span.getStyle().set("margin-left", marginLeft + "px").set("font-size", "0.9em").set("font-weight", "400")
+				.set("color", "#a0a0a0").set("padding", "10px 16px").set("display", "block").set("border-radius", "6px")
+				.set("margin", "0 8px").set("width", "calc(100% - " + (marginLeft + 16) + "px)")
+				.set("box-sizing", "border-box").set("background-color", "transparent");
 		return span;
 	}
 
@@ -658,9 +465,7 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		layout.setSizeFull();
 		layout.setPadding(false);
 		layout.setSpacing(false);
-		layout.getStyle()
-		.set("background-color", "#0a121f")
-		.set("padding", "4px");
+		layout.getStyle().set("background-color", "#0a121f").set("padding", "4px");
 
 		VerticalLayout contentWrapper = new VerticalLayout(view);
 		contentWrapper.setSizeFull();
@@ -685,14 +490,10 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 			updateDatabaseStatusIndicator(status);
 		} catch (Exception e) {
 			databaseStatus.setText("BD: ERROR");
-			databaseStatus.getStyle()
-			.set("border-radius", "2px")
-			.set("padding", "2px 2px 2px 2px")
-			.set("background-color", "rgba(255, 165, 0, 0.2)")
-			.set("color", "orange")
-			.set("border", "1px solid orange");
-			databaseStatus.getElement().setAttribute("title", 
-					"Error al verificar: " + e.getMessage());
+			databaseStatus.getStyle().set("border-radius", "2px").set("padding", "2px 2px 2px 2px")
+					.set("background-color", "rgba(255, 165, 0, 0.2)").set("color", "orange")
+					.set("border", "1px solid orange");
+			databaseStatus.getElement().setAttribute("title", "Error al verificar: " + e.getMessage());
 
 			System.err.println("Error checking database health: " + e.getMessage());
 			e.printStackTrace();
@@ -700,31 +501,21 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 	}
 
 	private void updateDatabaseStatusIndicator(DatabaseHealthStatus status) {
-		String statusText = "BD: " + (status.isConnected() ? "CONECTADA" : "DESCONECTADA");
+		String statusText = "BD: " + (status.isConnected() ? "ON-LINE" : "OFF-LINE");
 		databaseStatus.setText(statusText);
 
 		if (status.isConnected()) {
-			databaseStatus.getStyle()
-			.set("border-radius", "2px")
-			.set("padding", "2px 2px 2px 2px")
-			.set("background-color", "rgba(0, 255, 0, 0.2)")
-			.set("color", "lightgreen")
-			.set("border", "1px solid lightgreen");
+			databaseStatus.getStyle().set("border-radius", "2px").set("padding", "2px 2px 2px 2px")
+					.set("background-color", "rgba(0, 255, 0, 0.2)").set("color", "lightgreen")
+					.set("border", "1px solid lightgreen");
 		} else {
-			databaseStatus.getStyle()
-			.set("border-radius", "2px")
-			.set("padding", "2px 2px 2px 2px")
-			.set("background-color", "rgba(255, 0, 0, 0.2)")
-			.set("color", "lightcoral")
-			.set("border", "1px solid lightcoral");
+			databaseStatus.getStyle().set("border-radius", "2px").set("padding", "2px 2px 2px 2px")
+					.set("background-color", "rgba(255, 0, 0, 0.2)").set("color", "lightcoral")
+					.set("border", "1px solid lightcoral");
 		}
 
-		databaseStatus.getElement().setAttribute("title", 
-				String.format("Tipo: %s | Estado: %s | %s", 
-						status.databaseType(), 
-						status.status(), 
-						status.message())
-				);
+		databaseStatus.getElement().setAttribute("title",
+				String.format("Tipo: %s | Estado: %s | %s", status.databaseType(), status.status(), status.message()));
 	}
 
 	private void updateFooter(String ruta, long duracionMinutos, String fechaHoraStr) {
@@ -745,33 +536,18 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		copyrightIcon.setColor("white");
 		copyrightIcon.getStyle().set("font-size", "9px");
 		Span copyright = new Span(copyrightIcon, new Text(" Dignitas 2026"));
-		copyright.getStyle()
-		.set("color", "white")
-		.set("font-size", "11px")
-		.set("white-space", "nowrap");
+		copyright.getStyle().set("color", "white").set("font-size", "11px").set("white-space", "nowrap");
 
 		Span rutaActual = new Span("Ruta: " + ruta);
-		rutaActual.getStyle()
-		.set("color", "white")
-		.set("font-size", "11px")
-		.set("white-space", "nowrap");
+		rutaActual.getStyle().set("color", "white").set("font-size", "11px").set("white-space", "nowrap");
 
 		Span fechaHora = new Span(fechaHoraStr);
-		fechaHora.getStyle()
-		.set("color", "white")
-		.set("font-size", "11px")
-		.set("white-space", "nowrap");
+		fechaHora.getStyle().set("color", "white").set("font-size", "11px").set("white-space", "nowrap");
 
 		Span duracionSesion = new Span("Sesión: " + duracionMinutos + " min");
-		duracionSesion.getStyle()
-		.set("color", "white")
-		.set("font-size", "11px")
-		.set("white-space", "nowrap");
+		duracionSesion.getStyle().set("color", "white").set("font-size", "11px").set("white-space", "nowrap");
 
-		databaseStatus.getStyle()
-		.set("color", "white")
-		.set("font-size", "11px")
-		.set("white-space", "nowrap");
+		databaseStatus.getStyle().set("color", "white").set("font-size", "11px").set("white-space", "nowrap");
 
 		footer.add(copyright, rutaActual, fechaHora, duracionSesion, databaseStatus);
 	}
@@ -785,5 +561,19 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver 
 		String formattedDate = ahora.format(formato);
 
 		updateFooter(path, minutos, formattedDate);
+	}
+
+	@Override
+	public void beforeEnter(BeforeEnterEvent event) {
+		if (!SecurityUtils.isAuthenticated() && !event.getNavigationTarget().equals(LoginView.class)) {
+			event.forwardTo(LoginView.class);
+		}
+	}
+
+	@Override
+	protected void onAttach(AttachEvent attachEvent) {
+		super.onAttach(attachEvent);
+		attachEvent.getUI().getElement().getThemeList().add("dark");
+		attachEvent.getUI().getPage().executeJs("document.documentElement.style.setProperty('color-scheme', 'dark')");
 	}
 }

@@ -6,6 +6,7 @@ import com.visus.central.infraestructure.converter.TipoDomicilioConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -85,18 +86,12 @@ public class JpaDomicilioEntity {
     @Column(name = "idlocalidad", nullable = false)
     private Integer idLocalidad;
 
-    @ManyToOne
-    @JoinColumn(
-        name = "idcliente",
-        nullable = true
-    )
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idcliente", referencedColumnName = "idcliente")
     private JpaClienteEntity cliente;
 
     @ManyToOne
-    @JoinColumn(
-        name = "idvendedor",
-        nullable = true
-    )
+    @JoinColumn(name = "idvendedor", nullable = true)
     private JpaVendedorEntity vendedor;
 
     public Integer getId() {

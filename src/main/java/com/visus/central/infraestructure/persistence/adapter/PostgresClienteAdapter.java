@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.visus.central.domain.model.Cliente;
+import com.visus.central.domain.model.ClienteComboDTO;
 import com.visus.central.domain.model.Domicilio;
 import com.visus.central.domain.port.in.DomicilioUseCase;
 import com.visus.central.domain.port.out.ClienteRepository;
 import com.visus.central.infraestructure.converter.JpaClienteMapper;
 import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity;
 import com.visus.central.infraestructure.persistence.repository.JpaClienteRepository;
-
 import jakarta.transaction.Transactional;
 
 @Component
@@ -23,11 +23,12 @@ public class PostgresClienteAdapter implements ClienteRepository {
     private final JpaClienteMapper clienteMapper;
     private final DomicilioUseCase domicilioUseCase; 
 
-    public PostgresClienteAdapter(JpaClienteRepository jpaRepository, DomicilioUseCase domicilioUseCase, JpaClienteMapper clienteMapper) {
-        this.jpaRepository = jpaRepository;
+	public PostgresClienteAdapter(JpaClienteRepository jpaRepository, DomicilioUseCase domicilioUseCase,
+			JpaClienteMapper clienteMapper) {
+		this.jpaRepository = jpaRepository;
 		this.clienteMapper = clienteMapper;
 		this.domicilioUseCase = domicilioUseCase;
-    }
+	}
 
     @Override
     public List<Cliente> findAll() {
@@ -35,6 +36,13 @@ public class PostgresClienteAdapter implements ClienteRepository {
         return jpaRepository.findAll().stream()
             .map(clienteMapper::toModel) // SOLO MAPEA CLIENTE, NO DOMICILIOS
             .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<Cliente> findAllClientesBasico() {
+        return jpaRepository.findByEstado(JpaClienteEntity.Estado.Habilitado).stream()
+                .map(clienteMapper::toModel)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -79,10 +87,9 @@ public class PostgresClienteAdapter implements ClienteRepository {
             .collect(Collectors.toList());
     }
     
-
-    // MÉTODO PARA CARGAR DOMICILIOS CUANDO SE NECESITEN
-    public List<Domicilio> findDomiciliosByClienteId(Integer idCliente) {
-        return domicilioUseCase.findByClienteId(idCliente);
+    @Override
+    public List<ClienteComboDTO> findClientesParaCombo() {
+        return jpaRepository.findClientesParaCombo();
     }
-    
+
 }

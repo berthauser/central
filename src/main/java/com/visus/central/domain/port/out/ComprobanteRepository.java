@@ -7,7 +7,14 @@ import com.visus.central.domain.model.Comprobante;
 
 public interface ComprobanteRepository {
 	List<Comprobante> findAll();
-    Optional<Comprobante> findById(Integer id);
-    Comprobante save(Comprobante comprobante);
-    void deleteById(Integer id);
+
+	Optional<Comprobante> findActivo();
+
+	Optional<Comprobante> findById(Integer id);
+	
+	Optional<Comprobante> findByNombreCorto(String nombreCorto);
+
+	Comprobante save(Comprobante comprobante);
+
+	void deleteById(Integer id);
 }

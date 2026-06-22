@@ -46,10 +46,11 @@ public class DomicilioUseCaseImpl implements DomicilioUseCase {
     public List<Domicilio> findByVendedorId(Integer idVendedor) {
         return repository.findByVendedorId(idVendedor);
     }
+
+	@Override
+	public List<Domicilio> findByClienteId(Integer idCliente) {
+		return repository.findByClienteId(idCliente);
+	}
     
-    @Override
-    public List<Domicilio> findByClienteId(Integer idCliente) {
-    	return repository.findByClienteId(idCliente);
-    }
 }
 

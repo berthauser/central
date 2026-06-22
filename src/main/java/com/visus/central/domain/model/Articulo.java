@@ -2,6 +2,8 @@ package com.visus.central.domain.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity.Estado;
@@ -33,7 +35,9 @@ public class Articulo {
     private Boolean esBonificado;
     private BigDecimal bonificacion;
     private Estado estado;
-	
+
+    private List<UnidadConCantidad> unidades = new ArrayList<>();
+
     public Integer getId() {
 		return id;
 	}
@@ -226,11 +230,23 @@ public class Articulo {
 		this.estado = estado;
 	}
     
+    public List<UnidadConCantidad> getUnidades() {
+		return unidades;
+	}
+
+	public void setUnidades(List<UnidadConCantidad> unidades) {
+		this.unidades = unidades != null ? unidades : new ArrayList<>();
+	}
+
+    public boolean isDisponible() {
+        return this.estado == Estado.Disponible;
+    }
+    
 	@Override
 	public int hashCode() {
 		return Objects.hash(alicuota, bonificacion, codigo_barra, codigo_interno, columna, descripcion, esBonificado,
 				estado, fechaActualizPrecios, fechaBaja, fechaCompra, fechaVencimiento, fila, id, linea, margenUtilidad,
-				medida, nrolote, precioCosto, presentacion, proveedor, stock, stock_maximo, stock_minimo);
+				medida, nrolote, precioCosto, presentacion, proveedor, stock, stock_maximo, stock_minimo, unidades);
 	}
 
 	@Override
@@ -254,7 +270,8 @@ public class Articulo {
 				&& Objects.equals(nrolote, other.nrolote) && Objects.equals(precioCosto, other.precioCosto)
 				&& Objects.equals(presentacion, other.presentacion) && Objects.equals(proveedor, other.proveedor)
 				&& Objects.equals(stock, other.stock) && Objects.equals(stock_maximo, other.stock_maximo) 
-				&& Objects.equals(stock_minimo, other.stock_minimo);
+				&& Objects.equals(stock_minimo, other.stock_minimo)
+				&& Objects.equals(unidades, other.unidades);
 	}
 
 	@Override
@@ -266,7 +283,8 @@ public class Articulo {
 				+ ", fechaCompra=" + fechaCompra + ", fechaVencimiento=" + fechaVencimiento + ", fechaBaja=" + fechaBaja
 				+ ", fechaActualizPrecios=" + fechaActualizPrecios + ", fila=" + fila + ", columna=" + columna
 				+ ", precioCosto=" + precioCosto + ", margenUtilidad=" + margenUtilidad + ", alicuota=" + alicuota
-				+ ", esBonificado=" + esBonificado + ", bonificacion=" + bonificacion + ", estado=" + estado + "]";
+				+ ", esBonificado=" + esBonificado + ", bonificacion=" + bonificacion + ", estado=" + estado
+				+ ", unidades=" + unidades + "]";
 	}
 	
 }

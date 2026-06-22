@@ -7,7 +7,6 @@ public class Localidad {
 	private Integer idlocalidad;
     private String nombre;
     private Integer codigoPostal;
-    private Departamento departamento;
 	
     public Integer getIdlocalidad() {
 		return idlocalidad;
@@ -32,18 +31,10 @@ public class Localidad {
 	public void setCodigoPostal(Integer codigoPostal) {
 		this.codigoPostal = codigoPostal;
 	}
-	
-	public Departamento getDepartamento() {
-		return departamento;
-	}
-	
-	public void setDepartamento(Departamento departamento) {
-		this.departamento = departamento;
-	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigoPostal, departamento, idlocalidad, nombre);
+		return Objects.hash(codigoPostal, idlocalidad, nombre);
 	}
 
 	@Override
@@ -55,13 +46,12 @@ public class Localidad {
 		if (getClass() != obj.getClass())
 			return false;
 		Localidad other = (Localidad) obj;
-		return Objects.equals(codigoPostal, other.codigoPostal) && Objects.equals(departamento, other.departamento)
+		return Objects.equals(codigoPostal, other.codigoPostal)
 				&& Objects.equals(idlocalidad, other.idlocalidad) && Objects.equals(nombre, other.nombre);
 	}
 
 	@Override
 	public String toString() {
-		return "Localidad [idlocalidad=" + idlocalidad + ", nombre=" + nombre + ", codigoPostal=" + codigoPostal
-				+ ", departamento=" + departamento + "]";
+		return "Localidad [idlocalidad=" + idlocalidad + ", nombre=" + nombre + ", codigoPostal=" + codigoPostal + "]";
 	}
 }

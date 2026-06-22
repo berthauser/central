@@ -102,9 +102,11 @@ public class JpaArticuloEntity {
     @Column(name = "bonificacion", precision = 15, scale = 2)
     private BigDecimal bonificacion;    
     
-	@Convert(converter = EstadoArticuloConverter.class) // Esto le dice a JPA: “Usá el conversor para guardar y leer como VARCHAR”.
+	@Convert(converter = EstadoArticuloConverter.class)
     @Column(name = "estado", length = 15)
     private Estado estado;
+
+
     
     public enum Estado {
     	EnExistencias("En Existencias"), Disponible("Disponible"), Comprometido("Comprometido"), NoDisponible("No Disponible"), Entrante("Entrante");

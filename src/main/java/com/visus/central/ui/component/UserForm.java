@@ -1,138 +1,173 @@
 package com.visus.central.ui.component;
 
-import java.util.List;
-
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Hr;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 import com.visus.central.domain.model.User;
 
 public class UserForm extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private final TextField username = new TextField("Usuario");
 	private final PasswordField password = new PasswordField("Contraseña");
-	private final TextField role = new TextField("Rol");
+	private final ComboBox<String> role = new ComboBox<>("Rol");
 	private final Binder<User> binder = new Binder<>(User.class);
 	private User currentUser;
-	private final List<String> rolesPermitidos = List.of("ADMIN", "USER", "AUDITOR");
+
 	private final Button crear = new Button("Crear");
 	private final Button modificar = new Button("Modificar");
 	private final Button eliminar = new Button("Eliminar");
 	private final Button volver = new Button("Volver");
 
 	public UserForm() {
-        setPadding(true);
-        setSpacing(true);
-        setAlignItems(Alignment.START);
+		setPadding(true);
+		setSpacing(true);
 
-        username.addClassName("campo-estilo-imagen");
-        password.addClassName("campo-estilo-imagen");
-        role.addClassName("campo-estilo-imagen");
+		username.addClassName("campo-estilo-imagen");
+		password.addClassName("campo-estilo-imagen");
+		role.addClassName("campo-estilo-imagen");
 
-        binder.forField(username)
-            .asRequired("El usuario es obligatorio")
-            .withValidator(u -> u.length() >= 3, "Debe tener al menos 3 caracteres")
-            .bind(User::getUsername, null);
+		role.setItems("ADMIN", "USER", "AUDITOR");
+		role.setRequiredIndicatorVisible(true);
 
-        binder.forField(password)
-            .withValidator(p -> p == null || p.length() >= 6, "Mínimo 6 caracteres")
-            .bind(User::getPassword, null);
+		binder.forField(username).asRequired("El usuario es obligatorio")
+				.withValidator(u -> u.length() >= 3, "Debe tener al menos 3 caracteres").bind(User::getUsername,
+						User::setUsername);
 
-        binder.forField(role)
-            .asRequired("El rol es obligatorio")
-            .withValidator(rolesPermitidos::contains, "Rol inválido. Debe ser ADMIN, USER o AUDITOR")
-            .bind(User::getRole, null);
+		binder.forField(password)
+				.withValidator(p -> p == null || p.isBlank() || p.length() >= 6, "Mínimo 6 caracteres si se ingresa")
+				.bind(User::getPassword, User::setPassword);
 
-        binder.setBean(new User());
+		binder.forField(role).asRequired("El rol es obligatorio").bind(User::getRole, User::setRole);
 
-        crear.addClickListener(_ -> fireEvent(new CreateEvent(this, getUserFromForm())));
-        modificar.addClickListener(_ -> fireEvent(new UpdateEvent(this, getUserFromForm())));
-        eliminar.addClickListener(_ -> fireEvent(new DeleteEvent(this, currentUser)));
-        volver.addClickListener(_ -> fireEvent(new BackEvent(this)));
+		crear.addClassName("btn-grabar");
+		modificar.addClassName("btn-modificar");
+		eliminar.addClassName("btn-eliminar");
+		volver.addClassName("btn-volver");
 
-        crear.addClassName("btn-grabar");
-        modificar.addClassName("btn-modificar");
-        eliminar.addClassName("btn-eliminar");
-        volver.addClassName("btn-volver");
+		crear.addClickListener(_ -> {
+			String pwd = password.getValue();
+			if (pwd == null || pwd.isBlank()) {
+				password.setErrorMessage("La contraseña es obligatoria");
+				password.setInvalid(true);
+				return;
+			}
+			if (binder.validate().isOk()) {
+				fireEvent(new CreateEvent(this, getUserFromForm()));
+			}
+		});
+		modificar.addClickListener(_ -> {
+			if (binder.validate().isOk()) {
+				fireEvent(new UpdateEvent(this, getUserFromForm()));
+			}
+		});
+		eliminar.addClickListener(_ -> {
+			if (currentUser != null) {
+				fireEvent(new DeleteEvent(this, currentUser));
+			}
+		});
+		volver.addClickListener(_ -> fireEvent(new BackEvent(this)));
 
-        HorizontalLayout botones = new HorizontalLayout(crear, modificar, eliminar, volver);
-        botones.setAlignItems(Alignment.END);
+		FormLayout formLayout = new FormLayout(username, password, role);
+		formLayout.setWidthFull();
+		formLayout.setResponsiveSteps(new FormLayout.ResponsiveStep("0", 3));
 
-        add(username, password, role, botones);
-    }
+		HorizontalLayout botones = new HorizontalLayout(crear, modificar, eliminar, volver);
+		botones.setAlignItems(Alignment.END);
+
+		add(formLayout, new Hr(), botones);
+	}
 
 	public void setUser(User user) {
-        this.currentUser = user;
-        binder.setBean(new User());
-    }
+		this.currentUser = user;
+		password.setRequiredIndicatorVisible(false);
+		password.setValue("");
+		binder.readBean(user);
+	}
 
-    public void clearForm() {
-        currentUser = null;
-        binder.setBean(new User());
-    }
+	public void clearForm() {
+		this.currentUser = null;
+		password.setRequiredIndicatorVisible(true);
+		binder.setBean(new User());
+	}
 
-    private User getUserFromForm() {
-        return new User();
-    }
+	private User getUserFromForm() {
+		if (currentUser != null) {
+			try {
+				binder.writeBean(currentUser);
+				return currentUser;
+			} catch (ValidationException e) {
+				return null;
+			}
+		}
+		User user = new User();
+		try {
+			binder.writeBean(user);
+			return user;
+		} catch (ValidationException e) {
+			return null;
+		}
+	}
 
-    // Eventos personalizados
-    @SuppressWarnings("serial")
+	@SuppressWarnings("serial")
 	public static class CreateEvent extends ComponentEvent<UserForm> {
-        private final User user;
-        public CreateEvent(UserForm source, User user) {
-            super(source, false);
-            this.user = user;
-        }
-        public User getUser() { return user; }
-    }
+		private final User user;
+		public CreateEvent(UserForm source, User user) {
+			super(source, false);
+			this.user = user;
+		}
+		public User getUser() { return user; }
+	}
 
-    @SuppressWarnings("serial")
+	@SuppressWarnings("serial")
 	public static class UpdateEvent extends ComponentEvent<UserForm> {
-        private final User user;
-        public UpdateEvent(UserForm source, User user) {
-            super(source, false);
-            this.user = user;
-        }
-        public User getUser() { return user; }
-    }
+		private final User user;
+		public UpdateEvent(UserForm source, User user) {
+			super(source, false);
+			this.user = user;
+		}
+		public User getUser() { return user; }
+	}
 
-    @SuppressWarnings("serial")
+	@SuppressWarnings("serial")
 	public static class DeleteEvent extends ComponentEvent<UserForm> {
-        private final User user;
-        public DeleteEvent(UserForm source, User user) {
-            super(source, false);
-            this.user = user;
-        }
-        public User getUser() { return user; }
-    }
+		private final User user;
+		public DeleteEvent(UserForm source, User user) {
+			super(source, false);
+			this.user = user;
+		}
+		public User getUser() { return user; }
+	}
 
-    @SuppressWarnings("serial")
+	@SuppressWarnings("serial")
 	public static class BackEvent extends ComponentEvent<UserForm> {
-        public BackEvent(UserForm source) { super(source, false); }
-    }
+		public BackEvent(UserForm source) { super(source, false); }
+	}
 
-    public Registration addCreateListener(ComponentEventListener<CreateEvent> listener) {
-        return addListener(CreateEvent.class, listener);
-    }
+	public Registration addCreateListener(ComponentEventListener<CreateEvent> listener) {
+		return addListener(CreateEvent.class, listener);
+	}
 
-    public Registration addUpdateListener(ComponentEventListener<UpdateEvent> listener) {
-        return addListener(UpdateEvent.class, listener);
-    }
+	public Registration addUpdateListener(ComponentEventListener<UpdateEvent> listener) {
+		return addListener(UpdateEvent.class, listener);
+	}
 
-    public Registration addDeleteListener(ComponentEventListener<DeleteEvent> listener) {
-        return addListener(DeleteEvent.class, listener);
-    }
+	public Registration addDeleteListener(ComponentEventListener<DeleteEvent> listener) {
+		return addListener(DeleteEvent.class, listener);
+	}
 
-    public Registration addBackListener(ComponentEventListener<BackEvent> listener) {
-        return addListener(BackEvent.class, listener);
-    }
-
+	public Registration addBackListener(ComponentEventListener<BackEvent> listener) {
+		return addListener(BackEvent.class, listener);
+	}
 }

@@ -11,7 +11,14 @@ import com.visus.central.infraestructure.persistence.entity.JpaVendedorEntity;
 
 @Repository
 public interface JpaDomicilioRepository extends JpaRepository<JpaDomicilioEntity, Integer> {
-    List<JpaDomicilioEntity> findByVendedor(JpaVendedorEntity vendedor);
-    List<JpaDomicilioEntity> findByCliente(JpaClienteEntity cliente);
-    List<JpaDomicilioEntity> findByIdLocalidad(Integer idLocalidad);
+	List<JpaDomicilioEntity> findByVendedor(JpaVendedorEntity vendedor);
+
+	List<JpaDomicilioEntity> findByCliente(JpaClienteEntity cliente);
+
+	List<JpaDomicilioEntity> findByIdLocalidad(Integer idLocalidad);
+
+	// Este método usa la convención de nomenclatura de Spring Data JPA
+	// Busca domicilios por el campo 'cliente.id' (navegación)
+	List<JpaDomicilioEntity> findByClienteId(Integer idCliente);
+
 }

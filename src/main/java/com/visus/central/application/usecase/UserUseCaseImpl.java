@@ -51,6 +51,13 @@ public class UserUseCaseImpl implements UserUseCase {
 
     @Override
     public void update(User user) {
+        String password = user.getPassword();
+        if (password == null || password.isBlank()) {
+            repository.buscarPorUsername(user.getUsername())
+                .ifPresent(existing -> user.setPassword(existing.getPassword()));
+        } else {
+            user.setPassword(passwordEncoder.encode(password));
+        }
         repository.actualizar(user);
     }
 

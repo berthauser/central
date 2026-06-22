@@ -40,8 +40,8 @@ public class ClienteForm extends AbstractForm<Cliente> {
 	private TextField nombreFantasia = new TextField("Nombre Fantasía");
 	private TextField nombreCliente = new TextField("Nombre Cliente");
 	private ComboBox<Sexo> sexo = new ComboBox<>("Sexo");
-	private TextField telefonoFijo = new TextField("Teléfono Fijo");
-	private TextField telefonoMovil = new TextField("Teléfono Móvil");
+	private TextField telefonoFijo = new TextField("Teléfono 1");
+	private TextField telefonoMovil = new TextField("Teléfono 2");
 
 	private EmailField email = new EmailField("Email");
 
@@ -450,7 +450,6 @@ public class ClienteForm extends AbstractForm<Cliente> {
 	        
 	        System.out.println("📝 Encontrados " + domicilios.size() + " domicilios en BD");
 	        domicilioSubForm.setDomicilios(domicilios);
-	        
 	    } catch (Exception e) {
 	        System.err.println("❌ Error al cargar domicilios: " + e.getMessage());
 	        domicilioSubForm.setDomicilios(new ArrayList<>());

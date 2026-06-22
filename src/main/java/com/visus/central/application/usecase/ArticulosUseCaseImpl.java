@@ -12,6 +12,7 @@ import com.visus.central.domain.port.in.ArticuloUseCase;
 import com.visus.central.domain.port.out.ArticuloRepository;
 import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity;
 import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity.Estado;
+import com.visus.central.infraestructure.util.Ean13Generator;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -35,10 +36,13 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
 				.orElseThrow(() -> new EntityNotFoundException("Artículo", id));
 	}
 
-    @Override
-    public Articulo save(Articulo articulo) {
-        return articuloRepository.save(articulo);
-    }
+	@Override
+	public Articulo save(Articulo articulo) {
+		if (articulo.getCodigo_barra() == null || articulo.getCodigo_barra().isBlank()) {
+			articulo.setCodigo_barra(Ean13Generator.generar());
+		}
+		return articuloRepository.save(articulo);
+	}
 
     @Override
     @Transactional

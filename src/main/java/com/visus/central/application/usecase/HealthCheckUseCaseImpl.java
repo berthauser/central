@@ -1,8 +1,12 @@
 package com.visus.central.application.usecase;
 
-import org.springframework.boot.actuate.health.HealthComponent;
-import org.springframework.boot.actuate.health.HealthEndpoint;
-import org.springframework.boot.actuate.health.Status;
+import java.sql.Connection;
+import java.sql.Statement;
+
+import javax.sql.DataSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.visus.central.domain.port.in.HealthCheckUseCase;
@@ -10,49 +14,33 @@ import com.visus.central.domain.port.in.HealthCheckUseCase;
 @Service
 public class HealthCheckUseCaseImpl implements HealthCheckUseCase {
 
-    private final HealthEndpoint healthEndpoint;
+private static final Logger log = LoggerFactory.getLogger(HealthCheckUseCaseImpl.class);
+    
+    private final DataSource dataSource;
 
-    public HealthCheckUseCaseImpl(HealthEndpoint healthEndpoint) {
-        this.healthEndpoint = healthEndpoint;
+    public HealthCheckUseCaseImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
-
+    
     @Override
     public DatabaseHealthStatus checkDatabaseHealth() {
-        try {
-            HealthComponent healthComponent = healthEndpoint.health();
-            Status status = healthComponent.getStatus();
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement()) {
             
-            // Estrategia simple: si el estado general es UP, asumimos que la BD está bien
-            // Esto funciona porque Spring Boot marca el health general como DOWN si la BD falla
-            boolean isDatabaseConnected = status.equals(Status.UP);
-            
-            String details;
-            if (isDatabaseConnected) {
-                details = "Sistema y base de datos operativos";
-            } else {
-                // Analizar el mensaje para determinar si es problema de BD
-                String healthMessage = healthComponent.toString();
-                if (healthMessage.toLowerCase().contains("database") || 
-                    healthMessage.toLowerCase().contains("postgres") ||
-                    healthMessage.toLowerCase().contains("jdbc")) {
-                    details = "Problema de conexión con la base de datos";
-                } else {
-                    details = "Problema en el sistema";
-                }
-            }
+            stmt.execute("SELECT 1");
+            String dbName = conn.getMetaData().getDatabaseProductName();
+            String dbVersion = conn.getMetaData().getDatabaseProductVersion();
             
             return new DatabaseHealthStatus(
-                isDatabaseConnected,
-                status.getCode(),
-                details,
-                "PostgreSQL"
+                true, "UP",
+                "Conexión exitosa a " + dbName + " " + dbVersion,
+                dbName
             );
-            
         } catch (Exception e) {
+            log.error("Error verificando salud de BD", e);
             return new DatabaseHealthStatus(
-                false, 
-                "ERROR", 
-                "Error al verificar estado: " + e.getMessage(), 
+                false, "DOWN",
+                "Error de conexión: " + e.getMessage(),
                 "Unknown"
             );
         }

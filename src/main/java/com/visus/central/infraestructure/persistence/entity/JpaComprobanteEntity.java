@@ -1,11 +1,12 @@
 package com.visus.central.infraestructure.persistence.entity;
 
-import com.visus.central.infraestructure.converter.ColumnaComprobanteConverter;
-import com.visus.central.infraestructure.converter.NombreCortoComprobanteConverter;
+import com.visus.central.domain.model.Columna;
+import com.visus.central.domain.model.NombreCorto;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,92 +15,34 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "comprobantes")
 public class JpaComprobanteEntity {
-	
+
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idcomprobante")
-    private Integer id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "idcomprobante")
+	private Integer id;
 
-    @Column(name = "nombre_largo", nullable = false, length = 60)
-    private String nombreLargo;
+	@Column(name = "nombre_largo", nullable = false, length = 60)
+	private String nombreLargo;
 
-    @Convert(converter = NombreCortoComprobanteConverter.class)
-    @Column(name = "nombre_corto", nullable = false, length = 3)
-    private NombreCorto nombreCorto;
-    
-    public enum NombreCorto {
-    	FacturaA("FAA"),
-    	FacturaB("FAB"),
-    	FacturaC("FAC"),
-    	Vale("VAL"),
-    	Remito("REM"),
-    	Nota_de_Débito("NDB"),
-    	Nota_de_Crédito("NCR"),
-    	Recibo("REC");
+	@Enumerated(EnumType.STRING)
+	@Column(name = "nombre_corto", length = 3)
+	private NombreCorto nombreCorto; // ← JPA guardará el nombre del enum (REM, FAC, etc.)
 
-    	private final String label;
+	@Column(name = "numero_inicial", nullable = false)
+	private Integer numeroInicial = 1;
 
-    	NombreCorto(String label) {
-    		this.label = label;
-    	}
+	@Column(name = "numero_final", nullable = false)
+	private Integer numeroFinal = 1;
 
-    	public String getLabel() {
-    		return label;
-    	}
+	@Column(name = "numero_actual", nullable = false)
+	private Integer numeroActual;
 
-    	@Override
-    	public String toString() {
-    		return label;
-    	}
+	@Column(name = "activo")
+	private Boolean activo;
 
-    	public static NombreCorto fromLabel(String label) {
-    		for (NombreCorto p: values()) {
-    			if (p.label.equalsIgnoreCase(label)) {
-    				return p;
-    			}
-    		}
-    		throw new IllegalArgumentException("Nombre Corto inválido: " + label);
-    	}
-    }
-
-    @Column(name = "numero_inicial", nullable = false)
-    private Integer numeroInicial = 1;
-
-    @Column(name = "sucursal", nullable = false)
-    private Integer sucursal;
-    
-    @Convert(converter = ColumnaComprobanteConverter.class)
-    @Column(name = "columna", nullable = false)
-    private Columna columna;
-    
-    public enum Columna {
-    	Débito("DB"),
-    	Crédito("CR");
-
-    	private final String label;
-
-    	Columna(String label) {
-    		this.label = label;
-    	}
-
-    	public String getLabel() {
-    		return label;
-    	}
-
-    	@Override
-    	public String toString() {
-    		return label;
-    	}
-
-    	public static Columna fromLabel(String label) {
-    		for (Columna p: values()) {
-    			if (p.label.equalsIgnoreCase(label)) {
-    				return p;
-    			}
-    		}
-    		throw new IllegalArgumentException("Columna inválida: " + label);
-    	}
-    }
+	@Enumerated(EnumType.STRING)
+	@Column(name = "columna", length = 2, nullable = false)
+	private Columna columna;
 
 	public Integer getId() {
 		return id;
@@ -133,12 +76,28 @@ public class JpaComprobanteEntity {
 		this.numeroInicial = numeroInicial;
 	}
 
-	public Integer getSucursal() {
-		return sucursal;
+	public Integer getNumeroFinal() {
+		return numeroFinal;
 	}
 
-	public void setSucursal(Integer sucursal) {
-		this.sucursal = sucursal;
+	public void setNumeroFinal(Integer numeroFinal) {
+		this.numeroFinal = numeroFinal;
+	}
+
+	public Integer getNumeroActual() {
+		return numeroActual;
+	}
+
+	public void setNumeroActual(Integer numeroActual) {
+		this.numeroActual = numeroActual;
+	}
+
+	public Boolean getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
 	}
 
 	public Columna getColumna() {

@@ -7,9 +7,13 @@ import com.visus.central.domain.model.Presentacion;
 
 public interface PresentacionRepository {
 	List<Presentacion> listar();
+
 	List<Presentacion> buscarPorDescripcion(String descripcion);
+
 	Optional<Presentacion> buscarPorId(Integer id);
+
 	void guardar(Presentacion presentacion);
+
 	void eliminar(Integer Id);
 
 }

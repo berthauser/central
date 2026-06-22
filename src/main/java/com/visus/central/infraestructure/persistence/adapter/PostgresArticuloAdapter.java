@@ -9,10 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.visus.central.domain.model.Articulo;
+import com.visus.central.domain.model.Unidad;
+import com.visus.central.domain.model.UnidadConCantidad;
 import com.visus.central.domain.port.out.ArticuloRepository;
 import com.visus.central.infraestructure.converter.JpaArticuloMapper;
 import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity;
+import com.visus.central.infraestructure.persistence.entity.JpaArticuloUnidadEntity;
+import com.visus.central.infraestructure.persistence.entity.JpaUnidadEntity;
 import com.visus.central.infraestructure.persistence.repository.JpaArticuloRepository;
+import com.visus.central.infraestructure.persistence.repository.JpaArticuloUnidadRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -21,11 +26,14 @@ public class PostgresArticuloAdapter implements ArticuloRepository {
 
 	private final JpaArticuloRepository jpaArticuloRepository;
 	private final JpaArticuloMapper articuloMapper;
+	private final JpaArticuloUnidadRepository jpaArticuloUnidadRepository;
 
-	public PostgresArticuloAdapter(JpaArticuloRepository jpaArticuloRepository, 
-			JpaArticuloMapper articuloMapper) {
+	public PostgresArticuloAdapter(JpaArticuloRepository jpaArticuloRepository,
+			JpaArticuloMapper articuloMapper,
+			JpaArticuloUnidadRepository jpaArticuloUnidadRepository) {
 		this.jpaArticuloRepository = jpaArticuloRepository;
 		this.articuloMapper = articuloMapper;
+		this.jpaArticuloUnidadRepository = jpaArticuloUnidadRepository;
 	}
 
 	@Override
@@ -48,9 +56,11 @@ public class PostgresArticuloAdapter implements ArticuloRepository {
 	}
 	
 	@Override
+	@Transactional
 	public Optional<Articulo> findById(Integer id) {
 		return jpaArticuloRepository.findById(id)
-				.map(articuloMapper::toModel);
+				.map(articuloMapper::toModel)
+				.map(this::cargarUnidades);
 	}
 	
 	@Override
@@ -64,7 +74,45 @@ public class PostgresArticuloAdapter implements ArticuloRepository {
 	public Articulo save(Articulo articulo) {
 		JpaArticuloEntity entity = articuloMapper.toEntity(articulo);
 		JpaArticuloEntity savedEntity = jpaArticuloRepository.save(entity);
-		return articuloMapper.toModel(savedEntity);
+
+		if (savedEntity.getId() != null) {
+			jpaArticuloUnidadRepository.deleteByArticuloId(savedEntity.getId());
+			if (articulo.getUnidades() != null) {
+				for (UnidadConCantidad uc : articulo.getUnidades()) {
+					if (uc.getUnidad() != null && uc.getUnidad().getId() != null) {
+						JpaArticuloUnidadEntity au = new JpaArticuloUnidadEntity();
+						au.setArticulo(savedEntity);
+						JpaUnidadEntity jpaUnidad = new JpaUnidadEntity();
+						jpaUnidad.setId(uc.getUnidad().getId());
+						au.setUnidad(jpaUnidad);
+						au.setCantidad(uc.getCantidad() != null ? uc.getCantidad() : 1);
+						jpaArticuloUnidadRepository.save(au);
+					}
+				}
+			}
+		}
+
+		Articulo model = articuloMapper.toModel(savedEntity);
+		model.setUnidades(articulo.getUnidades());
+		return model;
+	}
+
+	private Articulo cargarUnidades(Articulo model) {
+		if (model != null && model.getId() != null) {
+			List<UnidadConCantidad> unidades = jpaArticuloUnidadRepository.findByArticuloId(model.getId())
+					.stream()
+					.map(au -> {
+						Unidad u = new Unidad();
+						u.setId(au.getUnidad().getId());
+						u.setIdPresentacion(au.getUnidad().getIdPresentacion());
+						u.setMedida(au.getUnidad().getMedida());
+						Integer cantidad = au.getCantidad() != null ? au.getCantidad() : 1;
+						return new UnidadConCantidad(u, cantidad);
+					})
+					.collect(Collectors.toList());
+			model.setUnidades(unidades);
+		}
+		return model;
 	}
 
 	@Override

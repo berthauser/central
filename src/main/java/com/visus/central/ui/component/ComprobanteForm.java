@@ -2,13 +2,14 @@ package com.visus.central.ui.component;
 
 import java.util.Arrays;
 
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.visus.central.domain.model.Columna;
 import com.visus.central.domain.model.Comprobante;
-import com.visus.central.infraestructure.persistence.entity.JpaComprobanteEntity.Columna;
-import com.visus.central.infraestructure.persistence.entity.JpaComprobanteEntity.NombreCorto;
+import com.visus.central.domain.model.NombreCorto;
 
 public class ComprobanteForm extends AbstractForm<Comprobante> {
 
@@ -17,7 +18,9 @@ public class ComprobanteForm extends AbstractForm<Comprobante> {
     private TextField nombreLargo = new TextField("Nombre Largo");
     private ComboBox<NombreCorto> nombreCorto = new ComboBox<>("Nombre Corto");
     private IntegerField numeroInicial = new IntegerField("Número Inicial");
-    private IntegerField sucursal = new IntegerField("Sucursal");
+    private IntegerField numeroFinal = new IntegerField("Número Final");
+    private IntegerField numeroActual = new IntegerField("Número Actual");   // nuevo, solo lectura
+    private Checkbox activo = new Checkbox("Activo");    
     private ComboBox<Columna> columna = new ComboBox<>("Columna");
 
     public ComprobanteForm() {
@@ -36,7 +39,7 @@ public class ComprobanteForm extends AbstractForm<Comprobante> {
         nombreCorto.addClassName(campoStyle);
         nombreCorto.setRequired(true);
         nombreCorto.setItems(Arrays.asList(NombreCorto.values()));
-        nombreCorto.setItemLabelGenerator(NombreCorto::getLabel);
+        nombreCorto.setItemLabelGenerator(NombreCorto::getCodigo);
         nombreCorto.setWidth("150px");
         
         numeroInicial.addClassName(campoStyle);
@@ -45,11 +48,17 @@ public class ComprobanteForm extends AbstractForm<Comprobante> {
         numeroInicial.setMin(1);
         numeroInicial.setMax(999999);
         
-        sucursal.addClassName(campoStyle);
-        sucursal.setRequired(true);
-        sucursal.setWidth("150px");
-        sucursal.setMin(1);
-        sucursal.setMax(9999);
+        numeroFinal.addClassName(campoStyle);
+        numeroFinal.setRequired(true);
+        numeroFinal.setWidth("150px");
+        numeroFinal.setMin(1);
+        numeroFinal.setMax(9999999);
+        
+        numeroActual.addClassName(campoStyle);
+        numeroActual.setReadOnly(true);
+        numeroActual.setWidth("150px");
+        
+        activo.addClassName(campoStyle);
         
         columna.addClassName(campoStyle);
         columna.setRequired(true);
@@ -58,7 +67,7 @@ public class ComprobanteForm extends AbstractForm<Comprobante> {
         columna.setWidth("150px");
         
         // ALINEACIÓN HORIZONTAL: Usar HorizontalLayout para organizar en filas
-        HorizontalLayout fila1 = new HorizontalLayout(nombreLargo, nombreCorto, numeroInicial, sucursal, columna);
+        HorizontalLayout fila1 = new HorizontalLayout(nombreLargo, nombreCorto, numeroInicial, numeroFinal, numeroActual, activo, columna);
         fila1.setSpacing(true);
         fila1.setAlignItems(Alignment.END); // Alinear al bottom para que se vea mejor
         
@@ -82,12 +91,18 @@ public class ComprobanteForm extends AbstractForm<Comprobante> {
             .withValidator(value -> value != null && value >= 1,
                 "El número inicial debe ser mayor o igual a 1")
             .bind(Comprobante::getNumeroInicial, Comprobante::setNumeroInicial);
+        
+        binder.forField(numeroFinal)
+        .asRequired("El número final es obligatorio")
+        .withValidator(value -> value != null && value >= 1,
+        		"El número final debe ser mayor o igual a 1")
+        .bind(Comprobante::getNumeroFinal, Comprobante::setNumeroFinal);
             
-        binder.forField(sucursal)
-            .asRequired("La sucursal es obligatoria")
-            .withValidator(value -> value != null && value >= 1,
-                "La sucursal debe ser mayor o igual a 1")
-            .bind(Comprobante::getSucursal, Comprobante::setSucursal);
+        binder.forField(numeroActual)
+        .bind(Comprobante::getNumeroActual, Comprobante::setNumeroActual);
+    
+    binder.forField(activo)
+        .bind(Comprobante::getActivo, Comprobante::setActivo);
             
         binder.forField(columna)
             .asRequired("La columna es obligatoria")
@@ -100,14 +115,18 @@ public class ComprobanteForm extends AbstractForm<Comprobante> {
             nombreLargo.clear();
             nombreCorto.clear();
             numeroInicial.clear();
-            sucursal.clear();
+            numeroFinal.clear();
+            numeroActual.clear();
+            activo.clear();
             columna.clear();
             return;
         }
         nombreLargo.setValue(entity.getNombreLargo() != null ? entity.getNombreLargo() : "");
         nombreCorto.setValue(entity.getNombreCorto());
         numeroInicial.setValue(entity.getNumeroInicial());
-        sucursal.setValue(entity.getSucursal());
+        numeroFinal.setValue(entity.getNumeroFinal());
+        numeroActual.setValue(entity.getNumeroActual());
+        activo.setValue(Boolean.TRUE.equals(entity.getActivo()));
         columna.setValue(entity.getColumna());
     }
 

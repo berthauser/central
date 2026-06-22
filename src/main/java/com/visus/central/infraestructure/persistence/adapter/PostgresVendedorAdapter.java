@@ -56,7 +56,7 @@ public class PostgresVendedorAdapter implements VendedorRepository {
     @Override
     @Transactional
     public Vendedor save(Vendedor model) {
-    	JpaVendedorEntity entity = vendedorMapper.toDomain(model);
+    	JpaVendedorEntity entity = vendedorMapper.toEntity(model);
     	JpaVendedorEntity saved = repository.save(entity);
     	return vendedorMapper.toModel(saved); // DEVUELVE EL VENDEDOR GUARDADO
     }

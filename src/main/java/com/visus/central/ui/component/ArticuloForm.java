@@ -41,6 +41,7 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.BigDecimalField;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.visus.central.application.port.in.UnidadUseCase;
 import com.visus.central.domain.model.Alicuota;
 import com.visus.central.domain.model.Articulo;
 import com.visus.central.domain.model.Linea;
@@ -48,7 +49,10 @@ import com.visus.central.domain.model.Medida;
 import com.visus.central.domain.model.Presentacion;
 import com.visus.central.domain.model.Proveedor;
 import com.visus.central.domain.model.Rubro;
+import com.visus.central.domain.model.Unidad;
+import com.visus.central.domain.model.UnidadConCantidad;
 import com.visus.central.domain.port.in.AlicuotaUseCase;
+import com.visus.central.domain.port.in.ArticuloUseCase;
 import com.visus.central.domain.port.in.LineaUseCase;
 import com.visus.central.domain.port.in.MedidaUseCase;
 import com.visus.central.domain.port.in.PresentacionUseCase;
@@ -56,6 +60,7 @@ import com.visus.central.domain.port.in.ProveedorUseCase;
 import com.visus.central.domain.port.in.RubroUseCase;
 import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity.Estado;
 import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity;
+import com.visus.central.infraestructure.util.Ean13Generator;
 import com.visus.central.infraestructure.util.FormatoUtils;
 import com.visus.central.infraestructure.util.SpringContextHelper;
 
@@ -79,6 +84,7 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 	private final ComboBox<Medida> medida = new ComboBox<>("Medida");
 	private final ComboBox<Presentacion> presentacion = new ComboBox<>("Presentación");
 	private final ComboBox<Proveedor> proveedor = new ComboBox<>("Proveedor");
+	private final UnidadSelector unidades = new UnidadSelector("Pares / Talles");
 
 	private DatePicker fechaCompra = new DatePicker("Fecha de Compra");
 	private DatePicker fechaVencimiento = new DatePicker("Fecha de Vencimiento");
@@ -92,7 +98,9 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 	private BigDecimalField margenUtilidad = new BigDecimalField("Margen de Utilidad");
 
 	private final ComboBox<Alicuota> alicuota = new ComboBox<>("Alicuota");
-	private TextField gravamenDisplay = new TextField("Gravamen");
+	private TextField gravamenDisplay = new TextField();
+	private BigDecimalField precioConIvaDisplay = new BigDecimalField("Precio + IVA");
+	private BigDecimalField precioVentaDisplay = new BigDecimalField("Precio de Venta");
 
 	private Checkbox esBonificado = new Checkbox("Artículo Bonificado");
 	private BigDecimalField bonificacion = new BigDecimalField("Bonificación");
@@ -113,6 +121,8 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 	private PresentacionUseCase presentacionUseCase;
 	private ProveedorUseCase proveedorUseCase;
 	private AlicuotaUseCase alicuotaUseCase;
+	private UnidadUseCase unidadUseCase;
+	private ArticuloUseCase articuloUseCase;
 
 	private Map<Integer, List<Linea>> cacheLineasPorRubro = new HashMap<>();
 
@@ -132,6 +142,8 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 		this.presentacionUseCase = SpringContextHelper.getBean(PresentacionUseCase.class);
 		this.proveedorUseCase = SpringContextHelper.getBean(ProveedorUseCase.class);
 		this.alicuotaUseCase = SpringContextHelper.getBean(AlicuotaUseCase.class);
+		this.unidadUseCase = SpringContextHelper.getBean(UnidadUseCase.class);
+		this.articuloUseCase = SpringContextHelper.getBean(ArticuloUseCase.class);
 
 		buildLayout();
 		configurarFormatoDecimalesConListeners();
@@ -177,6 +189,12 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 		codigoInterno.setWidth("160px");
 		codigoBarra.addClassName(campoStyle);
 		codigoBarra.setWidth("160px");
+		codigoBarra.addBlurListener(_ -> {
+			if (codigoBarra.getValue() == null || codigoBarra.getValue().isBlank()) {
+				String nuevoCodigo = Ean13Generator.generar();
+				codigoBarra.setValue(nuevoCodigo);
+			}
+		});
 
 		nroLote.addClassName(campoStyle);
 		nroLote.setWidth("160px");
@@ -201,6 +219,8 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 		presentacion.setWidth("250px");
 		proveedor.addClassName(campoStyle);
 		proveedor.setWidth("250px");
+
+		unidades.addClassName(campoStyle);
 
 		fechaCompra.addClassName(campoStyle);
 		fechaCompra.setWidth("150px");
@@ -229,8 +249,21 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 		gravamenDisplay.setReadOnly(true);
 		gravamenDisplay.setSuffixComponent(new Span("%"));
 		gravamenDisplay.setTooltipText("Porcentaje de gravamen de la alícuota seleccionada");
-		//        gravamen.getStyle().set("background-color", "var(--lumo-contrast-5pct)");
 		gravamenDisplay.getStyle()
+		.set("background-color", "var(--lumo-contrast-5pct)")
+		.set("color", "var(--lumo-secondary-text-color)")
+		.set("font-weight", "500");
+
+		precioConIvaDisplay.setReadOnly(true);
+		precioConIvaDisplay.setWidth("150px");
+		precioConIvaDisplay.getStyle()
+		.set("background-color", "var(--lumo-contrast-5pct)")
+		.set("color", "var(--lumo-secondary-text-color)")
+		.set("font-weight", "500");
+
+		precioVentaDisplay.setReadOnly(true);
+		precioVentaDisplay.setWidth("150px");
+		precioVentaDisplay.getStyle()
 		.set("background-color", "var(--lumo-contrast-5pct)")
 		.set("color", "var(--lumo-secondary-text-color)")
 		.set("font-weight", "500");
@@ -252,15 +285,12 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 	private VerticalLayout crearPestañaInformacionBasica() {
 
 		VerticalLayout tab = new VerticalLayout();
-		tab.setSpacing(true);
-		tab.setPadding(true);
 		tab.setWidthFull();
 
 		// Grupo 1: Datos del artículo
 		VerticalLayout grupo1 = new VerticalLayout();
-		grupo1.setSpacing(true);
 		grupo1.setPadding(false);
-		grupo1.add(new Span("Datos del Artículo"));
+		grupo1.add(crearEtiquetaGrupo("Datos del Artículo"));
 
 		HorizontalLayout datosBasicos = new HorizontalLayout();
 		datosBasicos.setSpacing(true);
@@ -269,9 +299,8 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 		// Grupo 2: Control de stock
 		VerticalLayout grupo2 = new VerticalLayout();
-		grupo2.setSpacing(true);
 		grupo2.setPadding(false);
-		grupo2.add(new Span("Control de Stock"));
+		grupo2.add(crearEtiquetaGrupo("Control de Stock"));
 
 		HorizontalLayout stockLayout = new HorizontalLayout();
 		stockLayout.setSpacing(true);
@@ -284,15 +313,13 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 	private VerticalLayout crearPestañaCategorizacion() {
 		VerticalLayout tab = new VerticalLayout();
-		tab.setSpacing(true);
-		tab.setPadding(true);
 		tab.setWidthFull();
+		tab.setPadding(false);
 
 		// Grupo 1: Clasificación
 		VerticalLayout grupo1 = new VerticalLayout();
-		grupo1.setSpacing(true);
 		grupo1.setPadding(false);
-		grupo1.add(new Span("Clasificación"));
+		grupo1.add(crearEtiquetaGrupo("Clasificación"));
 
 		HorizontalLayout clasificacion = new HorizontalLayout();
 		clasificacion.setSpacing(true);
@@ -301,30 +328,31 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 		// Grupo 2: Especificaciones
 		VerticalLayout grupo2 = new VerticalLayout();
-		grupo2.setSpacing(true);
 		grupo2.setPadding(false);
-		grupo2.add(new Span("Especificaciones"));
+		grupo2.add(crearEtiquetaGrupo("Especificaciones"));
 
 		HorizontalLayout especificaciones = new HorizontalLayout();
 		especificaciones.setSpacing(true);
 		especificaciones.add(medida, presentacion, proveedor);
 		grupo2.add(especificaciones);
 
-		tab.add(grupo1, grupo2);
+		// Unidades (pares/talles)
+		Span tituloUnidades = new Span("Pares / Talles - Cantidades");
+		tituloUnidades.getElement().getThemeList().add("badge contrast");
+		unidades.setVisible(false);
+
+		tab.add(grupo1, grupo2, tituloUnidades, unidades);
 		return tab;
 	}
 
 	private VerticalLayout crearPestañaFechasUbicacion() {
 		VerticalLayout tab = new VerticalLayout();
-		tab.setSpacing(true);
-		tab.setPadding(true);
 		tab.setWidthFull();
 
 		// Grupo 1: Fechas
 		VerticalLayout grupo1 = new VerticalLayout();
-		grupo1.setSpacing(true);
 		grupo1.setPadding(false);
-		grupo1.add(new Span("Fechas importantes"));
+		grupo1.add(crearEtiquetaGrupo("Fechas importantes"));
 
 		HorizontalLayout fechasLayout1 = new HorizontalLayout();
 		fechasLayout1.setSpacing(true);
@@ -334,9 +362,8 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 		// Grupo 2: Ubicación
 		VerticalLayout grupo2 = new VerticalLayout();
-		grupo2.setSpacing(true);
 		grupo2.setPadding(false);
-		grupo2.add(new Span("Ubicación en almacén"));
+		grupo2.add(crearEtiquetaGrupo("Ubicación en almacén"));
 
 		HorizontalLayout ubicacionLayout = new HorizontalLayout();
 		ubicacionLayout.setSpacing(true);
@@ -349,59 +376,68 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 	private HorizontalLayout crearPestañaPreciosFinanciero() {
 		HorizontalLayout tab = new HorizontalLayout();
-		tab.setSpacing(true);
-		tab.setPadding(true);
 		tab.setWidthFull();
 
 		// Grupo 1: Precios base
 		VerticalLayout grupo1 = new VerticalLayout();
-		grupo1.setSpacing(true);
 		grupo1.setPadding(false);
-		grupo1.add(new Span("Precios base"));
+		grupo1.add(crearEtiquetaGrupo("Precios base"));
 
 		HorizontalLayout preciosLayout = new HorizontalLayout();
 		preciosLayout.setSpacing(true);
 		preciosLayout.add(precioCosto, margenUtilidad);
 		grupo1.add(preciosLayout);
 
+		HorizontalLayout preciosCalculadosLayout = new HorizontalLayout();
+		preciosCalculadosLayout.setSpacing(true);
+		preciosCalculadosLayout.add(precioConIvaDisplay, precioVentaDisplay);
+		grupo1.add(preciosCalculadosLayout);
+
 		// Grupo 2: Tributación
 		VerticalLayout grupo2 = new VerticalLayout();
-		grupo2.setSpacing(true);
 		grupo2.setPadding(false);
-		grupo2.add(new Span("Tributación"));
+		grupo2.add(crearEtiquetaGrupo("Tributación"));
 		grupo2.add(alicuota);
+		grupo2.add(gravamenDisplay);
 
-		// Grupo 3: Tributación
+		// Grupo 3: Bonificaciones
 		VerticalLayout grupo3 = new VerticalLayout();
-		grupo3.setSpacing(true);
 		grupo3.setPadding(false);
-		grupo3.add(new Span("Gravamen"));
-		grupo3.add(gravamenDisplay);
-
-		// Grupo 4: Bonificaciones
-		VerticalLayout grupo4 = new VerticalLayout();
-		grupo4.setSpacing(true);
-		grupo4.setPadding(false);
-		grupo4.add(new Span("Bonificaciones"));
+		grupo3.add(crearEtiquetaGrupo("Bonificaciones"));
 
 		HorizontalLayout bonificacionLayout = new HorizontalLayout();
 		bonificacionLayout.setSpacing(true);
 		bonificacionLayout.setAlignItems(Alignment.CENTER);
 		bonificacionLayout.add(esBonificado, bonificacion);
-		grupo4.add(bonificacionLayout);
+		grupo3.add(bonificacionLayout);
 
-		tab.add(grupo1, grupo2, grupo3, grupo4);
+		tab.add(grupo1, grupo2, grupo3);
 		return tab;
 	}
 
 	private VerticalLayout crearPestañaEstado() {
 		VerticalLayout tab = new VerticalLayout();
-		tab.setSpacing(true);
-		tab.setPadding(true);
 		tab.setWidthFull();
 
-		tab.add(new Span("Estado del artículo"), estado);
+		VerticalLayout grupo = new VerticalLayout();
+		grupo.setPadding(false);
+		grupo.add(crearEtiquetaGrupo("Estado del artículo"));
+		grupo.add(estado);
+
+		tab.add(grupo);
 		return tab;
+	}
+
+	@Override
+	public void setEntity(Articulo entity) {
+		if (entity != null && entity.getId() != null) {
+			try {
+				entity = articuloUseCase.findById(entity.getId());
+			} catch (Exception e) {
+				System.err.println("Error al recargar artículo ID=" + entity.getId() + ": " + e.getMessage());
+			}
+		}
+		super.setEntity(entity);
 	}
 
 	private void cargarDatosIniciales() {
@@ -429,7 +465,6 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 					.sorted(Comparator.comparing(Presentacion::getDescripcion))
 					.collect(Collectors.toList()));
 			presentacion.setItemLabelGenerator(Presentacion::getDescripcion);
-
 
 			// Cargar proveedores
 			todosLosProveedores = proveedorUseCase.findAll();
@@ -469,10 +504,7 @@ public class ArticuloForm extends AbstractForm<Articulo> {
                 (rubroSeleccionado != null ? rubroSeleccionado.getDescripcion() : "Ninguno"));
 
             if (rubroSeleccionado != null) {
-                // Cargar líneas para este rubro
-                UI.getCurrent().access(() -> {
-                    cargarLineasParaRubroSeleccionado(rubroSeleccionado.getId());
-                });
+                cargarLineasParaRubroSeleccionado(rubroSeleccionado.getId());
             } else {
                 // Si no hay rubro seleccionado, no mostrar líneas
                 linea.setItems(new ArrayList<>());
@@ -497,29 +529,6 @@ public class ArticuloForm extends AbstractForm<Articulo> {
         });
 
 		// Listener para alícuota
-		alicuota.addValueChangeListener(event -> {
-			if (event.getValue() != null) {
-				Alicuota alicuotaSeleccionada = event.getValue();
-				BigDecimal gravamenValue = alicuotaSeleccionada.getGravamen();
-
-				if (gravamenValue != null && gravamenValue.compareTo(BigDecimal.ZERO) > 0) {
-					// Formatear el gravamen como porcentaje (21,50 %)
-					String gravamenFormateado = FormatoUtils.formatPorcentaje(gravamenValue, false);
-					// Extraer solo el número para mostrar (sin el %)
-					String soloNumero = gravamenFormateado.replace(" %", "");
-					gravamenDisplay.setValue(soloNumero);
-					gravamenDisplay.setTooltipText("Gravamen: " + gravamenFormateado);
-				} else {
-					gravamenDisplay.setValue("No aplica");
-					gravamenDisplay.setTooltipText("Esta alícuota no tiene gravamen");
-				}
-			} else {
-				gravamenDisplay.clear();
-				gravamenDisplay.setTooltipText("Seleccione una alícuota para ver el gravamen");
-			}
-		});
-		
-		// Listener para alícuota
         alicuota.addValueChangeListener(event -> {
             if (isUpdating) return;
             
@@ -540,7 +549,32 @@ public class ArticuloForm extends AbstractForm<Articulo> {
                 gravamenDisplay.clear();
                 gravamenDisplay.setTooltipText("Seleccione una alícuota para ver el gravamen");
             }
+			actualizarPreciosCalculados();
         });
+
+		precioCosto.addValueChangeListener(_ -> actualizarPreciosCalculados());
+		margenUtilidad.addValueChangeListener(_ -> actualizarPreciosCalculados());
+
+		// Cuando cambia la presentación, cargar unidades disponibles
+		presentacion.addValueChangeListener(event -> {
+			if (isUpdating) return;
+			Presentacion p = event.getValue();
+			if (p != null && p.getId() != null) {
+				List<Unidad> unidadesDisponibles = unidadUseCase.buscarPorPresentacion(p.getId());
+				unidades.setItems(unidadesDisponibles);
+				unidades.setVisible(true);
+			} else {
+				unidades.setItems(new ArrayList<>());
+				unidades.setVisible(false);
+			}
+		});
+
+		// Auto-completar stock según pares/talles seleccionados
+		unidades.addValueChangeListener(value -> {
+			if (isUpdating) return;
+			int count = value.stream().mapToInt(UnidadConCantidad::getCantidad).sum();
+			stock.setValue(count);
+		});
 
 	}
 	
@@ -589,7 +623,6 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 		.bind(Articulo::getCodigo_interno, Articulo::setCodigo_interno);
 
 		binder.forField(codigoBarra)
-		.asRequired("El Código de Barra es Obligatorio")
 		.bind(Articulo::getCodigo_barra, Articulo::setCodigo_barra);
 
 		binder.forField(descripcion)
@@ -601,11 +634,9 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 		.bind(Articulo::getStock, Articulo::setStock);
 
 		binder.forField(stockMinimo)
-		.asRequired("La cantidad mínima en Stock es Obligatoria")
 		.bind(Articulo::getStock_minimo, Articulo::setStock_minimo);
 
 		binder.forField(stockMaximo)
-		.asRequired("La cantidad máxima en Stock es Obligatoria")
 		.bind(Articulo::getStock_maximo, Articulo::setStock_maximo);
 
 		// VALIDACIÓN PARA LÍNEA Y RUBRO
@@ -829,122 +860,115 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 	}
 
 	private void limpiarCamposSincrono() {
-		// Limpiar campos rápidamente sin disparar listeners
-		UI.getCurrent().access(() -> {
-			codigoInterno.clear();
-			codigoBarra.clear();
-			nroLote.clear();
-			descripcion.clear();
-			stock.clear();
-			stockMinimo.clear();
-			stockMaximo.clear();
-			rubro.clear();
-			linea.clear();
-			medida.clear();
-			presentacion.clear();
-			proveedor.clear();
-			fechaCompra.clear();
-			fechaVencimiento.clear();
-			fechaBaja.clear();
-			fechaActPrecios.clear();
-			fila.clear();
-			columna.clear();
-			precioCosto.clear();
-			margenUtilidad.clear();
-			alicuota.clear();
-			gravamenDisplay.clear();
-			esBonificado.setValue(false);
-			bonificacion.clear();
-			estado.clear();
+		codigoInterno.clear();
+		codigoBarra.clear();
+		nroLote.clear();
+		descripcion.clear();
+		stock.clear();
+		stockMinimo.setValue(0);
+		stockMaximo.setValue(0);
+		rubro.clear();
+		linea.clear();
+		medida.clear();
+		presentacion.clear();
+		proveedor.clear();
+		fechaCompra.clear();
+		fechaVencimiento.clear();
+		fechaBaja.clear();
+		fechaActPrecios.clear();
+		fila.clear();
+		columna.clear();
+		precioCosto.clear();
+		margenUtilidad.clear();
+		alicuota.clear();
+		gravamenDisplay.clear();
+		esBonificado.setValue(false);
+		bonificacion.clear();
+		estado.clear();
 
-			// Resetear estado de combos dependientes
-			linea.setItems(new ArrayList<>());
-			linea.setEnabled(false);
-			linea.setPlaceholder("Primero seleccione un rubro");
-		});
+		linea.setItems(new ArrayList<>());
+		linea.setEnabled(false);
+		linea.setPlaceholder("Primero seleccione un rubro");
+
+		unidades.setItems(new ArrayList<>());
+		unidades.setVisible(false);
 	}
 
 	private void cargarCamposBasicos(Articulo entity, long loadId) {
-		UI.getCurrent().access(() -> {
-            // Verificar que todavía estamos en la misma carga
-            if (currentLoadId != loadId) return;
+        if (currentLoadId != loadId) return;
 
-            codigoInterno.setValue(entity.getCodigo_interno() != null ? entity.getCodigo_interno() : "");
-            codigoBarra.setValue(entity.getCodigo_barra() != null ? entity.getCodigo_barra() : "");
-            nroLote.setValue(entity.getNrolote() != null ? entity.getNrolote() : "");
-            descripcion.setValue(entity.getDescripcion() != null ? entity.getDescripcion() : "");
+        codigoInterno.setValue(entity.getCodigo_interno() != null ? entity.getCodigo_interno() : "");
+        codigoBarra.setValue(entity.getCodigo_barra() != null ? entity.getCodigo_barra() : "");
+        nroLote.setValue(entity.getNrolote() != null ? entity.getNrolote() : "");
+        descripcion.setValue(entity.getDescripcion() != null ? entity.getDescripcion() : "");
 
-            stock.setValue(entity.getStock() != null ? entity.getStock().intValue() : null);
-            stockMinimo.setValue(entity.getStock_minimo() != null ? entity.getStock_minimo().intValue() : null);
-            stockMaximo.setValue(entity.getStock_maximo() != null ? entity.getStock_maximo().intValue() : null);
+        stock.setValue(entity.getStock() != null ? entity.getStock().intValue() : null);
+        stockMinimo.setValue(entity.getStock_minimo() != null ? entity.getStock_minimo().intValue() : null);
+        stockMaximo.setValue(entity.getStock_maximo() != null ? entity.getStock_maximo().intValue() : null);
 
-            fila.setValue(entity.getFila() != null ? entity.getFila().intValue() : null);
-            columna.setValue(entity.getColumna() != null ? entity.getColumna().intValue() : null);
+        fila.setValue(entity.getFila() != null ? entity.getFila().intValue() : null);
+        columna.setValue(entity.getColumna() != null ? entity.getColumna().intValue() : null);
 
-            fechaCompra.setValue(entity.getFechaCompra());
-            fechaVencimiento.setValue(entity.getFechaVencimiento());
-            fechaBaja.setValue(entity.getFechaBaja());
-            fechaActPrecios.setValue(entity.getFechaActualizPrecios());
+        fechaCompra.setValue(entity.getFechaCompra());
+        fechaVencimiento.setValue(entity.getFechaVencimiento());
+        fechaBaja.setValue(entity.getFechaBaja());
+        fechaActPrecios.setValue(entity.getFechaActualizPrecios());
 
-            estado.setValue(entity.getEstado());
-        });
+        estado.setValue(entity.getEstado());
 	}
 
 	private void cargarCamposDependientes(Articulo entity, long loadId) {
-		 UI.getCurrent().access(() -> {
-		        // Verificar que todavía estamos en la misma carga
-		        if (currentLoadId != loadId) return;
+        if (currentLoadId != loadId) return;
 
-		        // Cargar campos simples primero
-		        if (entity.getPrecioCosto() != null) {
-		            BigDecimal precioRedondeado = entity.getPrecioCosto().setScale(2, RoundingMode.HALF_UP);
-		            precioCosto.setValue(precioRedondeado);
-		            System.out.println("Precio costo establecido: " + FormatoUtils.formatPesos(precioRedondeado));
-		        }
+        if (entity.getPrecioCosto() != null) {
+            BigDecimal precioRedondeado = entity.getPrecioCosto().setScale(2, RoundingMode.HALF_UP);
+            precioCosto.setValue(precioRedondeado);
+        }
 
-		        if (entity.getMargenUtilidad() != null) {
-		            BigDecimal margenRedondeado = entity.getMargenUtilidad().setScale(2, RoundingMode.HALF_UP);
-		            margenUtilidad.setValue(margenRedondeado);
-		            System.out.println("Margen establecido: " + FormatoUtils.formatPesos(margenRedondeado));
-		        }
+        if (entity.getMargenUtilidad() != null) {
+            BigDecimal margenRedondeado = entity.getMargenUtilidad().setScale(2, RoundingMode.HALF_UP);
+            margenUtilidad.setValue(margenRedondeado);
+        }
 
-		     // Alícuota y gravamen
-		        if (entity.getAlicuota() != null) {
-		            alicuota.setValue(entity.getAlicuota());
-		            BigDecimal gravamenValue = entity.getAlicuota().getGravamen();
-		            if (gravamenValue != null && gravamenValue.compareTo(BigDecimal.ZERO) > 0) {
-		                String gravamenFormateado = FormatoUtils.formatPorcentaje(gravamenValue, false);
-		                String soloNumero = gravamenFormateado.replace(" %", "");
-		                gravamenDisplay.setValue(soloNumero);
-		                gravamenDisplay.setTooltipText("Gravamen: " + gravamenFormateado);
-		            } else {
-		                gravamenDisplay.setValue("No aplica");
-		                gravamenDisplay.setTooltipText("Esta alícuota no tiene gravamen");
-		            }
-		            System.out.println("Alícuota establecida: " + entity.getAlicuota().getDescripcion());
-		        }
+        if (entity.getAlicuota() != null) {
+            alicuota.setValue(entity.getAlicuota());
+            BigDecimal gravamenValue = entity.getAlicuota().getGravamen();
+            if (gravamenValue != null && gravamenValue.compareTo(BigDecimal.ZERO) > 0) {
+                String gravamenFormateado = FormatoUtils.formatPorcentaje(gravamenValue, false);
+                String soloNumero = gravamenFormateado.replace(" %", "");
+                gravamenDisplay.setValue(soloNumero);
+                gravamenDisplay.setTooltipText("Gravamen: " + gravamenFormateado);
+            } else {
+                gravamenDisplay.setValue("No aplica");
+                gravamenDisplay.setTooltipText("Esta alícuota no tiene gravamen");
+            }
+        }
 
-		     // Bonificación
-		        esBonificado.setValue(entity.getEsBonificado());
-		        if (entity.getBonificacion() != null) {
-		            BigDecimal bonificacionRedondeada = entity.getBonificacion().setScale(2, RoundingMode.HALF_UP);
-		            bonificacion.setValue(bonificacionRedondeada);
-		            bonificacion.setReadOnly(!Boolean.TRUE.equals(entity.getEsBonificado()));
-		            System.out.println("Bonificación establecida: " + 
-		                FormatoUtils.formatPorcentaje(bonificacionRedondeada, false));
-		        } else {
-		            bonificacion.setReadOnly(true);
-		        }
+        esBonificado.setValue(entity.getEsBonificado());
+        if (entity.getBonificacion() != null) {
+            BigDecimal bonificacionRedondeada = entity.getBonificacion().setScale(2, RoundingMode.HALF_UP);
+            bonificacion.setValue(bonificacionRedondeada);
+            bonificacion.setReadOnly(!Boolean.TRUE.equals(entity.getEsBonificado()));
+        } else {
+            bonificacion.setReadOnly(true);
+        }
 
-		        // Combos simples
-		        medida.setValue(entity.getMedida());
-		        presentacion.setValue(entity.getPresentacion());
-		        proveedor.setValue(entity.getProveedor());
+        medida.setValue(entity.getMedida());
+        proveedor.setValue(entity.getProveedor());
 
-		        // Rubro y línea (último para evitar conflictos)
-		        // Este método debe llamar a cargarRubroYLinea, NO a cargarLineasPorRubroSincrono directamente
-		        cargarRubroYLinea(entity, loadId);
-		});
+        if (entity.getPresentacion() != null && entity.getPresentacion().getId() != null) {
+            List<Unidad> unidadesDisponibles = unidadUseCase.buscarPorPresentacion(
+                entity.getPresentacion().getId());
+            unidades.setItems(unidadesDisponibles);
+            unidades.setVisible(true);
+            if (entity.getUnidades() != null && !entity.getUnidades().isEmpty()) {
+                unidades.setValue(new java.util.LinkedHashSet<>(entity.getUnidades()));
+            }
+        }
+
+        presentacion.setValue(entity.getPresentacion());
+
+        cargarRubroYLinea(entity, loadId);
 	}
 
 	private void cargarRubroYLinea(Articulo entity, long loadId) {
@@ -993,31 +1017,24 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 	            System.out.println("📊 Líneas cargadas: " + lineasDelRubro.size());
 	        }
 
-	        // Actualizar UI
-	        UI.getCurrent().access(() -> {
-	            if (currentLoadId != loadId) {
-	                System.out.println("⚠️ Carga de líneas cancelada en UI - LoadId inválido");
-	                return;
-	            }
+	        if (currentLoadId != loadId) {
+	            System.out.println("⚠️ Carga de líneas cancelada en UI - LoadId inválido");
+	            return;
+	        }
 
-	            linea.setItems(lineasDelRubro);
-	            linea.setEnabled(true);
-	            linea.setPlaceholder("Seleccione una línea (" + lineasDelRubro.size() + " disponibles)");
-	            
-	            
-	            // Establecer la línea objetivo
-	            linea.setValue(lineaObjetivo);
-	            
-	            System.out.println("✅ Líneas establecidas para artículo (LoadId: " + loadId + ")");
-	        });
+	        linea.setItems(lineasDelRubro);
+	        linea.setEnabled(true);
+	        linea.setPlaceholder("Seleccione una línea (" + lineasDelRubro.size() + " disponibles)");
+	        
+	        linea.setValue(lineaObjetivo);
+	        
+	        System.out.println("✅ Líneas establecidas para artículo (LoadId: " + loadId + ")");
 
 	    } catch (Exception e) {
 	        System.err.println("❌ Error al cargar líneas: " + e.getMessage());
-	        UI.getCurrent().access(() -> {
-	            if (currentLoadId != loadId) return;
-	            linea.setItems(new ArrayList<>());
-	            linea.setPlaceholder("Error al cargar líneas");
-	        });
+	        if (currentLoadId != loadId) return;
+	        linea.setItems(new ArrayList<>());
+	        linea.setPlaceholder("Error al cargar líneas");
 	    }
 	}
 
@@ -1050,9 +1067,14 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 			// Resetear tooltip del gravamen
 			gravamenDisplay.setTooltipText("Seleccione una alícuota para ver el gravamen");
+
+			unidades.setItems(new ArrayList<>());
+			unidades.setVisible(false);
 		});
 
-		System.out.println("🧹 Formulario limpiado");
+		stockMinimo.setValue(0);
+		stockMaximo.setValue(0);
+
 		binder.setBean(current);
 	}
 
@@ -1061,15 +1083,36 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 		System.out.println("=== ArticuloForm.updateCurrentFromBinder() ===");
 
-		// Solo actualizar campos NO bindeados aquí
-		// Por ejemplo, si tienes algún campo que no está en el binder:
-		// current.setCampoNoBindeado(campoNoBindeado.getValue());
-
-		// NOTA: No necesitas validar rubro y línea aquí porque
-		// eso ya se hizo en el binder mediante validadores
+		if (current != null) {
+			current.setUnidades(new ArrayList<>(unidades.getValue()));
+		}
 
 	}
 	
+	private static Span crearEtiquetaGrupo(String texto) {
+		Span etiqueta = new Span(texto);
+		etiqueta.getElement().getThemeList().add("badge contrast");
+		return etiqueta;
+	}
+
+	private void actualizarPreciosCalculados() {
+		BigDecimal costo = precioCosto.getValue();
+		BigDecimal margen = margenUtilidad.getValue();
+		Alicuota alicuotaSel = alicuota.getValue();
+		if (costo == null) costo = BigDecimal.ZERO;
+		if (margen == null) margen = BigDecimal.ZERO;
+		BigDecimal gravamen = BigDecimal.ZERO;
+		if (alicuotaSel != null && alicuotaSel.getGravamen() != null) {
+			gravamen = alicuotaSel.getGravamen();
+		}
+		BigDecimal factorIva = BigDecimal.ONE.add(gravamen.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP));
+		BigDecimal conIva = costo.multiply(factorIva).setScale(2, RoundingMode.HALF_UP);
+		BigDecimal venta = conIva.multiply(BigDecimal.ONE.add(margen.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP)))
+				.setScale(2, RoundingMode.HALF_UP);
+		precioConIvaDisplay.setValue(conIva);
+		precioVentaDisplay.setValue(venta);
+	}
+
 	private void configurarBonificacion() {
 		// Configurar estado inicial
         bonificacion.setReadOnly(true);

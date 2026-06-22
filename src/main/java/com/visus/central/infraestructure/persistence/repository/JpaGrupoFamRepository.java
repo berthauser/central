@@ -3,7 +3,9 @@ package com.visus.central.infraestructure.persistence.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import com.visus.central.domain.model.ClienteComboDTO;
 import com.visus.central.infraestructure.persistence.entity.JpaGrupoFamEntity;
 
 public interface JpaGrupoFamRepository extends JpaRepository<JpaGrupoFamEntity, Integer> {
@@ -23,6 +25,11 @@ public interface JpaGrupoFamRepository extends JpaRepository<JpaGrupoFamEntity, 
     // → SELECT COUNT(*) FROM grupofam WHERE numero = '12345678' > 0
     boolean existsByNumero(Integer numero);
     
+ // Proyección para familiares (sin cargar el cliente asociado)
+    @Query("SELECT new com.visus.central.domain.model.ClienteComboDTO(gf.id, gf.nombre, 'FAMILIAR', gf.cliente.id, gf.id) " +
+           "FROM JpaGrupoFamEntity gf")
+    List<ClienteComboDTO> findFamiliaresParaCombo();
+    
     // Búsqueda por estado
     List<JpaGrupoFamEntity> findByEstado(String estado);
     
@@ -38,6 +45,5 @@ public interface JpaGrupoFamRepository extends JpaRepository<JpaGrupoFamEntity, 
     
     // Búsqueda por número
     List<JpaGrupoFamEntity> findByNumero(Long numero);
-    
 
 }

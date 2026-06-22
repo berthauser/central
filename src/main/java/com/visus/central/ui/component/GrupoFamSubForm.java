@@ -102,7 +102,6 @@ public class GrupoFamSubForm extends VerticalLayout {
         
         dialog.setHeaderTitle(grupoFamExistente == null ? "Agregar Familiar" : "Editar Familiar");
         dialog.setDraggable(true);
-        dialog.setModal(true);
         dialog.setCloseOnEsc(true);
         dialog.setCloseOnOutsideClick(false);
         

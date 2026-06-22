@@ -2,14 +2,22 @@ package com.visus.central;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
+import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.shared.ui.Transport;
 import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
 
-@EnableTransactionManagement
-@SpringBootApplication(scanBasePackages = "com.visus.central")
 @Theme("visus")
+@StyleSheet(Lumo.UTILITY_STYLESHEET)
+@EnableTransactionManagement
+@EnableScheduling
+@Push(transport = Transport.WEBSOCKET)
+@SpringBootApplication(scanBasePackages = "com.visus.central")
 public class CentralApplication implements AppShellConfigurator {
 
 	private static final long serialVersionUID = 1L;

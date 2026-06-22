@@ -7,8 +7,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
@@ -18,16 +16,13 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
-import com.vaadin.flow.server.VaadinServletResponse;
 import com.vaadin.flow.server.VaadinSession;
 import com.visus.central.domain.port.in.UserUseCase;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Route("login")
 @PageTitle("Iniciar sesión")
@@ -50,12 +45,17 @@ public class LoginView extends VerticalLayout {
 		setHeightFull();
 
 		TextField usernameField = new TextField("Usuario");
-		usernameField.setPlaceholder("Ingrese usuario");
+		usernameField.setPlaceholder("Ingrese Usuario");
 		usernameField.focus();
 		PasswordField passwordField = new PasswordField("Contraseña");
-		passwordField.setPlaceholder("Ingrese contraseña");
+		passwordField.setPlaceholder("Ingrese Contraseña");
 		Button loginButton = new Button("Ingresar");
-		
+
+		usernameField.addKeyPressListener(Key.ENTER, _ -> passwordField.focus());
+		passwordField.addKeyPressListener(Key.ENTER, _ -> loginButton.focus());
+		loginButton.getElement().addEventListener("keydown", _ -> loginButton.click())
+				.setFilter("event.key === 'Enter'");
+
 		usernameField.addClassName("campo-estilo-imagen");
 		passwordField.addClassName("campo-estilo-imagen");
 		loginButton.addClassName("btn-login");
@@ -96,38 +96,36 @@ public class LoginView extends VerticalLayout {
 					);
 			
 			if (success) {
-				
-				 // Obtener el rol real del usuario
-		        String role = userService.getRoleFor(usernameField.getValue()); // "ROLE_ADMIN", "ROLE_USER", etc.
+			    String role = userService.getRoleFor(usernameField.getValue());
+			    if (!role.startsWith("ROLE_")) {
+			        role = "ROLE_" + role;
+			    }
 
-		        Authentication auth = new UsernamePasswordAuthenticationToken(
-		            usernameField.getValue(),
-		            null,
-		            List.of(new SimpleGrantedAuthority(role))
-		        );
+			    Authentication auth = new UsernamePasswordAuthenticationToken(
+			        usernameField.getValue(), null,
+			        List.of(new SimpleGrantedAuthority(role))
+			    );
 
-		        // 🔐 Persistencia manual del contexto de seguridad
-		        SecurityContext context = SecurityContextHolder.createEmptyContext();
-		        context.setAuthentication(auth);
-		        SecurityContextHolder.setContext(context);
+			    SecurityContext context = SecurityContextHolder.createEmptyContext();
+			    context.setAuthentication(auth);
+			    SecurityContextHolder.setContext(context);
 
-		        HttpServletRequest request = ((VaadinServletRequest) VaadinService.getCurrentRequest()).getHttpServletRequest();
-		        HttpServletResponse response = ((VaadinServletResponse) VaadinService.getCurrentResponse()).getHttpServletResponse();
-		        new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+			    // Persistir en sesión HTTP manualmente
+			    VaadinServletRequest request = (VaadinServletRequest) VaadinService.getCurrentRequest();
+			    if (request != null) {
+			        request.getHttpServletRequest().getSession().setAttribute(
+			            "SPRING_SECURITY_CONTEXT", context);
+			    }
 
-		        // 🔐 También guardás en sesión Vaadin si lo necesitás para componentes visuales
-		        VaadinSession session = VaadinSession.getCurrent();
-		        session.setAttribute("username", usernameField.getValue());
-		        session.setAttribute("role", role);
+			    // Guardar en sesión Vaadin
+			    VaadinSession session = VaadinSession.getCurrent();
+			    session.setAttribute("username", usernameField.getValue());
+			    session.setAttribute("role", role);
 
-		        // 🔀 Redirección
-		        UI.getCurrent().navigate("/");
-
-				
-				
+			    UI.getCurrent().navigate("");
 			} else {
-				feedback.setText("Credenciales inválidas");
-				feedback.addClassName("error");
+			    feedback.setText("Credenciales inválidas");
+			    feedback.addClassName("error");
 			}
 		});
 		
@@ -149,7 +147,7 @@ public class LoginView extends VerticalLayout {
 	}
 	
 	private void resetFeedback(Span feedback) {
-	    feedback.setText("Sin credenciales");
+	    feedback.setText("Sin Credenciales");
 	    feedback.removeClassName("error");
 	}
 }

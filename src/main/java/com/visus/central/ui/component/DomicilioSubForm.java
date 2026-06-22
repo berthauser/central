@@ -124,7 +124,6 @@ public class DomicilioSubForm extends VerticalLayout {
         
         dialog.setHeaderTitle(domicilioExistente == null ? "Agregar Domicilio" : "Editar Domicilio");
         dialog.setDraggable(true);
-        dialog.setModal(true);
         dialog.setCloseOnEsc(true);
         dialog.setCloseOnOutsideClick(false);
         

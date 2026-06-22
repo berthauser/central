@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import com.visus.central.domain.model.ClienteComboDTO;
 import com.visus.central.domain.model.GrupoFam;
 import com.visus.central.domain.port.out.GrupoFamRepository;
 import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity;
@@ -29,7 +30,7 @@ public class PostgresGrupoFamAdapter implements GrupoFamRepository {
             .map(this::toModel)
             .collect(Collectors.toList());
     }
-
+    
     @Override
     public Optional<GrupoFam> findById(Integer id) {
         return jpaRepository.findById(id).map(this::toModel);
@@ -55,6 +56,7 @@ public class PostgresGrupoFamAdapter implements GrupoFamRepository {
             .collect(Collectors.toList());
     }
 
+    
     @Override
     public List<GrupoFam> findByClienteId(Integer idCliente) {
         return jpaRepository.findByClienteId(idCliente).stream()
@@ -95,6 +97,12 @@ public class PostgresGrupoFamAdapter implements GrupoFamRepository {
         entity.setParentesco(model.getParentesco());
         entity.setTipoDocumento(model.getDocumento());
         return entity;
+    }
+    
+    
+    @Override
+    public List<ClienteComboDTO> findFamiliaresParaCombo() {
+        return jpaRepository.findFamiliaresParaCombo();
     }
 
 }

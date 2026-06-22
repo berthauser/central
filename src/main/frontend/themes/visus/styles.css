@@ -428,6 +428,33 @@ vaadin-grid-cell-content .badge.contrast {
     transition: opacity 300ms ease-in-out;
 }
 
+/* Estilos para botones de incremento/decremento en tema oscuro */
+.custom-integer-field::part(increase-button),
+.custom-integer-field::part(decrease-button) {
+    background-color: #3a3a3a !important;
+    color: #ffffff !important;
+    border: 1px solid #666 !important;
+    border-radius: 4px !important;
+    width: 24px !important;
+    height: 24px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+}
+
+.custom-integer-field::part(increase-button):hover,
+.custom-integer-field::part(decrease-button):hover {
+    background-color: #555 !important;
+    border-color: #888 !important;
+}
+
+.custom-integer-field::part(increase-button):active,
+.custom-integer-field::part(decrease-button):active {
+    background-color: #777 !important;
+}
+
+
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 600px) {
   .direccion-responsive {

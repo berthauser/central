@@ -17,7 +17,6 @@ import com.visus.central.infraestructure.persistence.entity.JpaPresentacionEntit
 import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity;
 import com.visus.central.infraestructure.persistence.entity.JpaRubroEntity;
 
-
 @Component
 public class JpaArticuloMapper {
 	

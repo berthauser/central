@@ -1,25 +1,29 @@
-import 'construct-style-sheets-polyfill';
 import { injectGlobalCss } from 'Frontend/generated/jar-resources/theme-util.js';
 import { webcomponentGlobalCssInjector } from 'Frontend/generated/jar-resources/theme-util.js';
 import './theme-visus.components.generated.js';
 let needsReloadOnChanges = false;
-import { color } from '@vaadin/vaadin-lumo-styles/color.js';
-import { typography } from '@vaadin/vaadin-lumo-styles/typography.js';
-import { spacing } from '@vaadin/vaadin-lumo-styles/spacing.js';
-import { style } from '@vaadin/vaadin-lumo-styles/style.js';
+import stylesCss from 'themes/visus/styles.css?inline';
 
   let themeRemovers = new WeakMap();
   let targets = [];
+  const fontFaceRegex = /(@font-face\s*{[\s\S]*?})/g;
 
   export const applyTheme = (target) => {
     const removers = [];
     if (target !== document) {
-      removers.push(injectGlobalCss(color.cssText, '', target, true));
-removers.push(injectGlobalCss(typography.cssText, '', target, true));
-removers.push(injectGlobalCss(spacing.cssText, '', target, true));
-removers.push(injectGlobalCss(style.cssText, '', target, true));
-
+      removers.push(injectGlobalCss(stylesCss.toString(), '', target));
+    
       
+        webcomponentGlobalCssInjector((css) => {
+          removers.push(injectGlobalCss(css, '', target));
+          if(fontFaceRegex.test(css)) {
+            const fontFaces = Array.from(css.match(fontFaceRegex));
+            fontFaces.forEach(fontFace => {
+              removers.push(injectGlobalCss(fontFace, '', document));
+            });
+          }
+        });
+        
     }
     
     

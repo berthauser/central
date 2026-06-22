@@ -22,7 +22,7 @@ public class JpaVendedorMapper {
         return model;
     }
 
-    public JpaVendedorEntity toDomain(Vendedor model) {
+    public JpaVendedorEntity toEntity(Vendedor model) {
         if (model == null) return null;
 
         JpaVendedorEntity entity = new JpaVendedorEntity();
