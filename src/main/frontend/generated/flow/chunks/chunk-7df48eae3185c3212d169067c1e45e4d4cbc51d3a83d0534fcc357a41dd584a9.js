@@ -1,0 +1,1 @@
+import '@vaadin/vertical-layout/src/vaadin-vertical-layout.js';

@@ -1,0 +1,362 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="resumenCuenta" language="java" columnCount="1" pageWidth="595" pageHeight="842" columnWidth="531" leftMargin="36" rightMargin="28" topMargin="28" bottomMargin="48" uuid="1b90d2fa-f5df-436f-b745-a5c3b455b4e4">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#B5B5B5">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<dataset name="VencimientosDataset" uuid="ddb8ad96-4665-4c2d-b061-de418d4b9875">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="BeanCollectionDS"/>
+		<query language="sql"><![CDATA[]]></query>
+		<field name="numeroCuota" class="java.lang.Short"/>
+		<field name="fechaVencimiento" class="java.util.Date"/>
+		<field name="montoCuota" class="java.math.BigDecimal"/>
+		<field name="saldoCuota" class="java.math.BigDecimal"/>
+		<field name="estadoCuota" class="java.lang.String"/>
+	</dataset>
+	<dataset name="AplicacionesDataset" uuid="ed5cd759-5f95-450a-b57f-59ef75c9613b">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<query language="sql"><![CDATA[]]></query>
+		<field name="fechaPago" class="java.util.Date"/>
+		<field name="montoPagado" class="java.math.BigDecimal"/>
+		<field name="formaPago" class="java.lang.String"/>
+		<field name="usuarioGestion" class="java.lang.String"/>
+	</dataset>
+	<parameter name="fechaEmision" forPrompting="false" class="java.util.Date"/>
+	<parameter name="fechaVencimiento" forPrompting="false" class="java.util.Date"/>
+	<parameter name="montoOriginal" forPrompting="false" class="java.math.BigDecimal"/>
+	<parameter name="saldoPendiente" forPrompting="false" class="java.math.BigDecimal"/>
+	<parameter name="estadoCuenta" forPrompting="false" class="java.lang.String"/>
+	<parameter name="coeficiente" forPrompting="false" class="java.math.BigDecimal"/>
+	<parameter name="nombreCliente" forPrompting="false" class="java.lang.String"/>
+	<parameter name="domicilioCliente" forPrompting="false" class="java.lang.String"/>
+	<parameter name="documentoCliente" forPrompting="false" class="java.lang.String"/>
+	<parameter name="telefonoCliente" forPrompting="false" class="java.lang.String"/>
+	<parameter name="fechaReporte" forPrompting="false" class="java.util.Date"/>
+	<parameter name="totalPagado" forPrompting="false" class="java.math.BigDecimal"/>
+	<parameter name="vencimientosDataSource" forPrompting="false" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="aplicacionesDataSource" forPrompting="false" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<query language="sql"><![CDATA[]]></query>
+	<field name="numeroCuota" class="java.lang.Integer"/>
+	<field name="fechaVencimiento" class="java.util.Date"/>
+	<field name="montoCuota" class="java.math.BigDecimal"/>
+	<field name="saldoCuota" class="java.math.BigDecimal"/>
+	<field name="estadoCuota" class="java.lang.String"/>
+	<field name="fechaPago" class="java.util.Date"/>
+	<field name="montoPagado" class="java.math.BigDecimal"/>
+	<field name="formaPago" class="java.lang.String"/>
+	<field name="usuarioGestion" class="java.lang.String"/>
+	<background splitType="Stretch"/>
+	<title height="71" splitType="Stretch">
+		<element kind="staticText" uuid="c445ebd6-1623-43d3-ad61-2a62eed3cb9c" x="2" y="23" width="78" height="19">
+			<text><![CDATA[Fecha Reporte: ]]></text>
+		</element>
+		<element kind="staticText" uuid="f78df5e2-23c2-478a-9ba7-caca97c4d54b" x="2" y="48" width="41" height="19">
+			<text><![CDATA[Estado:]]></text>
+		</element>
+		<element kind="textField" uuid="b7fbf5ca-120d-47ca-9f67-76116a70a9a6" x="86" y="23" width="100" height="19">
+			<expression><![CDATA[$P{fechaReporte}]]></expression>
+		</element>
+		<element kind="textField" uuid="47f58029-c5a4-4fab-b553-c6e8dcf05219" x="62" y="48" width="100" height="19">
+			<expression><![CDATA[$P{estadoCuenta}]]></expression>
+		</element>
+		<element kind="line" uuid="934645f5-6f41-4aa2-a33a-ee59c5fc797b" x="0" y="70" width="555" height="1"/>
+		<element kind="staticText" uuid="081fe580-4c06-47e2-9918-f4cf440edade" x="0" y="0" width="555" height="20" fontName="Arial" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[RESUMEN DE CUENTA CORRIENTE]]></text>
+		</element>
+	</title>
+	<pageHeader height="151" splitType="Stretch">
+		<element kind="staticText" uuid="eac5d422-d6f0-4101-9df5-ae8a3bc8a282" x="0" y="0" width="555" height="20" fontName="Arial" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[DATOS DEL CLIENTE]]></text>
+		</element>
+		<element kind="staticText" uuid="23f81dd8-24a9-4439-b80f-08c2d893f0c9" x="0" y="20" width="50" height="19">
+			<text><![CDATA[Nombre:]]></text>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="8c20a097-f74c-4e44-85c6-ae2dcbcb9d9b" x="0" y="42" width="60" height="19">
+			<text><![CDATA[Documento:]]></text>
+		</element>
+		<element kind="staticText" uuid="4354d1ff-3c5e-46f5-ae6d-6202d9e3476c" x="0" y="65" width="60" height="17">
+			<text><![CDATA[Domicilio:]]></text>
+		</element>
+		<element kind="staticText" uuid="69525438-5415-4559-a396-1591be980339" x="174" y="43" width="46" height="17">
+			<text><![CDATA[Teléfono:]]></text>
+		</element>
+		<element kind="line" uuid="c11d15c4-15a4-466c-ba6b-8564b25ea525" x="0" y="84" width="555" height="1"/>
+		<element kind="staticText" uuid="2244de65-ef52-4795-8436-26e6a13daaef" x="0" y="85" width="555" height="20" fontName="Arial" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[DETALLES DE LA CUENTA]]></text>
+		</element>
+		<element kind="staticText" uuid="91430da7-b232-48ec-9837-bc9827c48e1d" x="0" y="105" width="80" height="19">
+			<text><![CDATA[Fecha Emisión: ]]></text>
+		</element>
+		<element kind="staticText" uuid="9b075e8b-9290-430d-8ddc-430610545a2e" x="0" y="129" width="80" height="19">
+			<text><![CDATA[Monto Original:]]></text>
+		</element>
+		<element kind="staticText" uuid="cd016669-8ce9-4727-a681-54849ce29ea6" x="240" y="105" width="100" height="19">
+			<text><![CDATA[Fecha Vencimiento:]]></text>
+		</element>
+		<element kind="staticText" uuid="ca36b494-407e-4d43-8cf6-f7864778c4f0" x="240" y="129" width="60" height="19">
+			<text><![CDATA[Coeficiente:]]></text>
+		</element>
+		<element kind="textField" uuid="afecb960-32d7-4501-83ee-0e80c2670b38" x="53" y="20" width="370" height="19">
+			<expression><![CDATA[$P{nombreCliente}]]></expression>
+		</element>
+		<element kind="textField" uuid="02a80136-a48e-41b3-8347-38678f1d3650" x="64" y="42" width="100" height="19">
+			<expression><![CDATA[$P{documentoCliente}]]></expression>
+		</element>
+		<element kind="textField" uuid="81d983cd-ae92-4b7e-9a60-a26bf1f8c542" x="64" y="65" width="359" height="17">
+			<expression><![CDATA[$P{domicilioCliente}]]></expression>
+		</element>
+		<element kind="textField" uuid="6decbc28-2b8f-48b2-886f-c27fee0b946a" x="225" y="43" width="183" height="19">
+			<expression><![CDATA[$P{telefonoCliente}]]></expression>
+		</element>
+		<element kind="textField" uuid="ebca0d50-ae1c-43d9-8ef6-3752d0e60447" x="80" y="105" width="120" height="19">
+			<expression><![CDATA[$P{fechaEmision}]]></expression>
+		</element>
+		<element kind="textField" uuid="14bcdedb-19e9-4a42-a141-83b7b98b52b2" x="80" y="129" width="120" height="19">
+			<expression><![CDATA[$P{montoOriginal}]]></expression>
+		</element>
+		<element kind="textField" uuid="002a8b3e-a56f-4a56-b666-edd3e5ef9ad8" x="306" y="129" width="80" height="19">
+			<expression><![CDATA[$P{coeficiente}]]></expression>
+		</element>
+		<element kind="textField" uuid="723aec96-30fb-4c96-9f92-f39ec908308c" x="340" y="105" width="149" height="19">
+			<expression><![CDATA[$P{fechaVencimiento} == null ? "No Aplica" : new SimpleDateFormat("dd/MM/yyyy").format($P{fechaVencimiento})]]></expression>
+		</element>
+	</pageHeader>
+	<detail>
+		<band height="92" splitType="Stretch">
+			<element kind="component" uuid="a82ad0f3-3925-4e8d-80e2-4155efa6cd68" positionType="Float" stretchType="ContainerHeight" x="0" y="2" width="528" height="90">
+				<component kind="table">
+					<datasetRun uuid="c888cc1d-29a8-48a3-b48e-cedcac9b2b18" subDataset="VencimientosDataset">
+						<dataSourceExpression><![CDATA[$P{vencimientosDataSource}]]></dataSourceExpression>
+					</datasetRun>
+					<tableFooter>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
+					</tableFooter>
+					<column kind="group" uuid="76dfbbb8-4bdc-4f7c-a0cf-5af428c75854" width="555" weight="20">
+						<tableHeader height="20" rowSpan="1" style="Table_TH">
+							<element kind="staticText" uuid="1bbe4c27-7275-4c77-85eb-01c5e46b0825" x="0" y="0" width="555" height="20" bold="true" hTextAlign="Center" vTextAlign="Middle">
+								<text><![CDATA[VENCIMIENTOS]]></text>
+								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+								<box>
+									<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+									<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+									<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+									<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</element>
+						</tableHeader>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [5]"/>
+						<column kind="single" uuid="01f25596-b281-47b4-b56d-f8b95f9598d9" width="57">
+							<columnHeader height="20" rowSpan="1" style="Table_CH">
+								<element kind="staticText" uuid="10bd4159-dcec-4957-8a64-bf85fcffbe9e" x="0" y="0" width="57" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Cuota]]></text>
+									<property name="com.jaspersoft.studio.unit.height" value="px"/>
+								</element>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table_CH"/>
+							<detailCell height="20" style="Table_TD">
+								<element kind="textField" uuid="243122d8-5218-407f-b898-f19ced0e0e11" x="0" y="0" width="57" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<expression><![CDATA[$F{numeroCuota}]]></expression>
+								</element>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						</column>
+						<column kind="single" uuid="165b2a87-9afc-495f-b641-b6baef340234" width="148">
+							<columnHeader height="20" rowSpan="1" style="Table_CH">
+								<element kind="staticText" uuid="28467b1c-a7ca-403a-b48d-845594715903" x="0" y="0" width="148" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Fecha de Vencimiento]]></text>
+								</element>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table_CH"/>
+							<detailCell height="20" style="Table_TD">
+								<element kind="textField" uuid="2d407640-e928-4ae5-a6a2-cdda0ce94b23" x="0" y="0" width="148" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<expression><![CDATA[$F{fechaVencimiento} == null ? "Contado" : new SimpleDateFormat("dd/MM/yyyy").format($F{fechaVencimiento})]]></expression>
+								</element>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						</column>
+						<column kind="single" uuid="7a0726f2-bbfc-4524-8d5f-8a0b90ee702c" width="113">
+							<columnHeader height="20" rowSpan="1" style="Table_CH">
+								<element kind="staticText" uuid="26244518-6f70-4176-8b72-f60a4e622c8d" x="0" y="0" width="113" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Monto]]></text>
+								</element>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table_CH"/>
+							<detailCell height="20" style="Table_TD">
+								<element kind="textField" uuid="98bb1b6d-4550-411b-b6c6-342809febaae" x="0" y="0" width="113" height="20" hTextAlign="Right" vTextAlign="Middle">
+									<expression><![CDATA[$F{montoCuota}]]></expression>
+								</element>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						</column>
+						<column kind="single" uuid="faf61147-6a99-40e0-8f86-a2be1b33e839" width="113">
+							<columnHeader height="20" rowSpan="1" style="Table_CH">
+								<element kind="staticText" uuid="96f435cd-03f3-4697-aea9-63fa97a22e97" x="0" y="0" width="113" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Saldo]]></text>
+								</element>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table_CH"/>
+							<detailCell height="20" style="Table_TD">
+								<element kind="textField" uuid="f691f424-d76a-47de-817e-6fa3ec650ede" x="0" y="0" width="113" height="20" hTextAlign="Right" vTextAlign="Middle">
+									<expression><![CDATA[$F{saldoCuota}]]></expression>
+								</element>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						</column>
+						<column kind="single" uuid="b93082a4-e315-4de8-beb8-39409f1bcdc8" width="124">
+							<columnHeader height="20" rowSpan="1" style="Table_CH">
+								<element kind="staticText" uuid="ba6e5aaf-6d61-4e61-82fd-b1106ec5b8aa" x="0" y="0" width="124" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Estado]]></text>
+								</element>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table_CH"/>
+							<detailCell height="20" style="Table_TD">
+								<element kind="textField" uuid="e199c8ef-5bd0-4003-a05e-685a8ede932c" x="0" y="0" width="124" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<expression><![CDATA[$F{estadoCuota}]]></expression>
+								</element>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						</column>
+					</column>
+				</component>
+				<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+				<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+				<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+				<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			</element>
+		</band>
+		<band height="104">
+			<element kind="component" uuid="9d013573-a76e-467d-bfee-b8b8ba5aa914" positionType="Float" stretchType="ContainerHeight" x="0" y="4" width="528" height="100">
+				<component kind="table">
+					<datasetRun uuid="bff9f89c-41ad-4bf4-885d-ddf88696ae05" subDataset="AplicacionesDataset">
+						<dataSourceExpression><![CDATA[$P{aplicacionesDataSource}]]></dataSourceExpression>
+					</datasetRun>
+					<tableFooter>
+						<printWhenExpression><![CDATA[false]]></printWhenExpression>
+					</tableFooter>
+					<column kind="group" uuid="1e791863-ae98-4097-97c6-d7f204c420e3" width="528">
+						<tableHeader height="20" rowSpan="1" style="Table 1_TH">
+							<element kind="staticText" uuid="f9a6ae1f-36da-4732-838f-75837361c841" stretchType="NoStretch" x="0" y="0" width="528" height="20" backcolor="#FFFFFF" bold="true" hTextAlign="Center" vTextAlign="Middle">
+								<text><![CDATA[APLICACIONES DEL PAGO]]></text>
+								<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+								<box>
+									<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+									<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+									<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+									<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								</box>
+							</element>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<box style="Table 1_TH">
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</tableHeader>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Columns [3]"/>
+						<column kind="single" uuid="1e61708d-c762-4222-a396-fd08e1b09a14" width="120">
+							<columnHeader height="20" rowSpan="1" style="Table 1_CH">
+								<element kind="staticText" uuid="86c4034c-a551-499e-ad59-79e8f584d7ea" x="0" y="0" width="120" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Fecha de Pago]]></text>
+									<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+								</element>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table 1_CH"/>
+							<detailCell height="20" style="Table 1_TD">
+								<element kind="textField" uuid="e2b9c1a6-b2ea-44de-998b-ef8f9e183568" x="0" y="0" width="120" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<expression><![CDATA[$F{fechaPago}]]></expression>
+								</element>
+								<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						</column>
+						<column kind="single" uuid="89ed2a87-734b-402b-a340-40cb58c8c915" width="150">
+							<columnHeader height="20" rowSpan="1" style="Table 1_CH">
+								<element kind="staticText" uuid="c5a26750-4141-4fde-8dab-708a9f117321" x="0" y="0" width="150" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Monto Pagado]]></text>
+								</element>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table 1_CH"/>
+							<detailCell height="20" style="Table 1_TD">
+								<element kind="textField" uuid="4bab0425-6b5b-4700-814a-53b27fc0fc8e" x="0" y="0" width="150" height="20" hTextAlign="Right" vTextAlign="Middle">
+									<expression><![CDATA[$F{montoPagado}]]></expression>
+								</element>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						</column>
+						<column kind="single" uuid="d4bd6716-61ce-45e0-84dd-8d910ccb9dd1" width="258">
+							<columnHeader height="20" rowSpan="1" style="Table 1_CH">
+								<element kind="staticText" uuid="4b930a9f-fdcf-49a2-973e-d6b2509052b6" x="0" y="0" width="258" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<text><![CDATA[Forma de Pago]]></text>
+								</element>
+							</columnHeader>
+							<columnFooter height="30" rowSpan="1" style="Table 1_CH"/>
+							<detailCell height="20" style="Table 1_TD">
+								<element kind="textField" uuid="ddff2188-1ff1-4653-a041-738575776a9b" x="0" y="0" width="258" height="20" hTextAlign="Center" vTextAlign="Middle">
+									<expression><![CDATA[$F{formaPago}]]></expression>
+								</element>
+							</detailCell>
+							<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						</column>
+					</column>
+				</component>
+				<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+				<property name="com.jaspersoft.studio.table.style.table_header" value="Table 1_TH"/>
+				<property name="com.jaspersoft.studio.table.style.column_header" value="Table 1_CH"/>
+				<property name="com.jaspersoft.studio.table.style.detail" value="Table 1_TD"/>
+			</element>
+		</band>
+	</detail>
+	<summary height="57" splitType="Stretch">
+		<element kind="staticText" uuid="75c9d6b5-3c8d-44be-bf87-13eb27a8f1f7" x="330" y="4" width="84" height="22" hTextAlign="Right">
+			<text><![CDATA[Total Pagado:]]></text>
+		</element>
+		<element kind="staticText" uuid="1d705519-1bfb-46d4-9dd2-c0f3c266b4f0" x="330" y="36" width="84" height="17" hTextAlign="Right">
+			<text><![CDATA[Saldo Pendiente:]]></text>
+		</element>
+		<element kind="textField" uuid="2fb83abe-e066-4e32-a464-abf746931764" x="426" y="36" width="100" height="17" hTextAlign="Right">
+			<expression><![CDATA[$P{saldoPendiente}]]></expression>
+		</element>
+		<element kind="textField" uuid="0631298e-23e1-48c4-96ba-9a454a93ff41" x="426" y="4" width="100" height="22" hTextAlign="Right">
+			<expression><![CDATA[$P{totalPagado}]]></expression>
+		</element>
+	</summary>
+</jasperReport>

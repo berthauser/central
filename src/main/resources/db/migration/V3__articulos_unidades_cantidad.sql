@@ -1,0 +1,2 @@
+ALTER TABLE IF EXISTS public.articulos_unidades
+    ADD COLUMN IF NOT EXISTS cantidad INTEGER NOT NULL DEFAULT 1;
