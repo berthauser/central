@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -37,6 +38,7 @@ import com.vaadin.flow.server.streams.DownloadHandler;
 import com.vaadin.flow.server.streams.DownloadResponse;
 import com.visus.central.domain.model.Caja;
 import com.visus.central.domain.model.MovimientoCaja;
+import com.visus.central.domain.model.OrigenMovimiento;
 import com.visus.central.domain.port.in.CajaUseCase;
 import com.visus.central.domain.port.in.MovimientoManualRec;
 import com.visus.central.domain.port.out.CajaReadRepository;
@@ -118,28 +120,72 @@ public class CajaView extends VerticalLayout implements Runnable {
 		gridMovimientos = new Grid<>(MovimientoCaja.class, false);
 
 		gridMovimientos.addColumn(mov -> mov.getFecha() != null ? mov.getFecha().format(DATE_FORMATTER) : "")
-				.setHeader("FECHA").setKey("fecha").setTextAlign(ColumnTextAlign.START);
+				.setHeader("FECHA").setKey("fecha").setTextAlign(ColumnTextAlign.START).setResizable(true);
 
 		gridMovimientos.addColumn(mov -> mov.getHora() != null ? mov.getHora().format(TIME_FORMATTER) : "")
-				.setHeader("HORA").setKey("hora").setTextAlign(ColumnTextAlign.START);
+				.setHeader("HORA").setKey("hora").setTextAlign(ColumnTextAlign.START).setResizable(true);
 
 		gridMovimientos.addColumn(MovimientoCaja::getDescripcion).setHeader("DESCRIPCIÓN").setKey("descripcion")
-				.setTextAlign(ColumnTextAlign.START);
+				.setTextAlign(ColumnTextAlign.START).setResizable(true);
 
-		gridMovimientos.addColumn(mov -> mov.getOrigen() != null ? mov.getOrigen().toString() : "").setHeader("ORIGEN")
-				.setKey("Origen").setTextAlign(ColumnTextAlign.START);
+		gridMovimientos.addColumn(new ComponentRenderer<>(mov -> {
+			String label = mov.getOrigen() != null ? mov.getOrigen().toString() : "";
+			if (mov.getOrigen() == OrigenMovimiento.MANUAL) {
+				label = "\u00a0\u00a0\u00a0\u00a0" + label + "\u00a0\u00a0\u00a0";
+			}
+			Span badge = new Span(label);
+			var theme = badge.getElement().getThemeList();
+			theme.add("badge");
+			if (mov.getOrigen() == OrigenMovimiento.AUTOMATICO) {
+				theme.add("success");
+			} else {
+				theme.add("contrast");
+				badge.getStyle().set("color", "var(--lumo-warning-text-color)");
+			}
+			return badge;
+		})).setHeader("ORIGEN").setKey("Origen").setTextAlign(ColumnTextAlign.START).setResizable(true);
 
 		// Columna Debe usando FormatoUtils
 		gridMovimientos.addColumn(mov -> mov.esIngreso() ? FormatoUtils.formatPesos(mov.getDebe()) : "")
-				.setHeader("DEBE").setKey("debe").setTextAlign(ColumnTextAlign.END);
+				.setHeader("DEBE").setKey("debe").setTextAlign(ColumnTextAlign.END).setResizable(true);
 
 		// Columna Haber usando FormatoUtils
 		gridMovimientos.addColumn(mov -> mov.esEgreso() ? FormatoUtils.formatPesos(mov.getHaber()) : "")
-				.setHeader("HABER").setKey("haber").setTextAlign(ColumnTextAlign.END);
+				.setHeader("HABER").setKey("haber").setTextAlign(ColumnTextAlign.END).setResizable(true);
 
 		gridMovimientos.setSizeFull();
 		gridMovimientos.setHeight("500px");
 		gridMovimientos.addClassName("grid-documentacion-dark");
+
+		gridMovimientos.getElement().executeJs(
+			"this.addEventListener('dblclick', function(e) {" +
+			"  const path = e.composedPath();" +
+			"  const cellContent = path.find(el => el.tagName === 'VAADIN-GRID-CELL-CONTENT');" +
+			"  if (!cellContent) return;" +
+			"  const slot = cellContent.assignedSlot;" +
+			"  if (!slot) return;" +
+			"  const col = slot.parentElement?._column;" +
+			"  if (!col) return;" +
+			"  function measure(el) {" +
+			"    if (!el) return 50;" +
+			"    var font = window.getComputedStyle(el).font || '16px sans-serif';" +
+			"    var temp = document.createElement('span');" +
+			"    temp.style.cssText = 'position:fixed;visibility:hidden;white-space:nowrap;font:' + font + ';padding:0 40px';" +
+			"    temp.textContent = el.textContent || '';" +
+			"    document.body.appendChild(temp);" +
+			"    var w = temp.offsetWidth;" +
+			"    document.body.removeChild(temp);" +
+			"    return Math.max(w, 50);" +
+			"  }" +
+			"  var maxWidth = 0;" +
+			"  (col._cells || []).concat(col._headerCell ? [col._headerCell] : []).concat(col._footerCell ? [col._footerCell] : []).forEach(function(cell) {" +
+			"    var el = cell._content || cell.querySelector('vaadin-grid-cell-content');" +
+			"    var w = measure(el);" +
+			"    if (w > maxWidth) maxWidth = w;" +
+			"  });" +
+			"  if (maxWidth > 0) { col.width = maxWidth + 'px'; col.flexGrow = 0; }" +
+			"});"
+		);
 
 		// Footer con totales resaltados
 		FooterRow footerRow = gridMovimientos.appendFooterRow();

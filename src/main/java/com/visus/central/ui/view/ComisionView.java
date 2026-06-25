@@ -127,24 +127,24 @@ public class ComisionView extends VerticalLayout {
 
 	private void configurarGrid() {
 		grid.addColumn(c -> c.getVendedor().getNombre()).setHeader("Vendedor").setWidth("200px")
-				.setSortable(true);
+				.setSortable(true).setResizable(true);
 		grid.addColumn(c -> c.getVenta().getId()).setHeader("N° Venta").setWidth("100px")
-				.setSortable(true);
+				.setSortable(true).setResizable(true);
 		grid.addColumn(c -> c.getVenta().getCliente().getNombreCliente()).setHeader("Cliente")
-				.setWidth("250px");
+				.setWidth("250px").setResizable(true);
 		grid.addColumn(c -> c.getFechaCalculo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
-				.setHeader("Fecha Cálculo").setWidth("120px");
+				.setHeader("Fecha Cálculo").setWidth("120px").setResizable(true);
 		grid.addColumn(c -> String.format("$%.2f", c.getBaseComisionable()))
-				.setHeader("Base Comisionable").setWidth("130px");
+				.setHeader("Base Comisionable").setWidth("130px").setResizable(true);
 		grid.addColumn(c -> String.format("%.2f%%", c.getPorcentaje()))
-				.setHeader("%").setWidth("70px");
+				.setHeader("%").setWidth("70px").setResizable(true);
 		grid.addColumn(c -> String.format("$%.2f", c.getComisionBruta()))
-				.setHeader("Comisión Bruta").setWidth("120px");
+				.setHeader("Comisión Bruta").setWidth("120px").setResizable(true);
 		grid.addColumn(c -> String.format("$%.2f", c.getAjustes()))
-				.setHeader("Ajustes").setWidth("90px");
+				.setHeader("Ajustes").setWidth("90px").setResizable(true);
 		grid.addColumn(c -> String.format("$%.2f", c.getComisionFinal()))
-				.setHeader("Comisión Final").setWidth("120px");
-		grid.addColumn(c -> c.getEstado().getLabel()).setHeader("Estado").setWidth("100px");
+				.setHeader("Comisión Final").setWidth("120px").setResizable(true);
+		grid.addColumn(c -> c.getEstado().getLabel()).setHeader("Estado").setWidth("100px").setResizable(true);
 	}
 
 	private void cargarCombos() {
