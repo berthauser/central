@@ -78,12 +78,9 @@ export declare class VaadinDevTools extends LitElement {
     static get isActive(): boolean;
     frontendStatus: ConnectionStatus;
     javaStatus: ConnectionStatus;
-    private root;
     componentPickActive: boolean;
     private javaConnection?;
     private frontendConnection?;
-    private nextMessageId;
-    private transitionDuration;
     elementTelemetry(): void;
     openWebSocketConnection(): void;
     removeOldLinks(path: string): void;
