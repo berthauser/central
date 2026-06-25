@@ -15,8 +15,6 @@ import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
-import com.vaadin.flow.component.details.Details;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -26,8 +24,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
+import com.vaadin.flow.component.sidenav.SideNav;
+import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.RouterLink;
 import com.visus.central.domain.port.in.HealthCheckUseCase;
 import com.visus.central.domain.port.in.HealthCheckUseCase.DatabaseHealthStatus;
 import com.visus.central.domain.port.in.PasswordChangeUseCase;
@@ -45,7 +44,6 @@ import com.visus.central.ui.view.ComisionView;
 import com.visus.central.ui.view.ComprobanteView;
 import com.visus.central.ui.view.CuentaCorrienteView;
 import com.visus.central.ui.view.DevolucionView;
-//import com.visus.central.ui.view.DepartamentoView;
 import com.visus.central.ui.view.FacturacionView;
 import com.visus.central.ui.view.LineaView;
 import com.visus.central.ui.view.LocalidadView;
@@ -337,120 +335,54 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 
 		logoContainer.add(headerLayout);
 
-		VerticalLayout menu = createMenu();
+		SideNav menu = createMenu();
 
 		drawer.add(logoContainer, menu);
-		drawer.setFlexGrow(1, menu);
 		return drawer;
 	}
 
-	private VerticalLayout createMenu() {
-		VerticalLayout menuLayout = new VerticalLayout();
-		menuLayout.setPadding(false);
-		menuLayout.setSpacing(false);
-		menuLayout.setMargin(false);
-		menuLayout.setWidthFull();
-		menuLayout.getStyle().set("background-color", "#101b29").set("color", "white").set("padding", "4px 0")
-				.set("border-radius", "8px").set("border", "1px solid #2a3f4f").set("margin-top", "1px");
+	private SideNav createMenu() {
+		SideNav sideNav = new SideNav();
+		sideNav.setAutoExpand(true);
 
-		// Sección: CLIENTES
-		Details clientesSection = createMenuSection("Clientes", createMenuLink("Actualización", ClienteView.class, 35),
-				createMenuLink("Cuenta Corriente", CuentaCorrienteView.class, 35));
-		clientesSection.getStyle().set("margin-bottom", "2px");
-		menuLayout.add(clientesSection);
+		SideNavItem clientes = new SideNavItem("Clientes");
+		clientes.setExpanded(true);
+		clientes.addItem(new SideNavItem("Actualización", ClienteView.class));
+		clientes.addItem(new SideNavItem("Cuenta Corriente", CuentaCorrienteView.class));
+		sideNav.addItem(clientes);
 
-		// Sección: PROVEEDORES
-		Details proveedoresSection = createMenuSection("Proveedores",
-				createMenuLink("Actualización", ProveedorView.class, 35));
-		proveedoresSection.getStyle().set("margin-bottom", "2px");
-		menuLayout.add(proveedoresSection);
+		SideNavItem proveedores = new SideNavItem("Proveedores");
+		proveedores.setExpanded(true);
+		proveedores.addItem(new SideNavItem("Actualización", ProveedorView.class));
+		sideNav.addItem(proveedores);
 
-		// SECCIÓN: TABLAS BÁSICAS
-		Details tablasBaseSection = createMenuSection("Tablas Básicas",
-//				createMenuLink("Departamentos", DepartamentoView.class, 35),
-				createMenuLink("Localidades", LocalidadView.class, 35),
-				createMenuLink("Vendedores", VendedorView.class, 35));
-		tablasBaseSection.getStyle().set("margin-bottom", "2px");
-		menuLayout.add(tablasBaseSection);
+		SideNavItem tablasBasicas = new SideNavItem("Tablas Básicas");
+		tablasBasicas.setExpanded(true);
+		tablasBasicas.addItem(new SideNavItem("Localidades", LocalidadView.class));
+		tablasBasicas.addItem(new SideNavItem("Vendedores", VendedorView.class));
+		sideNav.addItem(tablasBasicas);
 
-		// Sección: ÁREA FINANCIERA
-		Details areaFinancieraSection = createMenuSection("Área Financiera",
-				createMenuLink("Coeficientes", CoeficienteView.class, 35),
-				createMenuLink("Alícuotas", AlicuotaView.class, 35),
-				createMenuLink("Tipos de Pago", TipoPagoView.class, 35),
-				createMenuLink("Reglas de Comisiones", ReglaComisionView.class, 35),
-				createMenuLink("Comisiones", ComisionView.class, 35),
-				createMenuLink("Comprobantes", ComprobanteView.class, 35),
-				createMenuLink("Consultar Bancos", BancosView.class, 35));
-		areaFinancieraSection.getStyle().set("margin-bottom", "2px");
-		menuLayout.add(areaFinancieraSection);
+		SideNavItem areaFinanciera = new SideNavItem("Área Financiera");
+		areaFinanciera.setExpanded(true);
+		areaFinanciera.addItem(new SideNavItem("Coeficientes", CoeficienteView.class));
+		areaFinanciera.addItem(new SideNavItem("Alícuotas", AlicuotaView.class));
+		areaFinanciera.addItem(new SideNavItem("Tipos de Pago", TipoPagoView.class));
+		areaFinanciera.addItem(new SideNavItem("Reglas de Comisiones", ReglaComisionView.class));
+		areaFinanciera.addItem(new SideNavItem("Comisiones", ComisionView.class));
+		areaFinanciera.addItem(new SideNavItem("Comprobantes", ComprobanteView.class));
+		areaFinanciera.addItem(new SideNavItem("Consultar Bancos", BancosView.class));
+		sideNav.addItem(areaFinanciera);
 
-		// Sección: ARTÍCULOS
-		Details articulosSection = createMenuSection("Artículos",
-				createMenuLink("Actualización", ArticulosView.class, 35), createMenuLink("Rubros", RubroView.class, 35),
-				createMenuLink("Líneas", LineaView.class, 35),
-				createMenuLink("Presentaciones", PresentacionView.class, 35),
-				createMenuLink("Medidas", MedidaView.class, 35));
-		articulosSection.getStyle().set("margin-bottom", "2px");
-		menuLayout.add(articulosSection);
+		SideNavItem articulos = new SideNavItem("Artículos");
+		articulos.setExpanded(true);
+		articulos.addItem(new SideNavItem("Actualización", ArticulosView.class));
+		articulos.addItem(new SideNavItem("Rubros", RubroView.class));
+		articulos.addItem(new SideNavItem("Líneas", LineaView.class));
+		articulos.addItem(new SideNavItem("Presentaciones", PresentacionView.class));
+		articulos.addItem(new SideNavItem("Medidas", MedidaView.class));
+		sideNav.addItem(articulos);
 
-		return menuLayout;
-	}
-
-	private Details createMenuSection(String title, Component... components) {
-		VerticalLayout content = new VerticalLayout();
-		content.setPadding(false);
-		content.setSpacing(false);
-		content.setMargin(false);
-		content.setWidthFull();
-		content.getStyle().set("padding", "2px 0").set("background-color", "transparent");
-
-		for (Component component : components) {
-			content.add(component);
-		}
-
-		Div summaryDiv = new Div();
-		summaryDiv.setText(title);
-		summaryDiv.getStyle().set("background-color", "transparent").set("padding", "8px 16px")
-				.set("font-weight", "600").set("font-size", "14px").set("color", "white").set("cursor", "pointer")
-				.set("user-select", "none").set("margin", "0 0").set("width", "calc(100% - 16px)")
-				.set("border-radius", "4px").set("transition", "all 0.2s ease");
-
-		Details details = new Details(summaryDiv, content);
-		details.setOpened(true);
-		details.setWidthFull();
-
-		details.getElement().getStyle().set("border", "none").set("border-radius", "0").set("box-shadow", "none")
-				.set("margin", "0").set("padding", "0").set("width", "100%").set("background-color", "transparent");
-
-		summaryDiv.getElement().addEventListener("mouseenter", _ -> {
-			summaryDiv.getStyle().set("background-color", "#3a5f5f");
-		});
-
-		summaryDiv.getElement().addEventListener("mouseleave", _ -> {
-			summaryDiv.getStyle().set("background-color", "transparent");
-		});
-
-		return details;
-	}
-
-	private RouterLink createMenuLink(String text, Class<? extends Component> viewClass, int marginLeft) {
-		RouterLink link = new RouterLink(text, viewClass);
-		link.getStyle().set("margin-left", marginLeft + "px").set("font-size", "0.85em").set("font-weight", "400")
-				.set("color", "#e0e0e0").set("text-decoration", "none").set("padding", "6px 16px")
-				.set("display", "block").set("border-radius", "4px").set("margin", "0 8px")
-				.set("width", "calc(100% - " + (marginLeft + 16) + "px)").set("box-sizing", "border-box")
-				.set("transition", "all 0.2s ease").set("background-color", "transparent");
-
-		link.getElement().addEventListener("mouseenter", _ -> {
-			link.getStyle().set("background-color", "#3a5f5f").set("color", "white");
-		});
-
-		link.getElement().addEventListener("mouseleave", _ -> {
-			link.getStyle().set("background-color", "transparent").set("color", "#e0e0e0");
-		});
-
-		return link;
+		return sideNav;
 	}
 
 	@Override

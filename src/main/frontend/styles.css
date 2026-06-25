@@ -335,6 +335,72 @@ vaadin-details-summary::part(toggle)::before {
     margin: auto;
 }
 
+/* ===== SIDE NAVIGATION ===== */
+vaadin-side-nav {
+    width: 100%;
+}
+
+vaadin-side-nav::part(content) {
+    background-color: #101b29;
+    border: 1px solid #2a3f4f;
+    border-radius: 8px;
+    padding: 4px 0;
+}
+
+vaadin-side-nav-item {
+    margin-bottom: 2px;
+}
+
+vaadin-side-nav-item:last-child {
+    margin-bottom: 0;
+}
+
+vaadin-side-nav-item[has-children]::part(content) {
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+vaadin-side-nav-item[has-children]::part(content):hover {
+    background-color: #3a5f5f;
+}
+
+vaadin-side-nav-item[has-children]::part(children) {
+    padding: 0;
+}
+
+vaadin-side-nav-item:not([has-children])::part(link) {
+    font-size: 0.85em;
+    font-weight: 400;
+    color: #e0e0e0;
+    text-decoration: none;
+    padding: 6px 16px 6px 35px;
+    border-radius: 4px;
+    margin: 0 8px;
+    transition: all 0.2s ease;
+    background-color: transparent;
+}
+
+vaadin-side-nav-item:not([has-children])::part(link):hover {
+    background-color: #3a5f5f;
+    color: white;
+}
+
+vaadin-side-nav-item:not([has-children])[current]::part(link) {
+    background-color: #2f4f80;
+    color: #f0f0f0;
+    font-weight: 600;
+}
+
+vaadin-side-nav-item::part(toggle-button) {
+    color: white;
+}
+
 /* ===== DIVISOR PARA MENÚES ===== */
 .menu-divider {
     border-top: 1px solid var(--lumo-contrast-20pct);
