@@ -8,7 +8,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.login.LoginI18n;
@@ -30,7 +32,7 @@ public class LoginView extends LoginOverlay {
 	public LoginView(UserUseCase userService) {
 		LoginI18n i18n = new LoginI18n();
 		LoginI18n.Header header = new LoginI18n.Header();
-		header.setTitle("Visus Central");
+		header.setTitle("");
 		header.setDescription("Iniciar sesión");
 		i18n.setHeader(header);
 
@@ -48,9 +50,20 @@ public class LoginView extends LoginOverlay {
 
 		setForgotPasswordButtonVisible(false);
 
+		// Branding: icon + text
 		Icon appIcon = VaadinIcon.CUBES.create();
-		appIcon.setSize("28px");
-		appIcon.setColor("#3a5f5f");
+		appIcon.setSize("48px");
+		appIcon.getStyle().set("color", "var(--lumo-primary-color)");
+
+		Span titleText = new Span("Visus Central");
+		titleText.getStyle().set("font-size", "24px").set("font-weight", "bold");
+
+		Div branding = new Div(appIcon, titleText);
+		branding.getStyle().set("display", "flex").set("align-items", "center").set("gap", "12px")
+				.set("justify-content", "center").set("padding", "20px 0");
+
+		// Attach to load frontend deps (vaadin-icon + iconset)
+		getElement().appendChild(branding.getElement());
 
 		Paragraph copyright = new Paragraph("©Grupo Dignitas");
 		copyright.addClassName(LumoUtility.TextAlignment.CENTER);
@@ -91,19 +104,20 @@ public class LoginView extends LoginOverlay {
 
 		addAttachListener(_ -> {
 			setOpened(true);
+			String html = branding.getElement().getOuterHTML();
 			getElement().executeJs(
 				"var w = this.shadowRoot.querySelector('vaadin-login-overlay-wrapper');" +
-				"if (w && w.shadowRoot && !w.shadowRoot.querySelector('[data-licon]')) {" +
-				"  var s = w.shadowRoot.querySelector('section[part=\"brand\"]') || w.shadowRoot.querySelector('h1[part=\"title\"]');" +
-				"  if (s) {" +
-				"    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');" +
-				"    svg.setAttribute('data-licon', '');" +
-				"    svg.setAttribute('viewBox', '0 0 16 16');" +
-				"    svg.style.cssText = 'width:36px;height:36px;display:block;margin:0 auto 12px auto;fill:#3a5f5f';" +
-				"    svg.innerHTML = '<path d=\"M12 6v-4l-4-2-4 2v4l-4 2v5l4 2 4-2 4 2 4-2v-5zM8.090 1.12l2.91 1.44-2.6 1.3-2.91-1.44zM5 2.78l3 1.5v3.6l-3-1.5v-3.6zM4 13.88l-3-1.5v-3.6l3 1.5v3.6zM4.28 9.88l-2.88-1.46 2.6-1.3 2.88 1.44zM12 13.88l-3-1.5v-3.6l3 1.5v3.6zM12.28 9.88l-2.88-1.46 2.6-1.3 2.88 1.44z\"/>';" +
-				"    s.insertBefore(svg, s.firstChild);" +
+				"if (w && w.shadowRoot && !w.shadowRoot.querySelector('[data-brand]')) {" +
+				"  var div = document.createElement('div');" +
+				"  div.setAttribute('data-brand', '');" +
+				"  div.innerHTML = $0;" +
+				"  var brand = w.shadowRoot.querySelector('section[part=\"brand\"]');" +
+				"  if (brand) {" +
+				"    brand.insertBefore(div.firstElementChild, brand.firstChild);" +
+				"    brand.querySelector('slot[name=\"title\"]').style.display = 'none';" +
 				"  }" +
-				"}"
+				"}",
+				html
 			);
 		});
 	}
