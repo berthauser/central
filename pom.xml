@@ -17,7 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>25</java.version>
-		<vaadin.version>25.1.8</vaadin.version>
+		<vaadin.version>25.2.0</vaadin.version>
 		<jasper.version>7.0.6</jasper.version>
 	</properties>
 	<dependencies>
