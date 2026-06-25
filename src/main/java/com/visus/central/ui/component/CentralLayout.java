@@ -346,24 +346,24 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		sideNav.setAutoExpand(true);
 
 		SideNavItem clientes = new SideNavItem("Clientes");
-		clientes.setExpanded(true);
+		clientes.setPrefixComponent(VaadinIcon.USERS.create());
 		clientes.addItem(new SideNavItem("Actualización", ClienteView.class));
 		clientes.addItem(new SideNavItem("Cuenta Corriente", CuentaCorrienteView.class));
 		sideNav.addItem(clientes);
 
 		SideNavItem proveedores = new SideNavItem("Proveedores");
-		proveedores.setExpanded(true);
+		proveedores.setPrefixComponent(VaadinIcon.BUILDING.create());
 		proveedores.addItem(new SideNavItem("Actualización", ProveedorView.class));
 		sideNav.addItem(proveedores);
 
 		SideNavItem tablasBasicas = new SideNavItem("Tablas Básicas");
-		tablasBasicas.setExpanded(true);
+		tablasBasicas.setPrefixComponent(VaadinIcon.TABLE.create());
 		tablasBasicas.addItem(new SideNavItem("Localidades", LocalidadView.class));
 		tablasBasicas.addItem(new SideNavItem("Vendedores", VendedorView.class));
 		sideNav.addItem(tablasBasicas);
 
 		SideNavItem areaFinanciera = new SideNavItem("Área Financiera");
-		areaFinanciera.setExpanded(true);
+		areaFinanciera.setPrefixComponent(VaadinIcon.MONEY.create());
 		areaFinanciera.addItem(new SideNavItem("Coeficientes", CoeficienteView.class));
 		areaFinanciera.addItem(new SideNavItem("Alícuotas", AlicuotaView.class));
 		areaFinanciera.addItem(new SideNavItem("Tipos de Pago", TipoPagoView.class));
@@ -374,7 +374,7 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		sideNav.addItem(areaFinanciera);
 
 		SideNavItem articulos = new SideNavItem("Artículos");
-		articulos.setExpanded(true);
+		articulos.setPrefixComponent(VaadinIcon.CUBE.create());
 		articulos.addItem(new SideNavItem("Actualización", ArticulosView.class));
 		articulos.addItem(new SideNavItem("Rubros", RubroView.class));
 		articulos.addItem(new SideNavItem("Líneas", LineaView.class));

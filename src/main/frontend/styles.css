@@ -401,6 +401,13 @@ vaadin-side-nav-item::part(toggle-button) {
     color: white;
 }
 
+vaadin-side-nav-item [slot="prefix"] {
+    color: white;
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+}
+
 /* ===== DIVISOR PARA MENÚES ===== */
 .menu-divider {
     border-top: 1px solid var(--lumo-contrast-20pct);
