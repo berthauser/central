@@ -12,62 +12,6 @@ html {
   --lumo-secondary-text-color: hsla(0, 0%, 100%, 0.6);
 }
 
-/* ===== COMPONENTES DE LOGIN ===== */
-.login-view .vaadin-vertical-layout > hr {
-    border: none;
-    border-top: 2px solid var(--lumo-contrast-30pct);
-    margin: 0;
-    width: 100%;
-}
-
-.login-view .vaadin-vertical-layout span {
-    font-size: 0.75rem;
-    color: white;
-    font-style: italic;
-    margin: 0;
-    text-align: center;
-}
-
-.login-view .vaadin-vertical-layout span.feedback-error {
-    color: var(--lumo-error-text-color);
-}
-
-.login-form {
-    background-color: var(--lumo-base-color);
-    border-radius: 16px;
-    border: 1px solid var(--lumo-contrast-20pct);
-    box-shadow: var(--lumo-box-shadow-m);
-    padding: var(--lumo-space-m);
-}
-
-/* ===== COMPONENTES DE TEXTO ===== */
-.linea-divisoria {
-    border: none;
-    border-top: 2px solid var(--lumo-contrast-30pct);
-    margin-top: var(--lumo-space-s);
-    margin: 0;
-    width: 100%;
-}
-
-.copyright-text {
-    font-size: 0.75rem;
-    color: white;
-    font-style: italic;
-    margin: 0;
-    text-align: left;
-}
-
-.mensaje-feedback {
-    font-size: 0.75rem;
-    color: var(--lumo-secondary-text-color);
-    margin: 0;
-    text-align: left;
-}
-
-.mensaje-feedback.error {
-    color: var(--lumo-error-text-color);
-}
-
 /* ===== COMPONENTES DE CABECERA Y PIE ===== */
 .header-text {
   color: var(--lumo-header-text-color);
@@ -126,15 +70,6 @@ html {
 
 .btn-accion-icono:hover {
     background-color: var(--lumo-primary-color-10pct);
-}
-
-.btn-login {
-  background-color: #34A6F4;
-  color: #333;
-  border: 1px solid #bbb;
-  font-weight: 500;
-  padding: 6px 12px;
-  border-radius: 4px;
 }
 
 .btn-nuevo {
