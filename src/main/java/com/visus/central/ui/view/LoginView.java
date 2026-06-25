@@ -83,6 +83,17 @@ public class LoginView extends LoginOverlay {
 			}
 		});
 
-		addAttachListener(e -> setOpened(true));
+		addAttachListener(_ -> {
+			setOpened(true);
+			getElement().executeJs(
+				"var brand = this.shadowRoot.querySelector('[part=\"brand\"]');" +
+				"if (brand && !brand.querySelector('vaadin-icon')) {" +
+				"  var icon = document.createElement('vaadin-icon');" +
+				"  icon.setAttribute('icon', 'vaadin:cubes');" +
+				"  icon.style.cssText = 'width:36px;height:36px;display:block;margin:0 auto 8px auto;color:#3a5f5f';" +
+				"  brand.insertBefore(icon, brand.firstChild);" +
+				"}"
+			);
+		});
 	}
 }
