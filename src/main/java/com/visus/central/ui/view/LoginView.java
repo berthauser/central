@@ -11,7 +11,6 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinService;
@@ -22,13 +21,11 @@ import com.visus.central.domain.port.in.UserUseCase;
 
 @Route("login")
 @PageTitle("Iniciar sesión")
-public class LoginView extends VerticalLayout {
+public class LoginView extends LoginOverlay {
 
 	private static final long serialVersionUID = 1L;
 
 	public LoginView(UserUseCase userService) {
-		LoginOverlay login = new LoginOverlay();
-
 		LoginI18n i18n = LoginI18n.createDefault();
 		i18n.getHeader().setTitle("Visus Central");
 		i18n.getHeader().setDescription("Iniciar sesión");
@@ -37,16 +34,16 @@ public class LoginView extends VerticalLayout {
 		i18n.getForm().setSubmit("Ingresar");
 		i18n.getErrorMessage().setTitle("Credenciales inválidas");
 		i18n.getErrorMessage().setMessage("Verifique su usuario y contraseña");
-		login.setI18n(i18n);
+		setI18n(i18n);
 
-		login.setForgotPasswordButtonVisible(false);
+		setForgotPasswordButtonVisible(false);
 
 		Paragraph copyright = new Paragraph("©Grupo Dignitas");
 		copyright.addClassName(LumoUtility.TextAlignment.CENTER);
 		copyright.getStyle().set("font-size", "0.85rem").set("color", "var(--lumo-secondary-text-color)");
-		login.getFooter().add(copyright);
+		getFooter().add(copyright);
 
-		login.addLoginListener(event -> {
+		addLoginListener(event -> {
 			boolean success = userService.validateCredentials(event.getUsername(), event.getPassword());
 
 			if (success) {
@@ -71,18 +68,13 @@ public class LoginView extends VerticalLayout {
 				session.setAttribute("username", event.getUsername());
 				session.setAttribute("role", role);
 
-				login.close();
+				close();
 				UI.getCurrent().navigate("");
 			} else {
-				login.setError(true);
+				setError(true);
 			}
 		});
 
-		login.setOpened(true);
-
-		add(login);
-		setSizeFull();
-		setAlignItems(Alignment.CENTER);
-		setJustifyContentMode(JustifyContentMode.CENTER);
+		addAttachListener(e -> setOpened(true));
 	}
 }
