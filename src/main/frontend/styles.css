@@ -403,8 +403,8 @@ vaadin-side-nav-item::part(toggle-button) {
 
 vaadin-side-nav-item [slot="prefix"] {
     color: white;
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     margin-right: 6px;
 }
 
