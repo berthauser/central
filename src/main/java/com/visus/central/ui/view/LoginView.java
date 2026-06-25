@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
@@ -58,6 +59,9 @@ public class LoginView extends VerticalLayout {
 
 		usernameField.addClassName("campo-estilo-imagen");
 		passwordField.addClassName("campo-estilo-imagen");
+
+		injectAutofillFix(usernameField);
+		injectAutofillFix(passwordField);
 		loginButton.addClassName("btn-login");
 		
 		// Mensaje dinámico de error
@@ -149,5 +153,20 @@ public class LoginView extends VerticalLayout {
 	private void resetFeedback(Span feedback) {
 	    feedback.setText("Sin Credenciales");
 	    feedback.removeClassName("error");
+	}
+
+	private void injectAutofillFix(Component field) {
+		field.getElement().executeJs(
+			"var inp = this.inputElement;" +
+			"if (inp) {" +
+			"  var root = inp.getRootNode();" +
+			"  if (root instanceof ShadowRoot && !root.querySelector('[data-autofill]')) {" +
+			"    var style = document.createElement('style');" +
+			"    style.setAttribute('data-autofill', '');" +
+			"    style.textContent = 'input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #000 inset !important;-webkit-text-fill-color:#fff !important;caret-color:#fff !important;color:#fff !important}';" +
+			"    root.appendChild(style);" +
+			"  }" +
+			"}"
+		);
 	}
 }
