@@ -8,11 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.router.PageTitle;
@@ -32,7 +28,7 @@ public class LoginView extends LoginOverlay {
 	public LoginView(UserUseCase userService) {
 		LoginI18n i18n = new LoginI18n();
 		LoginI18n.Header header = new LoginI18n.Header();
-		header.setTitle("");
+		header.setTitle("Visus Central");
 		header.setDescription("Iniciar sesión");
 		i18n.setHeader(header);
 
@@ -49,21 +45,6 @@ public class LoginView extends LoginOverlay {
 		setI18n(i18n);
 
 		setForgotPasswordButtonVisible(false);
-
-		// Branding: icon + text
-		Icon appIcon = VaadinIcon.CUBES.create();
-		appIcon.setSize("48px");
-		appIcon.getStyle().set("color", "var(--lumo-primary-color)");
-
-		Span titleText = new Span("Visus Central");
-		titleText.getStyle().set("font-size", "24px").set("font-weight", "bold");
-
-		Div branding = new Div(appIcon, titleText);
-		branding.getStyle().set("display", "flex").set("align-items", "center").set("gap", "12px")
-				.set("justify-content", "center").set("padding", "20px 0");
-
-		// Attach to load frontend deps (vaadin-icon + iconset)
-		getElement().appendChild(branding.getElement());
 
 		Paragraph copyright = new Paragraph("©Grupo Dignitas");
 		copyright.addClassName(LumoUtility.TextAlignment.CENTER);
@@ -102,23 +83,6 @@ public class LoginView extends LoginOverlay {
 			}
 		});
 
-		addAttachListener(_ -> {
-			setOpened(true);
-			String html = branding.getElement().getOuterHTML();
-			getElement().executeJs(
-				"var w = this.shadowRoot.querySelector('vaadin-login-overlay-wrapper');" +
-				"if (w && w.shadowRoot && !w.shadowRoot.querySelector('[data-brand]')) {" +
-				"  var div = document.createElement('div');" +
-				"  div.setAttribute('data-brand', '');" +
-				"  div.innerHTML = $0;" +
-				"  var brand = w.shadowRoot.querySelector('section[part=\"brand\"]');" +
-				"  if (brand) {" +
-				"    brand.insertBefore(div.firstElementChild, brand.firstChild);" +
-				"    brand.querySelector('slot[name=\"title\"]').style.display = 'none';" +
-				"  }" +
-				"}",
-				html
-			);
-		});
+		addAttachListener(e -> setOpened(true));
 	}
 }
