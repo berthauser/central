@@ -108,8 +108,8 @@ public class JpaArticuloEntity {
 
 
     
-    public enum Estado {
-    	EnExistencias("En Existencias"), Disponible("Disponible"), Comprometido("Comprometido"), NoDisponible("No Disponible"), Entrante("Entrante");
+	public enum Estado {
+    	EnExistencias("En Existencias"), Disponible("Disponible"), Comprometido("Comprometido"), NoDisponible("No Disponible"), Entrante("Entrante"), Baja("Baja");
     	
 		private final String label;
 

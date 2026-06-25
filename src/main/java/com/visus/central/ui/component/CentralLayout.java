@@ -44,6 +44,7 @@ import com.visus.central.ui.view.CoeficienteView;
 import com.visus.central.ui.view.ComisionView;
 import com.visus.central.ui.view.ComprobanteView;
 import com.visus.central.ui.view.CuentaCorrienteView;
+import com.visus.central.ui.view.DevolucionView;
 //import com.visus.central.ui.view.DepartamentoView;
 import com.visus.central.ui.view.FacturacionView;
 import com.visus.central.ui.view.LineaView;
@@ -176,11 +177,11 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		// Item "Caja"
 		MenuItem cajaItem = menuBar.addItem("Caja");
 		SubMenu cajaSubMenu = cajaItem.getSubMenu();
-		MenuItem movManuales = cajaSubMenu.addItem("Movimientos Manuales");
+		MenuItem movManuales = cajaSubMenu.addItem("Movimientos");
 		movManuales.addClickListener(_ -> {
 			UI.getCurrent().navigate(CajaView.class);
 		});
-		cajaSubMenu.addItem("Consulta de Caja");
+		cajaSubMenu.addItem("Consulta");
 
 		// Item "Inventario"
 		MenuItem inventarioItem = menuBar.addItem("Inventario");
@@ -214,6 +215,12 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		MenuItem facturarItem = facturacionSubMenu.addItem("Facturar");
 		facturarItem.addClickListener(_ -> {
 			UI.getCurrent().navigate(FacturacionView.class);
+		});
+			
+		MenuItem devolucionItem = facturacionSubMenu.addItem("Devoluciones");
+		devolucionItem.addClickListener(_ -> {
+				UI.getCurrent().navigate(DevolucionView.class);
+			
 		});
 
 		// Estilizar los ítems del menú
@@ -444,15 +451,6 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		});
 
 		return link;
-	}
-
-	private Span createMenuSpan(String text, int marginLeft) {
-		Span span = new Span(text);
-		span.getStyle().set("margin-left", marginLeft + "px").set("font-size", "0.9em").set("font-weight", "400")
-				.set("color", "#a0a0a0").set("padding", "10px 16px").set("display", "block").set("border-radius", "6px")
-				.set("margin", "0 8px").set("width", "calc(100% - " + (marginLeft + 16) + "px)")
-				.set("box-sizing", "border-box").set("background-color", "transparent");
-		return span;
 	}
 
 	@Override
