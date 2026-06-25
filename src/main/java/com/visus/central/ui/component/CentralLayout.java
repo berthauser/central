@@ -295,7 +295,7 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		drawer.setSpacing(false);
 		drawer.setSizeFull();
 		drawer.getStyle().set("padding", "0").set("margin", "0").set("background-color", "transparent")
-				.set("color", "white").set("overflow-x", "hidden").set("width", "255px").set("min-width", "255px")
+				.set("color", "white").set("overflow", "hidden").set("width", "255px").set("min-width", "255px")
 				.set("max-width", "255px").set("border-radius", "0").set("margin-top", "2px")
 				.set("margin-bottom", "2px");
 
@@ -337,7 +337,15 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 
 		SideNav menu = createMenu();
 
-		drawer.add(logoContainer, menu);
+		VerticalLayout menuWrapper = new VerticalLayout(menu);
+		menuWrapper.setPadding(false);
+		menuWrapper.setSpacing(false);
+		menuWrapper.setMargin(false);
+		menuWrapper.getStyle().set("min-height", "0");
+		menuWrapper.getStyle().set("overflow-y", "auto");
+
+		drawer.add(logoContainer, menuWrapper);
+		drawer.setFlexGrow(1, menuWrapper);
 		return drawer;
 	}
 
@@ -356,7 +364,7 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		proveedores.addItem(new SideNavItem("Actualización", ProveedorView.class));
 		sideNav.addItem(proveedores);
 
-		SideNavItem tablasBasicas = new SideNavItem("Tablas Básicas");
+		SideNavItem tablasBasicas = new SideNavItem("Catálogos");
 		tablasBasicas.setPrefixComponent(VaadinIcon.TABLE.create());
 		tablasBasicas.addItem(new SideNavItem("Localidades", LocalidadView.class));
 		tablasBasicas.addItem(new SideNavItem("Vendedores", VendedorView.class));

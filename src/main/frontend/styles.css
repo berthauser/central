@@ -339,7 +339,6 @@ vaadin-details-summary::part(toggle)::before {
 vaadin-side-nav {
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
     box-sizing: border-box;
 }
 
@@ -382,7 +381,7 @@ vaadin-side-nav-item[has-children]::part(children) {
 }
 
 vaadin-app-layout::part(drawer) {
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 vaadin-side-nav-item:not([has-children])::part(link) {
