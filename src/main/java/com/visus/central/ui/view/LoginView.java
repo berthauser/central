@@ -26,14 +26,22 @@ public class LoginView extends LoginOverlay {
 	private static final long serialVersionUID = 1L;
 
 	public LoginView(UserUseCase userService) {
-		LoginI18n i18n = LoginI18n.createDefault();
-		i18n.getHeader().setTitle("Visus Central");
-		i18n.getHeader().setDescription("Iniciar sesión");
-		i18n.getForm().setUsername("Usuario");
-		i18n.getForm().setPassword("Contraseña");
-		i18n.getForm().setSubmit("Ingresar");
-		i18n.getErrorMessage().setTitle("Credenciales inválidas");
-		i18n.getErrorMessage().setMessage("Verifique su usuario y contraseña");
+		LoginI18n i18n = new LoginI18n();
+		LoginI18n.Header header = new LoginI18n.Header();
+		header.setTitle("Visus Central");
+		header.setDescription("Iniciar sesión");
+		i18n.setHeader(header);
+
+		LoginI18n.Form form = new LoginI18n.Form();
+		form.setUsername("Usuario");
+		form.setPassword("Contraseña");
+		form.setSubmit("Ingresar");
+		i18n.setForm(form);
+
+		LoginI18n.ErrorMessage error = new LoginI18n.ErrorMessage();
+		error.setTitle("Credenciales inválidas");
+		error.setMessage("Verifique su usuario y contraseña");
+		i18n.setErrorMessage(error);
 		setI18n(i18n);
 
 		setForgotPasswordButtonVisible(false);
