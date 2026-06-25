@@ -338,7 +338,9 @@ vaadin-details-summary::part(toggle)::before {
 /* ===== SIDE NAVIGATION ===== */
 vaadin-side-nav {
     width: 100%;
+    max-width: 100%;
     overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 vaadin-side-nav::part(content) {
@@ -346,6 +348,8 @@ vaadin-side-nav::part(content) {
     border: 1px solid #2a3f4f;
     border-radius: 8px;
     padding: 4px 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
 
 vaadin-side-nav-item {
@@ -373,6 +377,11 @@ vaadin-side-nav-item[has-children]::part(content):hover {
 
 vaadin-side-nav-item[has-children]::part(children) {
     padding: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+vaadin-app-layout::part(drawer) {
     overflow-x: hidden;
 }
 
