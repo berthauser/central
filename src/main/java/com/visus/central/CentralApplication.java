@@ -16,6 +16,8 @@ import com.vaadin.flow.theme.lumo.Lumo;
 @StyleSheet(Lumo.UTILITY_STYLESHEET)
 @CssImport("./styles.css")
 @CssImport("./card.css")
+@CssImport(value = "./autofill.css", themeFor = "vaadin-text-field")
+@CssImport(value = "./autofill.css", themeFor = "vaadin-password-field")
 @EnableTransactionManagement
 @EnableScheduling
 @Push(transport = Transport.WEBSOCKET)
