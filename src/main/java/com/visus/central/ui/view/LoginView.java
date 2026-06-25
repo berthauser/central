@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.router.PageTitle;
@@ -45,6 +47,10 @@ public class LoginView extends LoginOverlay {
 		setI18n(i18n);
 
 		setForgotPasswordButtonVisible(false);
+
+		Icon appIcon = VaadinIcon.CUBES.create();
+		appIcon.setSize("28px");
+		appIcon.setColor("#3a5f5f");
 
 		Paragraph copyright = new Paragraph("©Grupo Dignitas");
 		copyright.addClassName(LumoUtility.TextAlignment.CENTER);
@@ -86,12 +92,17 @@ public class LoginView extends LoginOverlay {
 		addAttachListener(_ -> {
 			setOpened(true);
 			getElement().executeJs(
-				"var brand = this.shadowRoot.querySelector('[part=\"brand\"]');" +
-				"if (brand && !brand.querySelector('vaadin-icon')) {" +
-				"  var icon = document.createElement('vaadin-icon');" +
-				"  icon.setAttribute('icon', 'vaadin:cubes');" +
-				"  icon.style.cssText = 'width:36px;height:36px;display:block;margin:0 auto 8px auto;color:#3a5f5f';" +
-				"  brand.insertBefore(icon, brand.firstChild);" +
+				"var w = this.shadowRoot.querySelector('vaadin-login-overlay-wrapper');" +
+				"if (w && w.shadowRoot && !w.shadowRoot.querySelector('[data-licon]')) {" +
+				"  var s = w.shadowRoot.querySelector('section[part=\"brand\"]') || w.shadowRoot.querySelector('h1[part=\"title\"]');" +
+				"  if (s) {" +
+				"    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');" +
+				"    svg.setAttribute('data-licon', '');" +
+				"    svg.setAttribute('viewBox', '0 0 16 16');" +
+				"    svg.style.cssText = 'width:36px;height:36px;display:block;margin:0 auto 12px auto;fill:#3a5f5f';" +
+				"    svg.innerHTML = '<path d=\"M12 6v-4l-4-2-4 2v4l-4 2v5l4 2 4-2 4 2 4-2v-5zM8.090 1.12l2.91 1.44-2.6 1.3-2.91-1.44zM5 2.78l3 1.5v3.6l-3-1.5v-3.6zM4 13.88l-3-1.5v-3.6l3 1.5v3.6zM4.28 9.88l-2.88-1.46 2.6-1.3 2.88 1.44zM12 13.88l-3-1.5v-3.6l3 1.5v3.6zM12.28 9.88l-2.88-1.46 2.6-1.3 2.88 1.44z\"/>';" +
+				"    s.insertBefore(svg, s.firstChild);" +
+				"  }" +
 				"}"
 			);
 		});
