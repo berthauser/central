@@ -338,6 +338,7 @@ vaadin-details-summary::part(toggle)::before {
 /* ===== SIDE NAVIGATION ===== */
 vaadin-side-nav {
     width: 100%;
+    overflow-x: hidden;
 }
 
 vaadin-side-nav::part(content) {
@@ -372,6 +373,7 @@ vaadin-side-nav-item[has-children]::part(content):hover {
 
 vaadin-side-nav-item[has-children]::part(children) {
     padding: 0;
+    overflow-x: hidden;
 }
 
 vaadin-side-nav-item:not([has-children])::part(link) {
