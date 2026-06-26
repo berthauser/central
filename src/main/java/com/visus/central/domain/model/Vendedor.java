@@ -3,9 +3,6 @@ package com.visus.central.domain.model;
 import java.util.List;
 import java.util.Objects;
 
-import com.visus.central.infraestructure.persistence.entity.JpaVendedorEntity.SituacionFiscal;
-import com.visus.central.infraestructure.persistence.entity.JpaVendedorEntity.TipoDocumento;
-
 public class Vendedor {
 
 	private Integer id;

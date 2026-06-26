@@ -56,6 +56,7 @@ public class DevolucionView extends VerticalLayout {
 	private final Button btnBuscarBarra = new Button("Buscar");
 	private final Button btnBuscarCliente = new Button("Buscar");
 	private final Button btnProcesar = new Button("Procesar Devolución");
+	private final Button btnInicio = new Button("Inicio");
 
 	private Venta ventaSeleccionada;
 	private int diasPolitica = 30;
@@ -93,7 +94,7 @@ public class DevolucionView extends VerticalLayout {
 		cmbDiasDevolucion.setValue(30);
 		cmbDiasDevolucion.setWidth("180px");
 
-		HorizontalLayout searchBar = new HorizontalLayout(txtCodigoBarra, btnBuscarBarra, cmbCliente, cmbDiasDevolucion, btnBuscarCliente);
+		HorizontalLayout searchBar = new HorizontalLayout(txtCodigoBarra, btnBuscarBarra, cmbCliente, cmbDiasDevolucion, btnBuscarCliente, btnInicio);
 		searchBar.setAlignItems(Alignment.BASELINE);
 		searchBar.setSpacing(true);
 
@@ -165,7 +166,6 @@ public class DevolucionView extends VerticalLayout {
 		itemsPanel.setSpacing(true);
 		itemsPanel.setPadding(false);
 
-		Button btnInicio = new Button("Inicio");
 		btnInicio.setIcon(new Icon(VaadinIcon.HOME));
 		btnInicio.addClassName("btn-volver-home");
 		btnInicio.addClickListener(_ -> UI.getCurrent().navigate(""));

@@ -1,11 +1,12 @@
 package com.visus.central.infraestructure.persistence.entity;
 
-import com.visus.central.infraestructure.converter.EstadoGrupoFamConverter;
-import com.visus.central.infraestructure.converter.ParentescoConverter;
-import com.visus.central.infraestructure.converter.TDocumentoGrupoFamConverter;
+import com.visus.central.domain.model.Estado;
+import com.visus.central.domain.model.Parentesco;
+import com.visus.central.domain.model.TipoDocumento;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,104 +33,20 @@ public class JpaGrupoFamEntity {
     )
     private JpaClienteEntity cliente;
 	
-	@Convert(converter = TDocumentoGrupoFamConverter.class) // Esto le dice a JPA: “Usá el conversor para guardar y leer como VARCHAR”.
+	@Enumerated(EnumType.STRING)
 	@Column(name = "documento", nullable = false, length = 20)
 	private TipoDocumento tipoDocumento;
-
-	public enum TipoDocumento {
-		Cuit_Cuil("CUIT/CUIL"), Dni("DNI"), No_Corresponde("No Corresponde");
-
-		private final String label;
-
-		TipoDocumento(String label) {
-			this.label = label;
-		}
-
-		@Override
-		public String toString() {
-			return label;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public static TipoDocumento fromLabel(String label) {
-			for (TipoDocumento p : values()) {
-				if (p.label.equalsIgnoreCase(label)) {
-					return p;
-				}
-			}
-			throw new IllegalArgumentException("Tipo de Documento inválido: " + label);
-		}
-	}
 	
 	@Column(name = "numero")
     private Long numero;
 
-    @Convert(converter = ParentescoConverter.class) // Esto le dice a JPA: “Usá el conversor para guardar y leer como VARCHAR”.
+    @Enumerated(EnumType.STRING)
     @Column(name = "parentesco", nullable = false, length = 20)
     private Parentesco parentesco;
     
-    public enum Parentesco {
-    	Hijo("Hijo/a"), Esposo("Esposo/a"), Nieto("Nieto/a"), Sobrino("Sobrino/a"), Otros("Otros");
-    	
-    	private final String label;
-    	
-    	Parentesco(String label) {
-    		this.label = label;
-    	}
-    	
-    	@Override
-    	public String toString() {
-    		return label;
-    	}
-    	
-    	public String getLabel() {
-    		return label;
-    	}
-    	
-    	public static Parentesco fromLabel(String label) {
-    		for (Parentesco p : values()) {
-    			if (p.label.equalsIgnoreCase(label)) {
-    				return p;
-    			}
-    		}
-    		throw new IllegalArgumentException("Parentesco inválido: " + label);
-    	}
-    }
-    
-    @Convert(converter = EstadoGrupoFamConverter.class) // Esto le dice a JPA: “Usá el conversor para guardar y leer como VARCHAR”.
+    @Enumerated(EnumType.STRING)
     @Column(name = "estado", nullable = false, length = 15)
     private Estado estado;
-    
-    public enum Estado {
-    	Habilitado("Habilitado"), Deshabilitado("Deshabilitado"), Baja("Baja");
-    	
-		private final String label;
-
-		Estado(String label) {
-			this.label = label;
-		}
-		
-		@Override
-	    public String toString() {
-	        return label;
-	    }
-
-		public String getLabel() {
-			return label;
-		}
-
-		public static Estado fromLabel(String label) {
-			for (Estado p : values()) {
-				if (p.label.equalsIgnoreCase(label)) {
-					return p;
-				}
-			}
-			throw new IllegalArgumentException("Estado no válido: " + label);
-		}
-	}
 
 	public Integer getIdgrupofam() {
 		return idgrupofam;

@@ -19,7 +19,6 @@ public class AboutDialog extends Dialog {
 
 	public AboutDialog() {
         // Configuración básica del diálogo
-        setModal(true);
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
         

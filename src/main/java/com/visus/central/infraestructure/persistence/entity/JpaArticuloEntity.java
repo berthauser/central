@@ -3,11 +3,12 @@ package com.visus.central.infraestructure.persistence.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.visus.central.infraestructure.converter.EstadoArticuloConverter;
+import com.visus.central.domain.model.EstadoArticulo;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
@@ -102,39 +103,9 @@ public class JpaArticuloEntity {
     @Column(name = "bonificacion", precision = 15, scale = 2)
     private BigDecimal bonificacion;    
     
-	@Convert(converter = EstadoArticuloConverter.class)
+	@Enumerated(EnumType.STRING)
     @Column(name = "estado", length = 15)
-    private Estado estado;
-
-
-    
-	public enum Estado {
-    	EnExistencias("En Existencias"), Disponible("Disponible"), Comprometido("Comprometido"), NoDisponible("No Disponible"), Entrante("Entrante"), Baja("Baja");
-    	
-		private final String label;
-
-		Estado(String label) {
-			this.label = label;
-		}
-		
-		@Override
-	    public String toString() {
-	        return label;
-	    }
-
-		public String getLabel() {
-			return label;
-		}
-
-		public static Estado fromLabel(String label) {
-			for (Estado p : values()) {
-				if (p.label.equalsIgnoreCase(label)) {
-					return p;
-				}
-			}
-			throw new IllegalArgumentException("Estado no válido: " + label);
-		}
-    }
+    private EstadoArticulo estado;
 
 	public Integer getId() {
 		return id;
@@ -320,11 +291,11 @@ public class JpaArticuloEntity {
 		this.bonificacion = bonificacion;
 	}
 
-	public Estado getEstado() {
+	public EstadoArticulo getEstado() {
 		return estado;
 	}
 
-	public void setEstado(Estado estado) {
+	public void setEstado(EstadoArticulo estado) {
 		this.estado = estado;
 	}
 

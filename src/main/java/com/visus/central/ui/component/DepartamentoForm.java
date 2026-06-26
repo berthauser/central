@@ -4,7 +4,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.visus.central.domain.model.Departamento;
-import com.visus.central.infraestructure.persistence.entity.JpaDepartamentoEntity.Provincia;
+import com.visus.central.domain.model.Provincia;
 
 public class DepartamentoForm extends AbstractForm<Departamento> {
 

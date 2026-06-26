@@ -23,7 +23,7 @@ import com.vaadin.flow.router.Route;
 import com.visus.central.domain.model.Departamento;
 import com.visus.central.domain.port.in.DepartamentoUseCase;
 import com.visus.central.domain.port.in.LocalidadUseCase;
-import com.visus.central.infraestructure.persistence.entity.JpaDepartamentoEntity.Provincia;
+import com.visus.central.domain.model.Provincia;
 import com.visus.central.ui.component.DepartamentoForm;
 import com.visus.central.ui.component.CentralLayout;
 

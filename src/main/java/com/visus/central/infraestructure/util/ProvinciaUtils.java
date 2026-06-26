@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.visus.central.infraestructure.persistence.entity.JpaDepartamentoEntity.Provincia;
+import com.visus.central.domain.model.Provincia;
 
 public class ProvinciaUtils {
 	public static List<String> obtenerProvinciasLegibles() {

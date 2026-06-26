@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.visus.central.domain.model.Cliente;
 import com.visus.central.domain.model.ClienteComboDTO;
 import com.visus.central.domain.model.Domicilio;
+import com.visus.central.domain.model.Estado;
 import com.visus.central.domain.port.in.DomicilioUseCase;
 import com.visus.central.domain.port.out.ClienteRepository;
 import com.visus.central.infraestructure.converter.JpaClienteMapper;
@@ -40,7 +41,7 @@ public class PostgresClienteAdapter implements ClienteRepository {
     
     @Override
     public List<Cliente> findAllClientesBasico() {
-        return jpaRepository.findByEstado(JpaClienteEntity.Estado.Habilitado).stream()
+        return jpaRepository.findByEstado(Estado.Habilitado).stream()
                 .map(clienteMapper::toModel)
                 .collect(Collectors.toList());
     }

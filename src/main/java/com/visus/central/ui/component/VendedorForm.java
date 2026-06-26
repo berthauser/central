@@ -15,8 +15,8 @@ import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.visus.central.domain.model.Domicilio;
 import com.visus.central.domain.model.Vendedor;
 import com.visus.central.domain.port.in.DomicilioUseCase;
-import com.visus.central.infraestructure.persistence.entity.JpaVendedorEntity.SituacionFiscal;
-import com.visus.central.infraestructure.persistence.entity.JpaVendedorEntity.TipoDocumento;
+import com.visus.central.domain.model.SituacionFiscal;
+import com.visus.central.domain.model.TipoDocumento;
 import com.visus.central.infraestructure.util.SpringContextHelper;
 
 public class VendedorForm extends AbstractForm<Vendedor> {

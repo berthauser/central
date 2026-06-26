@@ -31,8 +31,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity;
 import com.visus.central.domain.model.Articulo;
+import com.visus.central.domain.model.EstadoArticulo;
 import com.visus.central.domain.port.in.ArticuloUseCase;
 import com.visus.central.ui.component.AbstractForm;
 import com.visus.central.ui.component.ArticuloForm;
@@ -375,7 +375,7 @@ public class ArticulosView extends AbstractView<Articulo> {
 					layout.add(duplicar);
 
 					// Botón reactivar: solo cuando está NoDisponible
-					if (articulo.getEstado() == JpaArticuloEntity.Estado.NoDisponible) {
+					if (articulo.getEstado() == EstadoArticulo.NoDisponible) {
 						Button reactivar = new Button("Activar", new Icon(VaadinIcon.CHECK));
 						reactivar.addThemeVariants(ButtonVariant.LUMO_SUCCESS, ButtonVariant.LUMO_SMALL);
 						reactivar.addClickListener(_ -> reactivarArticulo(articulo));
@@ -548,7 +548,7 @@ public class ArticulosView extends AbstractView<Articulo> {
 					page = service.buscarPorDescripcion("", pageable);
 				} else {
 					try {
-						JpaArticuloEntity.Estado estadoEnum = JpaArticuloEntity.Estado.fromLabel(estadoSeleccionado);
+						EstadoArticulo estadoEnum = EstadoArticulo.fromLabel(estadoSeleccionado);
 						page = service.buscarPorEstado(estadoEnum, pageable);
 					} catch (IllegalArgumentException e) {
 						// Estado inválido, mostrar todos
@@ -561,7 +561,7 @@ public class ArticulosView extends AbstractView<Articulo> {
 					page = service.buscarPorDescripcion(currentFilter, pageable);
 				} else {
 					try {
-						JpaArticuloEntity.Estado estadoEnum = JpaArticuloEntity.Estado.fromLabel(estadoSeleccionado);
+						EstadoArticulo estadoEnum = EstadoArticulo.fromLabel(estadoSeleccionado);
 						page = service.buscarPorDescripcionYEstado(currentFilter, estadoEnum, pageable);
 					} catch (IllegalArgumentException e) {
 						// Estado inválido, solo filtrar por descripción

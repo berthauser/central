@@ -1,5 +1,6 @@
 package com.visus.central.domain.port.out;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,5 +15,7 @@ public interface CajaRepository {
 	Optional<Caja> findCajaAbierta(); // la única caja abierta (si aplica)
 
 	List<Caja> findAll();
+
+	List<Caja> findCerradasPorRango(LocalDate fechaInicio, LocalDate fechaFin);
 
 }

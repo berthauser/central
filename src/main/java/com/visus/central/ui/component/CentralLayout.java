@@ -42,14 +42,17 @@ import com.visus.central.ui.view.ClienteView;
 import com.visus.central.ui.view.CoeficienteView;
 import com.visus.central.ui.view.ComisionView;
 import com.visus.central.ui.view.ComprobanteView;
+import com.visus.central.ui.view.ConsultaDeListasView;
 import com.visus.central.ui.view.CuentaCorrienteView;
 import com.visus.central.ui.view.DevolucionView;
 import com.visus.central.ui.view.FacturacionView;
 import com.visus.central.ui.view.LineaView;
+import com.visus.central.ui.view.ListasView;
 import com.visus.central.ui.view.LocalidadView;
 import com.visus.central.ui.view.LoginView;
 import com.visus.central.ui.view.MedidaView;
 import com.visus.central.ui.view.PermisosView;
+import com.visus.central.ui.view.PorcentualesView;
 import com.visus.central.ui.view.PresentacionView;
 import com.visus.central.ui.view.ProveedorView;
 import com.visus.central.ui.view.ReglaComisionView;
@@ -179,7 +182,10 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		movManuales.addClickListener(_ -> {
 			UI.getCurrent().navigate(CajaView.class);
 		});
-		cajaSubMenu.addItem("Consulta");
+		MenuItem consultaCaja = cajaSubMenu.addItem("Consulta");
+		consultaCaja.addClickListener(_ -> {
+			UI.getCurrent().navigate(com.visus.central.ui.view.ConsultaCajaView.class);
+		});
 
 		// Item "Inventario"
 		MenuItem inventarioItem = menuBar.addItem("Inventario");
@@ -204,6 +210,13 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		porCodigoBarraItem.addClickListener(_ -> {
 			// UI.getCurrent().navigate("actualizacion-precios-codigo-barra");
 			UI.getCurrent().navigate(ActualizacionPreciosCodigoBarraView.class);
+		});
+
+		preciosSubMenu.addSeparator();
+
+		MenuItem consultaListasItem = preciosSubMenu.addItem("Consulta de Listas");
+		consultaListasItem.addClickListener(_ -> {
+			UI.getCurrent().navigate(ConsultaDeListasView.class);
 		});
 
 		// Item "Facturación"
@@ -368,6 +381,8 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		tablasBasicas.setPrefixComponent(VaadinIcon.TABLE.create());
 		tablasBasicas.addItem(new SideNavItem("Localidades", LocalidadView.class));
 		tablasBasicas.addItem(new SideNavItem("Vendedores", VendedorView.class));
+		tablasBasicas.addItem(new SideNavItem("Porcentuales para Listas", PorcentualesView.class));
+		tablasBasicas.addItem(new SideNavItem("Listas de Precios", ListasView.class));
 		sideNav.addItem(tablasBasicas);
 
 		SideNavItem areaFinanciera = new SideNavItem("Área Financiera");

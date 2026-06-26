@@ -11,9 +11,9 @@ import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.visus.central.domain.model.Banco;
 import com.visus.central.domain.model.Proveedor;
 import com.visus.central.domain.port.in.BancoUseCase;
-import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.Estado;
-import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.SituacionFiscal;
-import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.TipoDocumento;
+import com.visus.central.domain.model.Estado;
+import com.visus.central.domain.model.SituacionFiscal;
+import com.visus.central.domain.model.TipoDocumento;
 import com.visus.central.infraestructure.util.SpringContextHelper;
 
 public class ProveedorForm extends AbstractForm<Proveedor> {

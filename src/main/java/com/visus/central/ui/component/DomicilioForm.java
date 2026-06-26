@@ -16,7 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.visus.central.domain.model.Domicilio;
 import com.visus.central.domain.model.Localidad;
-import com.visus.central.infraestructure.persistence.entity.JpaDomicilioEntity.TipoDomicilio;
+import com.visus.central.domain.model.TipoDomicilio;
 
 public class DomicilioForm extends VerticalLayout {
 

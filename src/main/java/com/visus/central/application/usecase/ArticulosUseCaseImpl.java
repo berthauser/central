@@ -10,8 +10,7 @@ import com.visus.central.application.exception.EntityNotFoundException;
 import com.visus.central.domain.model.Articulo;
 import com.visus.central.domain.port.in.ArticuloUseCase;
 import com.visus.central.domain.port.out.ArticuloRepository;
-import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity;
-import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity.Estado;
+import com.visus.central.domain.model.EstadoArticulo;
 import com.visus.central.infraestructure.util.Ean13Generator;
 import jakarta.transaction.Transactional;
 
@@ -51,7 +50,7 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
         Optional<Articulo> articuloOpt = articuloRepository.findById(id);
         if (articuloOpt.isPresent()) {
             Articulo articulo = articuloOpt.get();
-            articulo.setEstado(JpaArticuloEntity.Estado.NoDisponible);
+            articulo.setEstado(EstadoArticulo.NoDisponible);
             articuloRepository.save(articulo);
         }
     }
@@ -62,7 +61,7 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
         if (articuloOpt.isPresent()) {
             Articulo articulo = articuloOpt.get();
             try {
-                JpaArticuloEntity.Estado estado = JpaArticuloEntity.Estado.fromLabel(nuevoEstado);
+                EstadoArticulo estado = EstadoArticulo.fromLabel(nuevoEstado);
                 articulo.setEstado(estado);
                 articuloRepository.save(articulo);
             } catch (IllegalArgumentException e) {
@@ -75,12 +74,12 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
     
     @Override
     public List<Articulo> buscarActivos() {
-        return articuloRepository.findByEstadoNot(JpaArticuloEntity.Estado.NoDisponible);
+        return articuloRepository.findByEstadoNot(EstadoArticulo.NoDisponible);
     }
 
     @Override
     public Page<Articulo> buscarActivosPaginado(Pageable pageable) {
-        return articuloRepository.findByEstadoNot(JpaArticuloEntity.Estado.NoDisponible, pageable);
+        return articuloRepository.findByEstadoNot(EstadoArticulo.NoDisponible, pageable);
     }
 
     @Override
@@ -104,12 +103,12 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
     }
     
     @Override
-    public Page<Articulo> buscarPorEstado(JpaArticuloEntity.Estado estado, Pageable pageable) {
+    public Page<Articulo> buscarPorEstado(EstadoArticulo estado, Pageable pageable) {
         return articuloRepository.findByEstado(estado, pageable);
     }
 
     @Override
-    public Page<Articulo> buscarPorDescripcionYEstado(String descripcion, JpaArticuloEntity.Estado estado, Pageable pageable) {
+    public Page<Articulo> buscarPorDescripcionYEstado(String descripcion, EstadoArticulo estado, Pageable pageable) {
         return articuloRepository.findByDescripcionContainingIgnoreCaseAndEstado(descripcion, estado, pageable);
     }
     
@@ -122,7 +121,7 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
                 return articuloRepository.findByDescripcionContainingIgnoreCase(descripcion, pageable);
             }
         } else {
-            JpaArticuloEntity.Estado estadoEnum = JpaArticuloEntity.Estado.fromLabel(estado);
+            EstadoArticulo estadoEnum = EstadoArticulo.fromLabel(estado);
             if (descripcion == null || descripcion.trim().isEmpty()) {
                 return articuloRepository.findByEstado(estadoEnum, pageable);
             } else {
@@ -138,7 +137,7 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
 	}
 
 	@Override
-	public Page<Articulo> buscarPorRubroYEstado(String rubro, Estado estado, Pageable pageable) {
+	public Page<Articulo> buscarPorRubroYEstado(String rubro, EstadoArticulo estado, Pageable pageable) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -150,7 +149,7 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
 	}
 
 	@Override
-	public Page<Articulo> buscarPorRubroDescripcionYEstado(String rubro, String descripcion, Estado estado,
+	public Page<Articulo> buscarPorRubroDescripcionYEstado(String rubro, String descripcion, EstadoArticulo estado,
 			Pageable pageable) {
 		// TODO Auto-generated method stub
 		return null;

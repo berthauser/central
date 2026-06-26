@@ -2,8 +2,6 @@ package com.visus.central.domain.model;
 
 import java.util.Objects;
 
-import com.visus.central.infraestructure.persistence.entity.JpaDomicilioEntity.TipoDomicilio;
-
 public class Domicilio {
 
 	private Integer id;

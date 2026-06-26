@@ -11,14 +11,12 @@ public class JpaVentaMapper {
 	private final JpaComprobanteMapper comprobanteMapper;
     private final JpaClienteMapper clienteMapper;
     private final JpaVendedorMapper vendedorMapper;
-    private final JpaItemMapper itemMapper;
 
 	public JpaVentaMapper(JpaComprobanteMapper comprobanteMapper, JpaClienteMapper clienteMapper,
-			JpaVendedorMapper vendedorMapper, JpaItemMapper itemMapper) {
+			JpaVendedorMapper vendedorMapper) {
 		this.comprobanteMapper = comprobanteMapper;
 		this.clienteMapper = clienteMapper;
 		this.vendedorMapper = vendedorMapper;
-		this.itemMapper = itemMapper;
     }
     
     

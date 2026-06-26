@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.visus.central.domain.model.Articulo;
-import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity;
+import com.visus.central.domain.model.EstadoArticulo;
 
 public interface ArticuloUseCase extends CrudUseCase<Articulo> {
 	 
@@ -21,8 +21,8 @@ public interface ArticuloUseCase extends CrudUseCase<Articulo> {
 	void cambiarEstado(Integer id, String nuevoEstado);
 
 	// Para filtro de estado
-	Page<Articulo> buscarPorEstado(JpaArticuloEntity.Estado estado, Pageable pageable);
-	Page<Articulo> buscarPorDescripcionYEstado(String descripcion, JpaArticuloEntity.Estado estado, Pageable pageable);
+	Page<Articulo> buscarPorEstado(EstadoArticulo estado, Pageable pageable);
+	Page<Articulo> buscarPorDescripcionYEstado(String descripcion, EstadoArticulo estado, Pageable pageable);
 
 	// Para mostrar solo artículos activos (no "No Disponible")
 	List<Articulo> buscarActivos();
@@ -33,8 +33,8 @@ public interface ArticuloUseCase extends CrudUseCase<Articulo> {
 	
 	// Métodos adicionales
 	Page<Articulo> buscarPorRubro(String rubro, Pageable pageable);
-	Page<Articulo> buscarPorRubroYEstado(String rubro, JpaArticuloEntity.Estado estado, Pageable pageable);
+	Page<Articulo> buscarPorRubroYEstado(String rubro, EstadoArticulo estado, Pageable pageable);
 	Page<Articulo> buscarPorRubroYDescripcion(String rubro, String descripcion, Pageable pageable);
-	Page<Articulo> buscarPorRubroDescripcionYEstado(String rubro, String descripcion, JpaArticuloEntity.Estado estado, Pageable pageable);
+	Page<Articulo> buscarPorRubroDescripcionYEstado(String rubro, String descripcion, EstadoArticulo estado, Pageable pageable);
 
 }

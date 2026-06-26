@@ -116,6 +116,11 @@ public class CajaUseCaseImpl implements CajaUseCase {
 	}
 
 	@Override
+	public List<Caja> obtenerCajasCerradasPorRango(LocalDate fechaInicio, LocalDate fechaFin) {
+		return cajaRepo.findCerradasPorRango(fechaInicio, fechaFin);
+	}
+
+	@Override
 	public BigDecimal obtenerSaldoInicialSugerido() {
 	    // Buscar todas las cajas ordenadas por fecha de cierre descendente, tomar la primera cerrada
 	    List<Caja> todas = cajaRepo.findAll(); // necesitas agregar findAll() en CajaRepositoryPort si no existe

@@ -5,11 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.Estado;
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.Sexo;
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.SituacionFiscal;
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.TipoDocumento;
-
 public class Cliente {
 	
 	private Integer id;

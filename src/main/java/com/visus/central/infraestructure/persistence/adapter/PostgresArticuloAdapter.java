@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.visus.central.domain.model.Articulo;
+import com.visus.central.domain.model.EstadoArticulo;
 import com.visus.central.domain.model.Unidad;
 import com.visus.central.domain.model.UnidadConCantidad;
 import com.visus.central.domain.port.out.ArticuloRepository;
@@ -137,27 +138,27 @@ public class PostgresArticuloAdapter implements ArticuloRepository {
 	// NUEVOS MÉTODOS IMPLEMENTADOS
 
 	@Override
-	public Page<Articulo> findByEstado(JpaArticuloEntity.Estado estado, Pageable pageable) {
+	public Page<Articulo> findByEstado(EstadoArticulo estado, Pageable pageable) {
 		return jpaArticuloRepository.findByEstado(estado, pageable)
 				.map(articuloMapper::toModel);
 	}
 
 	@Override
 	public Page<Articulo> findByDescripcionContainingIgnoreCaseAndEstado(
-			String descripcion, JpaArticuloEntity.Estado estado, Pageable pageable) {
+			String descripcion, EstadoArticulo estado, Pageable pageable) {
 		return jpaArticuloRepository.findByDescripcionContainingIgnoreCaseAndEstado(
 				descripcion, estado, pageable)
 				.map(articuloMapper::toModel);
 	}
 
 	@Override
-	public Page<Articulo> findByEstadoNot(JpaArticuloEntity.Estado estado, Pageable pageable) {
+	public Page<Articulo> findByEstadoNot(EstadoArticulo estado, Pageable pageable) {
 		return jpaArticuloRepository.findByEstadoNot(estado, pageable)
 				.map(articuloMapper::toModel);
 	}
 
 	@Override
-	public List<Articulo> findByEstadoNot(JpaArticuloEntity.Estado estado) {
+	public List<Articulo> findByEstadoNot(EstadoArticulo estado) {
 		return jpaArticuloRepository.findByEstadoNot(estado).stream()
 				.map(articuloMapper::toModel)
 				.collect(Collectors.toList());

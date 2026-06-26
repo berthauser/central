@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport name="precioLista" language="java" pageWidth="842" pageHeight="595" columnWidth="782" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30">
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<style name="title" fontSize="18" isBold="true"/>
+	<style name="columnHeader" mode="Opaque" backcolor="#F0F8FF" fontSize="10" isBold="true"/>
+	<style name="cell" fontSize="9"/>
+	<parameter name="listaDescripcion" class="java.lang.String"/>
+	<parameter name="dataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<title>
+		<band height="40">
+			<staticText>
+				<reportElement x="0" y="0" width="782" height="25"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Lista de Precios]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="25" width="782" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$P{listaDescripcion}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20">
+			<staticText><reportElement x="0" y="0" width="40" height="20"/><textElement/><text><![CDATA[Código]]></text></staticText>
+			<staticText><reportElement x="40" y="0" width="200" height="20"/><textElement/><text><![CDATA[Descripción]]></text></staticText>
+			<staticText><reportElement x="240" y="0" width="80" height="20"/><textElement/><text><![CDATA[Línea]]></text></staticText>
+			<staticText><reportElement x="320" y="0" width="80" height="20"/><textElement/><text><![CDATA[Proveedor]]></text></staticText>
+			<staticText><reportElement x="400" y="0" width="70" height="20"/><textElement textAlignment="Right"/><text><![CDATA[Costo]]></text></staticText>
+			<staticText><reportElement x="470" y="0" width="60" height="20"/><textElement textAlignment="Right"/><text><![CDATA[Margen]]></text></staticText>
+			<staticText><reportElement x="530" y="0" width="80" height="20"/><textElement textAlignment="Right"/><text><![CDATA[Precio Base]]></text></staticText>
+			<staticText><reportElement x="610" y="0" width="70" height="20"/><textElement textAlignment="Right"/><text><![CDATA[Ajuste %]]></text></staticText>
+			<staticText><reportElement x="680" y="0" width="102" height="20"/><textElement textAlignment="Right"/><text><![CDATA[Precio Final]]></text></staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField><reportElement x="0" y="0" width="40" height="20"/><textFieldExpression><![CDATA[$F{codigo}]]></textFieldExpression></textField>
+			<textField><reportElement x="40" y="0" width="200" height="20"/><textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression></textField>
+			<textField><reportElement x="240" y="0" width="80" height="20"/><textFieldExpression><![CDATA[$F{linea}]]></textFieldExpression></textField>
+			<textField><reportElement x="320" y="0" width="80" height="20"/><textFieldExpression><![CDATA[$F{proveedor}]]></textFieldExpression></textField>
+			<textField pattern="#,##0.00"><reportElement x="400" y="0" width="70" height="20" isPrintInFirstWholeBand="true"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{precioCosto}]]></textFieldExpression></textField>
+			<textField pattern="#,##0.00"><reportElement x="470" y="0" width="60" height="20"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{margenUtilidad}]]></textFieldExpression></textField>
+			<textField pattern="#,##0.00"><reportElement x="530" y="0" width="80" height="20"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{precioBase}]]></textFieldExpression></textField>
+			<textField pattern="#,##0.00"><reportElement x="610" y="0" width="70" height="20"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{porcentajeAjuste}]]></textFieldExpression></textField>
+			<textField pattern="#,##0.00"><reportElement x="680" y="0" width="102" height="20"/><textElement textAlignment="Right"/><textFieldExpression><![CDATA[$F{precioFinal}]]></textFieldExpression></textField>
+		</band>
+	</detail>
+</jasperReport>

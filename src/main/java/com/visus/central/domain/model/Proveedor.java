@@ -2,10 +2,6 @@ package com.visus.central.domain.model;
 
 import java.util.Objects;
 
-import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.Estado;
-import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.SituacionFiscal;
-import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity.TipoDocumento;
-
 public class Proveedor {
 	
 	private Integer id;

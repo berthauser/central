@@ -20,7 +20,9 @@ public interface CajaUseCase {
 	MovimientoCaja registrarMovimientoManual(MovimientoManualRec command);
 
 	BigDecimal calcularSaldoActual(Caja caja);
-	
+
 	BigDecimal obtenerSaldoInicialSugerido();
+
+	List<Caja> obtenerCajasCerradasPorRango(LocalDate fechaInicio, LocalDate fechaFin);
 
 }

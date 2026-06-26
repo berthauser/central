@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity.Estado;
-
 
 public class Articulo {
 	
@@ -34,7 +32,7 @@ public class Articulo {
     private Alicuota alicuota;
     private Boolean esBonificado;
     private BigDecimal bonificacion;
-    private Estado estado;
+    private EstadoArticulo estado;
 
     private List<UnidadConCantidad> unidades = new ArrayList<>();
 
@@ -222,11 +220,11 @@ public class Articulo {
 		this.bonificacion = bonificacion;
 	}
 	
-    public Estado getEstado() {
+    public EstadoArticulo getEstado() {
 		return estado;
 	}
 	
-    public void setEstado(Estado estado) {
+    public void setEstado(EstadoArticulo estado) {
 		this.estado = estado;
 	}
     
@@ -239,7 +237,7 @@ public class Articulo {
 	}
 
     public boolean isDisponible() {
-        return this.estado == Estado.Disponible;
+        return this.estado == EstadoArticulo.Disponible;
     }
     
 	@Override

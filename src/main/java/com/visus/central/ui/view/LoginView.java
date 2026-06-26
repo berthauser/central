@@ -83,6 +83,6 @@ public class LoginView extends LoginOverlay {
 			}
 		});
 
-		addAttachListener(e -> setOpened(true));
+		addAttachListener(_ -> setOpened(true));
 	}
 }

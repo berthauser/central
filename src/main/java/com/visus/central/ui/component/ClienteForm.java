@@ -25,10 +25,10 @@ import com.visus.central.domain.model.Domicilio;
 import com.visus.central.domain.model.GrupoFam;
 import com.visus.central.domain.port.in.DomicilioUseCase;
 import com.visus.central.domain.port.in.GrupoFamUseCase;
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.Estado;
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.Sexo;
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.SituacionFiscal;
-import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.TipoDocumento;
+import com.visus.central.domain.model.Estado;
+import com.visus.central.domain.model.Sexo;
+import com.visus.central.domain.model.SituacionFiscal;
+import com.visus.central.domain.model.TipoDocumento;
 import com.visus.central.infraestructure.util.SpringContextHelper;
 
 

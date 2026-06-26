@@ -58,8 +58,8 @@ import com.visus.central.domain.port.in.MedidaUseCase;
 import com.visus.central.domain.port.in.PresentacionUseCase;
 import com.visus.central.domain.port.in.ProveedorUseCase;
 import com.visus.central.domain.port.in.RubroUseCase;
-import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity.Estado;
-import com.visus.central.infraestructure.persistence.entity.JpaProveedorEntity;
+import com.visus.central.domain.model.Estado;
+import com.visus.central.domain.model.EstadoArticulo;
 import com.visus.central.infraestructure.util.Ean13Generator;
 import com.visus.central.infraestructure.util.FormatoUtils;
 import com.visus.central.infraestructure.util.SpringContextHelper;
@@ -105,7 +105,7 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 	private Checkbox esBonificado = new Checkbox("Artículo Bonificado");
 	private BigDecimalField bonificacion = new BigDecimalField("Bonificación");
 
-	private ComboBox<Estado> estado = new ComboBox<>("Estado");
+	private ComboBox<EstadoArticulo> estado = new ComboBox<>("Estado");
 
 	// Listas completas para filtrar
 	private List<Rubro> todosLosRubros = new ArrayList<>();
@@ -278,8 +278,8 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 		estado.addClassName(campoStyle);
 		estado.setWidth("250px");
-		estado.setItems(Arrays.asList(Estado.values()));
-		estado.setItemLabelGenerator(Estado::getLabel);
+		estado.setItems(Arrays.asList(EstadoArticulo.values()));
+		estado.setItemLabelGenerator(EstadoArticulo::getLabel);
 	}
 
 	private VerticalLayout crearPestañaInformacionBasica() {
@@ -714,7 +714,7 @@ public class ArticuloForm extends AbstractForm<Articulo> {
 
 			// Validación adicional: el proveedor debe estar activo
 			if (valido && proveedor.getEstado() != null) {
-				boolean habilitado = proveedor.getEstado().equals(JpaProveedorEntity.Estado.Habilitado);
+				boolean habilitado = proveedor.getEstado().equals(Estado.Habilitado);
 				if (!habilitado) {
 					System.out.println("Proveedor inactivo: " + proveedor.getNombreFantasia());
 					Notification.show("Proveedor inactivo. Asigne otro Proveedor", 

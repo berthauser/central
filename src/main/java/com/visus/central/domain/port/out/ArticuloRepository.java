@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.visus.central.domain.model.Articulo;
-import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity;
+import com.visus.central.domain.model.EstadoArticulo;
 
 public interface ArticuloRepository {
 	
@@ -25,13 +25,13 @@ public interface ArticuloRepository {
 	List<Articulo> findByProveedorId(Integer idProveedor);
 
 	// NUEVOS MÉTODOS PARA FILTRO DE ESTADO
-	Page<Articulo> findByEstado(JpaArticuloEntity.Estado estado, Pageable pageable);
+	Page<Articulo> findByEstado(EstadoArticulo estado, Pageable pageable);
 	Page<Articulo> findByDescripcionContainingIgnoreCaseAndEstado(
-			String descripcion, JpaArticuloEntity.Estado estado, Pageable pageable);
+			String descripcion, EstadoArticulo estado, Pageable pageable);
 
 	// Métodos para búsqueda excluyendo "No Disponible"
-	Page<Articulo> findByEstadoNot(JpaArticuloEntity.Estado estado, Pageable pageable);
-	List<Articulo> findByEstadoNot(JpaArticuloEntity.Estado estado);
+	Page<Articulo> findByEstadoNot(EstadoArticulo estado, Pageable pageable);
+	List<Articulo> findByEstadoNot(EstadoArticulo estado);
 
 	// Método para buscar todos con paginación
 	Page<Articulo> findAll(Pageable pageable);

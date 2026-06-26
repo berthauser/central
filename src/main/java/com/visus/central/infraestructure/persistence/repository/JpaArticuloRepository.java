@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.visus.central.domain.model.EstadoArticulo;
 import com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity;
 
 @Repository
@@ -29,17 +30,17 @@ public interface JpaArticuloRepository extends JpaRepository<JpaArticuloEntity, 
     Optional<JpaArticuloEntity> findByCodigoBarraWithRelations(@Param("codigoBarra") String codigoBarra);
     
     // Nuevos métodos para filtro por estado
-    Page<JpaArticuloEntity> findByEstado(JpaArticuloEntity.Estado estado, Pageable pageable);
+    Page<JpaArticuloEntity> findByEstado(EstadoArticulo estado, Pageable pageable);
     
     Page<JpaArticuloEntity> findByDescripcionContainingIgnoreCaseAndEstado(
         @Param("descripcion") String descripcion, 
-        @Param("estado") JpaArticuloEntity.Estado estado, 
+        @Param("estado") EstadoArticulo estado, 
         Pageable pageable);
     
     // Métodos para excluir un estado específico
-    Page<JpaArticuloEntity> findByEstadoNot(JpaArticuloEntity.Estado estado, Pageable pageable);
+    Page<JpaArticuloEntity> findByEstadoNot(EstadoArticulo estado, Pageable pageable);
     
-    List<JpaArticuloEntity> findByEstadoNot(JpaArticuloEntity.Estado estado);
+    List<JpaArticuloEntity> findByEstadoNot(EstadoArticulo estado);
     
  // Método flexible para múltiples filtros (opcional)
     @Query("SELECT a FROM JpaArticuloEntity a WHERE " +
@@ -47,7 +48,7 @@ public interface JpaArticuloRepository extends JpaRepository<JpaArticuloEntity, 
            "(:estado IS NULL OR a.estado = :estado)")
     Page<JpaArticuloEntity> buscarConFiltros(
         @Param("descripcion") String descripcion,
-        @Param("estado") JpaArticuloEntity.Estado estado,
+        @Param("estado") EstadoArticulo estado,
         Pageable pageable);
     
  // En tu repositorio JpaArticuloRepository

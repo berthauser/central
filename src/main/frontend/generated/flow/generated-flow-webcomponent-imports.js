@@ -115,7 +115,6 @@ import '@vaadin/upload/vaadin-upload-manager.js';
 import '@vaadin/virtual-list/src/vaadin-virtual-list.js';
 import 'Frontend/generated/jar-resources/virtualListConnector.js';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset.js';
-import 'Frontend/autofill.js';
 
 injectGlobalWebcomponentCss($cssFromFile_0.toString());
 injectGlobalWebcomponentCss($cssFromFile_1.toString());

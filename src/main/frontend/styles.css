@@ -367,7 +367,7 @@ vaadin-side-nav-item [slot="prefix"] {
   border: 1px solid #555;
   border-radius: 6px;
   font-size: 0.9em;
-  background-color: #1e1e1e;
+  background-color: var(--lumo-base-color);
   color: #e0e0e0;
 }
 

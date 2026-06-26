@@ -2,10 +2,11 @@ package com.visus.central.infraestructure.persistence.entity;
 
 import java.util.Objects;
 
-import com.visus.central.infraestructure.converter.TipoDomicilioConverter;
+import com.visus.central.domain.model.TipoDomicilio;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,38 +24,9 @@ public class JpaDomicilioEntity {
     @Column(name = "iddomicilio")
     private Integer id;
 
-	@Convert(converter = TipoDomicilioConverter.class) // Esto le dice a JPA: “Usá el conversor para guardar y leer como VARCHAR”.
+	@Enumerated(EnumType.STRING)
     @Column(name = "tipodomicilio", nullable = false, length = 30)
 	private TipoDomicilio tipoDomicilio;
-
-	public enum TipoDomicilio {
-		Fiscal_Pcial_Jurisdicción_Sede("Fiscal Pcial Jurisdicción Sede"), Principal_de_Actividades("Principal de Actividades"), 
-		Fiscal_Jurisdiccional("Fiscal Jurisdiccional"), Sin_Declarar("Sin Declarar");
-		
-		private final String label;
-
-		TipoDomicilio(String label) {
-			this.label = label;
-		}
-		
-		@Override
-	    public String toString() {
-	        return label;
-	    }
-
-		public String getLabel() {
-			return label;
-		}
-
-		public static TipoDomicilio fromLabel(String label) {
-			for (TipoDomicilio p : values()) {
-				if (p.label.equalsIgnoreCase(label)) {
-					return p;
-				}
-			}
-			throw new IllegalArgumentException("Tipo de Domicilio inválido: " + label);
-		}
-	}
 
     @Column(name = "calle", nullable = false, length = 60)
     private String calle;

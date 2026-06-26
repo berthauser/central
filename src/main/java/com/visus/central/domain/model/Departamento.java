@@ -1,6 +1,6 @@
 package com.visus.central.domain.model;
 
-import com.visus.central.infraestructure.persistence.entity.JpaDepartamentoEntity.Provincia;
+import com.visus.central.domain.model.Provincia;
 
 public class Departamento {
 	private Integer id;

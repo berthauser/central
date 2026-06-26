@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.visus.central.domain.model.ClienteComboDTO;
+import com.visus.central.domain.model.Estado;
 import com.visus.central.infraestructure.persistence.entity.JpaClienteEntity;
 
 public interface JpaClienteRepository extends JpaRepository<JpaClienteEntity, Integer> {
@@ -24,7 +25,7 @@ public interface JpaClienteRepository extends JpaRepository<JpaClienteEntity, In
 
 	// Proyección para clientes
 	@Query("SELECT new com.visus.central.domain.model.ClienteComboDTO(c.id, c.nombreCliente, 'CLIENTE', c.id, null) "
-			+ "FROM JpaClienteEntity c WHERE c.estado = com.visus.central.infraestructure.persistence.entity.JpaClienteEntity.Estado.Habilitado")
+			+ "FROM JpaClienteEntity c WHERE c.estado = com.visus.central.domain.model.Estado.Habilitado")
 	List<ClienteComboDTO> findClientesParaCombo();
 
 	// Versión paginada
@@ -32,7 +33,7 @@ public interface JpaClienteRepository extends JpaRepository<JpaClienteEntity, In
 			String nombreFantasia, String nombreCliente, Pageable pageable);
 
 	// Buscar por el enum Estado
-	List<JpaClienteEntity> findByEstado(JpaClienteEntity.Estado estado);
+	List<JpaClienteEntity> findByEstado(Estado estado);
 
 	List<JpaClienteEntity> findAll(); // todos, sin filtro
 

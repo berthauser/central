@@ -2,10 +2,6 @@ package com.visus.central.domain.model;
 
 import java.util.Objects;
 
-import com.visus.central.infraestructure.persistence.entity.JpaGrupoFamEntity.Estado;
-import com.visus.central.infraestructure.persistence.entity.JpaGrupoFamEntity.Parentesco;
-import com.visus.central.infraestructure.persistence.entity.JpaGrupoFamEntity.TipoDocumento;
-
 public class GrupoFam {
 	private Integer id;
     private String nombre;

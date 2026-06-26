@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.visus.central.infraestructure.persistence.entity.JpaDomicilioEntity.TipoDomicilio;
+import com.visus.central.domain.model.TipoDomicilio;
 
 public class TipoDomicilioUtils {
 	public static List<String> obtenerTiposDomicilioLegibles() {

@@ -108,7 +108,6 @@ import '@vaadin/upload/vaadin-upload-manager.js';
 import '@vaadin/virtual-list/src/vaadin-virtual-list.js';
 import 'Frontend/generated/jar-resources/virtualListConnector.js';
 import '@vaadin/vaadin-lumo-styles/vaadin-iconset.js';
-import 'Frontend/autofill.js';
 const loadOnDemand = (key) => { return Promise.resolve(0); }
 window.Vaadin = window.Vaadin || {};
 window.Vaadin.Flow = window.Vaadin.Flow || {};

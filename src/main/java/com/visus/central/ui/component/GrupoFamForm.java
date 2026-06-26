@@ -12,9 +12,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.visus.central.domain.model.GrupoFam;
-import com.visus.central.infraestructure.persistence.entity.JpaGrupoFamEntity.Estado;
-import com.visus.central.infraestructure.persistence.entity.JpaGrupoFamEntity.Parentesco;
-import com.visus.central.infraestructure.persistence.entity.JpaGrupoFamEntity.TipoDocumento;
+import com.visus.central.domain.model.Estado;
+import com.visus.central.domain.model.Parentesco;
+import com.visus.central.domain.model.TipoDocumento;
 
 public class GrupoFamForm extends VerticalLayout {
 

@@ -1,5 +1,6 @@
 package com.visus.central.infraestructure.persistence.adapter;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,6 +45,12 @@ public class CajaAdapter implements CajaRepository {
 	@Override
 	public List<Caja> findAll() {
 		return jpaRepository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Caja> findCerradasPorRango(LocalDate fechaInicio, LocalDate fechaFin) {
+		return jpaRepository.findCerradasPorRango(fechaInicio, fechaFin).stream()
+				.map(mapper::toDomain).collect(Collectors.toList());
 	}
 
 }

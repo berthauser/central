@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.visus.central.domain.model.Devolucion;
+import com.visus.central.domain.model.EstadoArticulo;
 import com.visus.central.domain.model.EstadoComision;
+import com.visus.central.domain.model.EstadoPlanPago;
 import com.visus.central.domain.model.EstadoVenta;
 import com.visus.central.domain.model.MovimientoCaja;
 import com.visus.central.domain.model.OrigenMovimiento;
@@ -60,7 +62,7 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 	@Transactional(readOnly = true)
 	public List<Venta> buscarVentasPorCliente(Integer idCliente) {
 		return ventaRepository.findByClienteId(idCliente).stream()
-				.filter(v -> v.getEstado() == EstadoVenta.COBRADA)
+				.filter(v -> v.getEstado() != EstadoVenta.DEVUELTA)
 				.toList();
 	}
 
@@ -68,7 +70,7 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 	@Transactional(readOnly = true)
 	public List<Venta> buscarVentasPorCodigoBarra(String codigoBarra) {
 		return ventaRepository.findByArticuloCodigoBarra(codigoBarra).stream()
-				.filter(v -> v.getEstado() == EstadoVenta.COBRADA)
+				.filter(v -> v.getEstado() != EstadoVenta.DEVUELTA)
 				.toList();
 	}
 
@@ -80,28 +82,59 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 		Venta venta = ventaRepository.findById(idVenta)
 				.orElseThrow(() -> new IllegalArgumentException("Venta no encontrada: " + idVenta));
 
-		// Calcular proporción de efectivo (afecta_caja = TRUE) sobre el total pagado
 		List<PlanPago> cuotas = planPagoRepository.findByVentaId(venta.getId());
-		BigDecimal totalCash = BigDecimal.ZERO;
-		BigDecimal totalVenta = BigDecimal.ZERO;
+
+		// Calcular bases para prorrateo
+		BigDecimal totalPagado = cuotas.stream()
+				.filter(c -> c.getEstado() == EstadoPlanPago.PAGADA)
+				.map(c -> c.getMontoPagado() != null ? c.getMontoPagado() : BigDecimal.ZERO)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		BigDecimal totalDeuda = cuotas.stream()
+				.filter(c -> c.getEstado() == EstadoPlanPago.PENDIENTE)
+				.map(c -> c.getMontoOriginal() != null ? c.getMontoOriginal() : BigDecimal.ZERO)
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		// Procesar cada cuota según su estado y tipo de pago
+		BigDecimal cashOutflow = BigDecimal.ZERO;
+		boolean huboReduccionDeuda = false;
+
 		for (PlanPago cuota : cuotas) {
-			BigDecimal monto = cuota.getMontoPagado() != null ? cuota.getMontoPagado() : BigDecimal.ZERO;
 			TipoPago tp = cuota.getIdTipoPago() != null
 					? tipoPagoRepository.findById(cuota.getIdTipoPago()).orElse(null)
 					: null;
-			if (tp != null && Boolean.TRUE.equals(tp.getAfecta_caja())) {
-				totalCash = totalCash.add(monto);
-			}
-			totalVenta = totalVenta.add(monto);
-		}
-		if (totalVenta.compareTo(BigDecimal.ZERO) <= 0) {
-			totalVenta = montoDevuelto;
-		}
-		BigDecimal cashPortion = montoDevuelto.multiply(totalCash).divide(totalVenta, 2, RoundingMode.HALF_UP);
+			if (tp == null) continue;
 
-		// Generar Egreso de Caja solo si hay porción en efectivo
+			if (cuota.getEstado() == EstadoPlanPago.PAGADA) {
+				if (totalPagado.compareTo(BigDecimal.ZERO) <= 0) continue;
+				BigDecimal porcion = montoDevuelto.multiply(cuota.getMontoPagado())
+						.divide(totalPagado, 2, RoundingMode.HALF_UP);
+
+				if (Boolean.TRUE.equals(tp.getAfecta_caja())) {
+					cashOutflow = cashOutflow.add(porcion);
+				}
+
+			} else if (cuota.getEstado() == EstadoPlanPago.PENDIENTE
+					&& Boolean.TRUE.equals(tp.getGenera_deuda())) {
+				if (totalDeuda.compareTo(BigDecimal.ZERO) <= 0) continue;
+				BigDecimal porcion = montoDevuelto.multiply(cuota.getMontoOriginal())
+						.divide(totalDeuda, 2, RoundingMode.HALF_UP);
+
+				BigDecimal nuevoOriginal = cuota.getMontoOriginal().subtract(porcion);
+				if (nuevoOriginal.compareTo(BigDecimal.ZERO) <= 0) {
+					cuota.setEstado(EstadoPlanPago.CANCELADA);
+					cuota.setMontoOriginal(BigDecimal.ZERO);
+				} else {
+					cuota.setMontoOriginal(nuevoOriginal);
+				}
+				planPagoRepository.save(cuota);
+				huboReduccionDeuda = true;
+			}
+		}
+
+		// Generar Egreso de Caja solo si hay porción en efectivo de cuotas PAGADAS
 		Integer idMovimientoCaja = null;
-		if (cashPortion.compareTo(BigDecimal.ZERO) > 0) {
+		if (cashOutflow.compareTo(BigDecimal.ZERO) > 0) {
 			var cajaOpt = cajaRepository.findCajaAbierta();
 			if (cajaOpt.isEmpty()) {
 				throw new IllegalStateException("No hay una caja abierta para registrar el egreso");
@@ -111,7 +144,7 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 			mc.setFecha(LocalDate.now());
 			mc.setHora(LocalTime.now());
 			mc.setDebe(BigDecimal.ZERO);
-			mc.setHaber(cashPortion);
+			mc.setHaber(cashOutflow);
 			mc.setDescripcion("Devolución venta #" + venta.getNumeroComprobante() + " - " + observaciones);
 			mc.setOrigen(OrigenMovimiento.AUTOMATICO);
 			mc = movimientoCajaRepository.save(mc);
@@ -122,7 +155,7 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 		var articuloOpt = articuloRepository.findById(idArticulo);
 		articuloOpt.ifPresent(a -> {
 			if (malEstado) {
-				a.setEstado(com.visus.central.infraestructure.persistence.entity.JpaArticuloEntity.Estado.Baja);
+				a.setEstado(EstadoArticulo.Baja);
 			} else {
 				a.setStock(a.getStock() + cantidad);
 			}
@@ -149,14 +182,22 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 			comisionRepository.save(cv);
 		}
 
-		// Guardar registro de devolución (solo efectivo)
-		Devolucion dev = new Devolucion(idVenta, idArticulo, cantidad, cashPortion,
-				TipoOperacionDevolucion.EGRESO_CAJA, malEstado,
-				observaciones, idUsuario);
+		// Determinar tipo de operación según lo que ocurrió
+		TipoOperacionDevolucion tipoOperacion;
+		BigDecimal montoRegistrado;
+		if (cashOutflow.compareTo(BigDecimal.ZERO) > 0) {
+			tipoOperacion = TipoOperacionDevolucion.EGRESO_CAJA;
+			montoRegistrado = cashOutflow;
+		} else {
+			tipoOperacion = TipoOperacionDevolucion.NOTA_CREDITO;
+			montoRegistrado = BigDecimal.ZERO;
+		}
+
+		// Guardar registro de devolución
+		Devolucion dev = new Devolucion(idVenta, idArticulo, cantidad, montoRegistrado,
+				tipoOperacion, malEstado, observaciones, idUsuario);
 		dev.setIdMovimientoCaja(idMovimientoCaja);
 		dev = devolucionRepository.save(dev);
-
-		ventaRepository.actualizarEstadoVenta(idVenta, EstadoVenta.DEVUELTA);
 
 		return dev;
 	}
