@@ -31,6 +31,9 @@ public interface ArticuloUseCase extends CrudUseCase<Articulo> {
 	// Método flexible (alternativa)
 	Page<Articulo> buscarConFiltros(String descripcion, String estado, Pageable pageable);
 	
+	// Para impresión de etiquetas
+	List<Articulo> buscarPorRubroId(Integer rubroId);
+
 	// Métodos adicionales
 	Page<Articulo> buscarPorRubro(String rubro, Pageable pageable);
 	Page<Articulo> buscarPorRubroYEstado(String rubro, EstadoArticulo estado, Pageable pageable);

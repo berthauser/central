@@ -164,6 +164,13 @@ public class PostgresArticuloAdapter implements ArticuloRepository {
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public List<Articulo> findByRubroId(Integer rubroId) {
+		return jpaArticuloRepository.findByRubroId(rubroId).stream()
+				.map(articuloMapper::toModel)
+				.collect(Collectors.toList());
+	}
+
 	// NUEVOS MÉTODOS PARA LA ACTUALIZACIÓN DE PRECIOS
 	@Override
     public List<Articulo> findByRubroIdAndLineaIdIn(Integer rubroId, List<Integer> lineasIds) {

@@ -46,6 +46,7 @@ import com.visus.central.ui.view.ConsultaDeListasView;
 import com.visus.central.ui.view.CuentaCorrienteView;
 import com.visus.central.ui.view.DevolucionView;
 import com.visus.central.ui.view.FacturacionView;
+import com.visus.central.ui.view.ImpresionEtiquetasView;
 import com.visus.central.ui.view.LineaView;
 import com.visus.central.ui.view.ListasView;
 import com.visus.central.ui.view.LocalidadView;
@@ -403,6 +404,7 @@ public class CentralLayout extends AppLayout implements AfterNavigationObserver,
 		articulos.addItem(new SideNavItem("Líneas", LineaView.class));
 		articulos.addItem(new SideNavItem("Presentaciones", PresentacionView.class));
 		articulos.addItem(new SideNavItem("Medidas", MedidaView.class));
+		articulos.addItem(new SideNavItem("Imprimir Etiquetas", ImpresionEtiquetasView.class));
 		sideNav.addItem(articulos);
 
 		return sideNav;

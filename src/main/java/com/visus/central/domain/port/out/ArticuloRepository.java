@@ -36,6 +36,9 @@ public interface ArticuloRepository {
 	// Método para buscar todos con paginación
 	Page<Articulo> findAll(Pageable pageable);
 	
+	// Para impresión de etiquetas
+	List<Articulo> findByRubroId(Integer rubroId);
+
 	// Usados para la actualizacion de Precios
 	List<Articulo> findByRubroIdAndLineaIdIn(Integer rubroId, List<Integer> lineasIds);
 	int countByRubroIdAndLineaIdIn(Integer rubroId, List<Integer> lineasIds);

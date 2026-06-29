@@ -17,6 +17,22 @@ public final class Ean13Generator {
 		return base + check;
 	}
 
+	public static String generar(String prefix) {
+		if (prefix == null || prefix.length() != 3 || !prefix.matches("\\d{3}")) {
+			throw new IllegalArgumentException("Prefix must be exactly 3 digits");
+		}
+		long seq = counter.incrementAndGet() % 1000000000L;
+		String base = prefix + String.format("%09d", seq);
+		int check = calcularDigitoControl(base);
+		return base + check;
+	}
+
+	public static String generarConSecuencia(long seq) {
+		String base = String.format("779%09d", seq % 1000000000L);
+		int check = calcularDigitoControl(base);
+		return base + check;
+	}
+
 	public static boolean esValido(String ean13) {
 		if (ean13 == null || ean13.length() != 13 || !ean13.matches("\\d{13}")) {
 			return false;
