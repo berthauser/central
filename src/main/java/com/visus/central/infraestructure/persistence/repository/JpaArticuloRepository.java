@@ -76,8 +76,10 @@ public interface JpaArticuloRepository extends JpaRepository<JpaArticuloEntity, 
     
     List<JpaArticuloEntity> findByLineaIdLineaIn(List<Integer> lineasIds);
 
-    @Query("SELECT a FROM JpaArticuloEntity a WHERE a.linea.rubro.id = :rubroId")
-    List<JpaArticuloEntity> findByRubroId(@Param("rubroId") Integer rubroId);
+    @Query("SELECT a FROM JpaArticuloEntity a LEFT JOIN FETCH a.linea l LEFT JOIN FETCH l.rubro WHERE a.linea.rubro.id = :rubroId")
+    Page<JpaArticuloEntity> findByRubroId(@Param("rubroId") Integer rubroId, Pageable pageable);
+
+    Page<JpaArticuloEntity> findByLineaIdLinea(Integer idLinea, Pageable pageable);
 
     @Query("SELECT a FROM JpaArticuloEntity a LEFT JOIN FETCH a.linea l LEFT JOIN FETCH l.rubro WHERE l.idLinea IN :lineasIds")
     List<JpaArticuloEntity> findByLineaIdLineaInWithRubro(@Param("lineasIds") List<Integer> lineasIds);

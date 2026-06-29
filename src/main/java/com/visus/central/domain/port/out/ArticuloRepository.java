@@ -37,7 +37,8 @@ public interface ArticuloRepository {
 	Page<Articulo> findAll(Pageable pageable);
 	
 	// Para impresión de etiquetas
-	List<Articulo> findByRubroId(Integer rubroId);
+	Page<Articulo> findByRubroId(Integer rubroId, Pageable pageable);
+	Page<Articulo> findByLineaId(Integer idLinea, Pageable pageable);
 
 	// Usados para la actualizacion de Precios
 	List<Articulo> findByRubroIdAndLineaIdIn(Integer rubroId, List<Integer> lineasIds);

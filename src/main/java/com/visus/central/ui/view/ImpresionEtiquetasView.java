@@ -1,13 +1,14 @@
 package com.visus.central.ui.view;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -20,10 +21,9 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.CallbackDataProvider;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.renderer.TextRenderer;
-import com.vaadin.flow.function.SerializableFunction;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
@@ -31,7 +31,6 @@ import com.vaadin.flow.server.StreamResource;
 import com.visus.central.domain.model.Articulo;
 import com.visus.central.domain.model.Linea;
 import com.visus.central.domain.model.Rubro;
-import com.vaadin.flow.component.UI;
 import com.visus.central.domain.port.in.ArticuloUseCase;
 import com.visus.central.domain.port.in.LineaUseCase;
 import com.visus.central.domain.port.in.RubroUseCase;
@@ -57,7 +56,8 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 	private final Checkbox todosCheck = new Checkbox("Seleccionar todos");
 	private final IntegerField cantidadField = new IntegerField("Cantidad");
 
-	private List<Articulo> articulos = new ArrayList<>();
+	private DataProvider<Articulo, Void> dataProvider;
+	private final Map<Integer, Integer> articuloQuantities = new HashMap<>();
 
 	public ImpresionEtiquetasView(RubroUseCase rubroUseCase, LineaUseCase lineaUseCase,
 			ArticuloUseCase articuloUseCase) {
@@ -80,11 +80,11 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 		rubroCombo.setItemLabelGenerator(Rubro::getDescripcion);
 		rubroCombo.addValueChangeListener(e -> {
 			lineaCombo.clear();
+			lineaCombo.setEnabled(false);
+			grid.setItems();
 			if (e.getValue() != null) {
 				lineaCombo.setItems(lineaUseCase.findByRubroId(e.getValue().getId()));
 				lineaCombo.setEnabled(true);
-			} else {
-				lineaCombo.setEnabled(false);
 			}
 		});
 
@@ -92,12 +92,6 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 		lineaCombo.setEnabled(false);
 
 		buscarBtn.addClickListener(_ -> buscar());
-		todosCheck.addValueChangeListener(e -> {
-			grid.asMultiSelect().deselectAll();
-			if (e.getValue()) {
-				grid.asMultiSelect().select(articulos);
-			}
-		});
 
 		downloadLink.getElement().setAttribute("style", "display: none");
 		add(downloadLink);
@@ -120,25 +114,28 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 		grid.setSizeFull();
 		grid.addColumn(Articulo::getCodigo_barra).setHeader("Código Barra").setWidth("130px").setFlexGrow(0);
 		grid.addColumn(Articulo::getCodigo_interno).setHeader("Código Interno").setWidth("130px").setFlexGrow(0);
-		grid.addColumn(Articulo::getDescripcion).setHeader("Descripción").setWidth("250px");
+		grid.addColumn(Articulo::getDescripcion).setHeader("Descripción");
 		grid.addColumn(a -> a.getPresentacion() != null ? a.getPresentacion().getDescripcion() : "")
 			.setHeader("Presentación").setWidth("120px").setFlexGrow(0);
 		grid.addColumn(a -> a.getMedida() != null ? a.getMedida().getDescripcion() : "")
 			.setHeader("Medida").setWidth("100px").setFlexGrow(0);
 		grid.addColumn(Articulo::getStock).setHeader("Stock").setWidth("80px").setFlexGrow(0);
-
 		grid.addColumn(new ComponentRenderer<>(articulo -> {
 			IntegerField qtyField = new IntegerField();
-			qtyField.setValue(articulo.getStock() != null ? articulo.getStock() : 1);
+			qtyField.setValue(articuloQuantities.getOrDefault(articulo.getId(),
+					articulo.getStock() != null ? articulo.getStock() : 1));
 			qtyField.setMin(1);
 			qtyField.setMax(9999);
 			qtyField.setWidth("80px");
-			qtyField.addValueChangeListener(e -> articuloQuantities.put(articulo.getId(), e.getValue()));
+			qtyField.addValueChangeListener(e -> {
+				if (e.getValue() != null) {
+					articuloQuantities.put(articulo.getId(), e.getValue());
+				}
+			});
 			return qtyField;
 		})).setHeader("Cant.").setWidth("90px").setFlexGrow(0);
 
 		grid.setSelectionMode(Grid.SelectionMode.MULTI);
-
 		add(grid);
 	}
 
@@ -166,26 +163,33 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 		Linea linea = lineaCombo.getValue();
 
 		if (rubro == null && linea == null) {
-			Notification.show("Seleccione al menos un Rubro o una Línea");
+			Notification.show("Seleccione un Rubro o una Línea");
 			return;
 		}
 
-		if (linea != null) {
-			articulos = articuloUseCase.buscarPorLinea(linea.getIdLinea());
-		} else {
-			articulos = articuloUseCase.buscarPorRubroId(rubro.getId());
-		}
+		articuloQuantities.clear();
 
-		if (rubro != null && linea == null) {
-			articulos = articulos.stream()
-					.filter(a -> a.getLinea() != null && a.getLinea().getRubro() != null
-							&& a.getLinea().getRubro().getId().equals(rubro.getId()))
-					.collect(Collectors.toList());
-		}
+		Integer rubroId = rubro != null ? rubro.getId() : null;
+		Integer lineaId = linea != null ? linea.getIdLinea() : null;
 
-		grid.setItems(articulos);
+		dataProvider = DataProvider.fromCallbacks(
+			query -> {
+				Pageable pageable = PageRequest.of(query.getOffset() / query.getLimit(), query.getLimit());
+				if (lineaId != null) {
+					return articuloUseCase.buscarPorLineaId(lineaId, pageable).stream();
+				}
+				return articuloUseCase.buscarPorRubroId(rubroId, pageable).stream();
+			},
+			query -> {
+				if (lineaId != null) {
+					return (int) articuloUseCase.buscarPorLineaId(lineaId, PageRequest.of(0, 1)).getTotalElements();
+				}
+				return (int) articuloUseCase.buscarPorRubroId(rubroId, PageRequest.of(0, 1)).getTotalElements();
+			}
+		);
+
+		grid.setDataProvider(dataProvider);
 		todosCheck.setValue(false);
-		Notification.show("Artículos encontrados: " + articulos.size());
 	}
 
 	private void generarZpl() {
@@ -198,15 +202,12 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 		int defaultQty = cantidadField.getValue() != null ? cantidadField.getValue() : 1;
 
 		StringBuilder zplCompleto = new StringBuilder();
-		zplCompleto.append("^XA\n");
-		zplCompleto.append("^LL300\n");
-		zplCompleto.append("^PW800\n");
-		zplCompleto.append("^LS0\n");
+		zplCompleto.append("^XA\n^LL300\n^PW800\n^LS0\n");
 
 		for (Articulo a : seleccionados) {
 			int qty = articuloQuantities.getOrDefault(a.getId(), defaultQty);
 			for (int i = 0; i < qty; i++) {
-				String etiqueta = ZplGenerator.generarEtiqueta(
+				zplCompleto.append(ZplGenerator.generarEtiqueta(
 						a.getCodigo_barra(),
 						a.getLinea() != null ? a.getLinea().getDescripcion() : null,
 						a.getCodigo_interno(),
@@ -214,16 +215,14 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 						a.getMedida() != null ? a.getMedida().getDescripcion() : null,
 						a.getPresentacion() != null ? a.getPresentacion().getDescripcion() : null,
 						a.getStock(),
-						800, 300);
-				zplCompleto.append(etiqueta);
+						800, 300));
 			}
 		}
 
-		String zplContent = zplCompleto.toString();
+		byte[] zplBytes = zplCompleto.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
 
-		byte[] zplBytes = zplContent.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-
-		StreamResource resource = new StreamResource("etiquetas.zpl", () -> new ByteArrayInputStream(zplBytes));
+		StreamResource resource = new StreamResource("etiquetas.zpl",
+				() -> new ByteArrayInputStream(zplBytes));
 		resource.setContentType("application/octet-stream");
 
 		downloadLink.setHref(resource);
@@ -239,6 +238,4 @@ public class ImpresionEtiquetasView extends VerticalLayout {
 			downloadLink.getElement()
 		);
 	}
-
-	private final Map<Integer, Integer> articuloQuantities = new HashMap<>();
 }

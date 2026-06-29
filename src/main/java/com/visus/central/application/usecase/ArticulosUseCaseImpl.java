@@ -131,8 +131,13 @@ public class ArticulosUseCaseImpl implements ArticuloUseCase {
     }
     
 	@Override
-	public List<Articulo> buscarPorRubroId(Integer rubroId) {
-		return articuloRepository.findByRubroId(rubroId);
+	public Page<Articulo> buscarPorRubroId(Integer rubroId, Pageable pageable) {
+		return articuloRepository.findByRubroId(rubroId, pageable);
+	}
+
+	@Override
+	public Page<Articulo> buscarPorLineaId(Integer lineaId, Pageable pageable) {
+		return articuloRepository.findByLineaId(lineaId, pageable);
 	}
 
 	@Override

@@ -165,10 +165,15 @@ public class PostgresArticuloAdapter implements ArticuloRepository {
 	}
 
 	@Override
-	public List<Articulo> findByRubroId(Integer rubroId) {
-		return jpaArticuloRepository.findByRubroId(rubroId).stream()
-				.map(articuloMapper::toModel)
-				.collect(Collectors.toList());
+	public Page<Articulo> findByRubroId(Integer rubroId, Pageable pageable) {
+		return jpaArticuloRepository.findByRubroId(rubroId, pageable)
+				.map(articuloMapper::toModel);
+	}
+
+	@Override
+	public Page<Articulo> findByLineaId(Integer idLinea, Pageable pageable) {
+		return jpaArticuloRepository.findByLineaIdLinea(idLinea, pageable)
+				.map(articuloMapper::toModel);
 	}
 
 	// NUEVOS MÉTODOS PARA LA ACTUALIZACIÓN DE PRECIOS
