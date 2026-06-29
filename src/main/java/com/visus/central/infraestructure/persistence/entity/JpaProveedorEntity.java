@@ -3,11 +3,14 @@ package com.visus.central.infraestructure.persistence.entity;
 import com.visus.central.domain.model.Estado;
 import com.visus.central.domain.model.SituacionFiscal;
 import com.visus.central.domain.model.TipoDocumento;
+import com.visus.central.infraestructure.converter.SituacionFiscalConverter;
+import com.visus.central.infraestructure.converter.TipoDocumentoConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ForeignKey;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,11 +35,11 @@ public class JpaProveedorEntity {
     @Column(name = "nombre_real", nullable = false, length = 50)
     private String nombreReal;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = SituacionFiscalConverter.class)
     @Column(name = "situacion_fiscal", nullable = false, length = 30)
     private SituacionFiscal situacionFiscal;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = TipoDocumentoConverter.class)
     @Column(name = "documento", nullable = false, length = 20)
     private TipoDocumento documento;
 

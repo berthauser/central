@@ -31,7 +31,6 @@ public class ListasView extends VerticalLayout {
     private static final long serialVersionUID = 1L;
 
     private final ListaUseCase servicio;
-    private final PorcentualUseCase porcentualService;
     private final Grid<Lista> grid = new Grid<>(Lista.class, false);
     private final TextField filtro = new TextField();
     private final ListaForm form;
@@ -40,7 +39,6 @@ public class ListasView extends VerticalLayout {
 
     public ListasView(ListaUseCase servicio, PorcentualUseCase porcentualService) {
         this.servicio = servicio;
-        this.porcentualService = porcentualService;
         this.form = new ListaForm(porcentualService.findAll());
 
         configurarVista();

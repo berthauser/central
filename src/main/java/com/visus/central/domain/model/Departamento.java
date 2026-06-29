@@ -2,6 +2,7 @@ package com.visus.central.domain.model;
 
 import com.visus.central.domain.model.Provincia;
 
+@SuppressWarnings("unused")
 public class Departamento {
 	private Integer id;
     private String nombre;

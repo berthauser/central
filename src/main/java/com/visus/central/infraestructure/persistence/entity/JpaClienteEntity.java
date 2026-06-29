@@ -7,7 +7,10 @@ import com.visus.central.domain.model.Estado;
 import com.visus.central.domain.model.Sexo;
 import com.visus.central.domain.model.SituacionFiscal;
 import com.visus.central.domain.model.TipoDocumento;
+import com.visus.central.infraestructure.converter.SituacionFiscalConverter;
+import com.visus.central.infraestructure.converter.TipoDocumentoConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,7 +44,7 @@ public class JpaClienteEntity {
     @Column(name = "telefono_movil", length = 15)
     private String telefonoMovil;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = TipoDocumentoConverter.class)
     @Column(name = "documento", nullable = false, length = 20)
     private TipoDocumento tipoDocumento;
     
@@ -72,7 +75,7 @@ public class JpaClienteEntity {
     @Column(name = "pago_minimo", precision = 18, scale = 2)
     private BigDecimal pagoMinimo;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = SituacionFiscalConverter.class)
     @Column(name = "situacion_fiscal", nullable = false, length = 30)
     private SituacionFiscal situacionFiscal;
     

@@ -3,7 +3,9 @@ package com.visus.central.infraestructure.persistence.entity;
 import com.visus.central.domain.model.Estado;
 import com.visus.central.domain.model.Parentesco;
 import com.visus.central.domain.model.TipoDocumento;
+import com.visus.central.infraestructure.converter.TipoDocumentoConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,7 +35,7 @@ public class JpaGrupoFamEntity {
     )
     private JpaClienteEntity cliente;
 	
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = TipoDocumentoConverter.class)
 	@Column(name = "documento", nullable = false, length = 20)
 	private TipoDocumento tipoDocumento;
 	

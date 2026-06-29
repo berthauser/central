@@ -3,8 +3,10 @@ package com.visus.central.infraestructure.persistence.entity;
 import java.util.List;
 
 import com.visus.central.domain.model.Provincia;
+import com.visus.central.infraestructure.converter.ProvinciaConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,7 +28,7 @@ public class JpaDepartamentoEntity {
 	@Column(length = 60, nullable = false)
 	private String nombre;
 
-	@Enumerated(EnumType.STRING)
+	@Convert(converter = ProvinciaConverter.class)
 	@Column(name = "provincia", nullable = false, length = 35)
 	private Provincia provincia;
 	

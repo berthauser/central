@@ -97,7 +97,6 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 
 		// Procesar cada cuota según su estado y tipo de pago
 		BigDecimal cashOutflow = BigDecimal.ZERO;
-		boolean huboReduccionDeuda = false;
 
 		for (PlanPago cuota : cuotas) {
 			TipoPago tp = cuota.getIdTipoPago() != null
@@ -128,7 +127,6 @@ public class DevolucionUseCaseImpl implements DevolucionUseCase {
 					cuota.setMontoOriginal(nuevoOriginal);
 				}
 				planPagoRepository.save(cuota);
-				huboReduccionDeuda = true;
 			}
 		}
 
